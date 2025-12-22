@@ -43,12 +43,11 @@ class QimenGenerator:
     # 坎1 -> 艮8 -> 震3 -> 巽4 -> 離9 -> 坤2 -> 兌7 -> 乾6 -> 坎1
     ROTATION_PATH = [1, 8, 3, 4, 9, 2, 7, 6]
     
-    def __init__(self, year: int, month: int, day: int, hour: int, timezone: int = 8):
+    def __init__(self, year: int, month: int, day: int, hour: int):
         self.year = year
         self.month = month
         self.day = day
         self.hour = hour
-        self.timezone = timezone
         self.dt = datetime(year, month, day, hour)
         
         # Initialize Lunar/Solar objects
@@ -416,7 +415,7 @@ class QimenGenerator:
             
         return {
             "solar_date": self.dt.strftime("%Y-%m-%d %H:%M"),
-            "timezone": f"GMT+{self.timezone}",
+            "timezone": "GMT+8",
             "gan_zhi": {
                 "year": self.gan_zhi[0],
                 "month": self.gan_zhi[1],
@@ -440,7 +439,7 @@ class QimenGenerator:
         """String representation."""
         d = self.generate()
         lines = []
-        lines.append(f"Time: {d['solar_date']} (GMT+{self.timezone})")
+        lines.append(f"Time: {d['solar_date']} (GMT+8)")
         lines.append(f"GanZhi: {d['gan_zhi']['year']} {d['gan_zhi']['month']} {d['gan_zhi']['day']} {d['gan_zhi']['hour']}")
         lines.append(f"JieQi: {d['solar_term']} ({d['yuan']})")
         lines.append(f"Chart: {d['formation']}")

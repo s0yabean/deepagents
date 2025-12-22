@@ -2,7 +2,93 @@ from langchain_core.tools import tool
 from typing import Dict, List, Optional
 import json
 from datetime import datetime
+import httpx
+from tavily import TavilyClient
+from markdownify import markdownify
 from qmdj_agent.chart_generator.qimen_generator import QimenGenerator
+
+# ==============================================================================
+# Time Utility Tools
+# ==============================================================================
+
+@tool(parse_docstring=True)
+def get_current_time() -> str:
+    """Get the current date and time in ISO 8601 format for chart generation.
+    
+    Use this tool to get the current timestamp before calling qmdj_chart_api.
+    The returned time is in GMT+8 (Beijing Time).
+    """
+    now = datetime.now()
+    return now.strftime("%Y-%m-%dT%H:%M:%S")
+
+# ==============================================================================
+# Web Search Tool (Context Advisor)
+# ==============================================================================
+
+def fetch_webpage_content(url: str, timeout: float = 10.0) -> str:
+    """Fetch and convert webpage content to markdown."""
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
+    
+    try:
+        response = httpx.get(url, headers=headers, timeout=timeout, follow_redirects=True)
+        response.raise_for_status()
+        html_content = response.text
+        markdown_content = markdownify(html_content, heading_style="ATX")
+        # Limit content length
+        return markdown_content[:3000] if len(markdown_content) > 3000 else markdown_content
+    except Exception as e:
+        return f"Error fetching content: {str(e)}"
+
+@tool(parse_docstring=True)
+def tavily_search(query: str, max_results: int = 2) -> str:
+    """Search the web for information to provide external context and evidence.
+    
+    Use this to find real-world data, news, trends, or research that relates to
+    the user's question. This grounds QMDJ readings with objective evidence.
+    
+    Args:
+        query: Search query to execute
+        max_results: Maximum number of results to return (default: 2)
+    """
+    try:
+        # Lazy initialization of Tavily client (only when search is called)
+        tavily_client = TavilyClient()
+        
+        # Use Tavily to discover URLs
+        search_results = tavily_client.search(
+            query,
+            max_results=max_results,
+            topic="general"
+        )
+        
+        # Fetch full content for each URL
+        result_texts = []
+        for result in search_results.get("results", []):
+            url = result["url"]
+            title = result["title"]
+            
+            # Fetch webpage content
+            content = fetch_webpage_content(url)
+            
+            result_text = f"""## {title}
+**URL:** {url}
+
+{content}
+
+---
+"""
+            result_texts.append(result_text)
+        
+        # Format final response
+        response = f"""🔍 Found {len(result_texts)} result(s) for '{query}':
+
+{chr(10).join(result_texts)}"""
+        
+        return response
+    except Exception as e:
+        return f"Search error: {str(e)}. Please try a different query."
 
 # ==============================================================================
 # QMDJ Chart Generation Tool
@@ -20,14 +106,86 @@ def qmdj_chart_api(timestamp: str) -> str:
     except ValueError:
         return json.dumps({"error": "Invalid timestamp format. Use ISO 8601 (e.g., 2023-10-27T10:00:00)"})
         
-    # Generate Chart
+    # Generate Chart (calculations use GMT+8 via lunar-python)
     try:
-        # Default to GMT+8 as requested by user
-        generator = QimenGenerator(dt.year, dt.month, dt.day, dt.hour, timezone=8)
+        generator = QimenGenerator(dt.year, dt.month, dt.day, dt.hour)
         chart_data = generator.generate()
         return json.dumps(chart_data, ensure_ascii=False, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Chart generation failed: {str(e)}"})
+
+# ==============================================================================
+# Energy Analysis Tools (Energy Analyzer Specialist)
+# ==============================================================================
+
+@tool(parse_docstring=True)
+def calculate_box_energy(chart_json: str) -> str:
+    """Calculate energy levels for all 9 palaces based on Death/Emptiness and overflow.
+    
+    Each palace starts at 100% energy. Death/Emptiness reduces to 20%.
+    Diagonal overflow increases opposite palace to 200% (or 100% if it has DE).
+    
+    Args:
+        chart_json: JSON string from qmdj_chart_api containing chart data
+    """
+    # STUB: To be implemented with full logic later
+    # For now, return placeholder data
+    try:
+        chart = json.loads(chart_json)
+        empty_death = chart.get("empty_death", "")
+        
+        # Placeholder: All palaces at 100% for now
+        energy_data = {
+            "1": {"energy": 100, "modifier": "normal"},
+            "2": {"energy": 100, "modifier": "normal"},
+            "3": {"energy": 100, "modifier": "normal"},
+            "4": {"energy": 100, "modifier": "normal"},
+            "5": {"energy": 100, "modifier": "center"},
+            "6": {"energy": 100, "modifier": "normal"},
+            "7": {"energy": 100, "modifier": "normal"},
+            "8": {"energy": 100, "modifier": "normal"},
+            "9": {"energy": 100, "modifier": "normal"},
+            "notes": "STUB: Energy calculation not yet implemented. All palaces at 100%."
+        }
+        
+        return json.dumps(energy_data, ensure_ascii=False, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Energy calculation failed: {str(e)}"})
+
+@tool(parse_docstring=True)
+def apply_tai_sui_modifier(energy_json: str, year: int) -> str:
+    """Apply Tai Sui (太岁) year-based energy modifiers to palace energies.
+    
+    Tai Sui affects different palaces based on the year's Earthly Branch.
+    
+    Args:
+        energy_json: JSON from calculate_box_energy
+        year: Year to calculate Tai Sui for
+    """
+    # STUB: To be implemented
+    try:
+        energy_data = json.loads(energy_json)
+        energy_data["tai_sui_applied"] = f"Year {year} (STUB: Not yet implemented)"
+        return json.dumps(energy_data, ensure_ascii=False, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Tai Sui calculation failed: {str(e)}"})
+
+@tool(parse_docstring=True)
+def detect_diagonal_overflow(chart_json: str) -> str:
+    """Detect diagonal overflow patterns where Death/Emptiness causes energy redistribution.
+    
+    When a palace has DE, its diagonal opposite gains overflow energy.
+    
+    Args:
+        chart_json: JSON string from qmdj_chart_api
+    """
+    # STUB: To be implemented
+    # Diagonal pairs: 1-9, 2-8, 3-7, 4-6 (5 has no diagonal)
+    return json.dumps({
+        "overflow_detected": False,
+        "affected_palaces": [],
+        "note": "STUB: Diagonal overflow detection not yet implemented"
+    }, ensure_ascii=False, indent=2)
 
 # ==============================================================================
 # QMDJ Knowledge Base Tools
