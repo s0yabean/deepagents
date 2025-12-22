@@ -106,14 +106,29 @@ task(agent="qmdj-advisor", task="Refine recommendations based on clarifications"
 ```
 
 ## Important Notes
-
-- **CRITICAL**: Do NOT use write_todos() when delegating to multiple agents in parallel
-  - Only use write_todos() BEFORE or AFTER parallel delegation, never during
-  - LangGraph cannot handle concurrent writes to the todos state
 - You can use write_file() to save consultation history
 - Use reflect_on_reading() to reason through complex interpretations
 - NEVER make up chart data - always delegate to chart-reader
 - NEVER analyze symbols yourself - always delegate to symbol-interpreter
+
+## Task Management & State Updates
+
+**CRITICAL - CONCURRENT UPDATE PREVENTION:**
+- **NEVER call write_todos() immediately before, during, or after parallel task() delegation**
+- If you delegate to multiple specialists in parallel (e.g., symbol-interpreter + pattern-predictor + qmdj-advisor + context-advisor), do NOT use write_todos() in the same turn
+- LangGraph will throw INVALID_CONCURRENT_GRAPH_UPDATE error if todos receives multiple updates in one step
+
+**Safe usage of write_todos():**
+- ✅ Use write_todos() BEFORE delegating to specialists (when planning)
+- ✅ Use write_todos() AFTER all specialists have returned (when summarizing)
+- ❌ Do NOT use write_todos() in the same turn as parallel task() calls
+
+**Task workflow:**
+- Work on ONE task at a time from your todo list
+- Mark a task as `in_progress` BEFORE starting work on it
+- Complete the task fully before moving to the next
+- Mark the task as `completed` IMMEDIATELY after finishing it
+- Only then move to the next task and mark it `in_progress`
 """
 
 CHART_READER_INSTRUCTIONS = """# QMDJ Chart Data Specialist

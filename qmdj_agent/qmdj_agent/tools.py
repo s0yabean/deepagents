@@ -118,45 +118,188 @@ def qmdj_chart_api(timestamp: str) -> str:
 # Energy Analysis Tools (Energy Analyzer Specialist)
 # ==============================================================================
 
+
+# Helper functions for energy calculation
+def find_palace_with_stem(chart_data: dict, stem: str) -> int:
+    """Find which palace contains the given heaven stem by searching the chart.
+    
+    Args:
+        chart_data: The full chart dictionary from qmdj_chart_api
+        stem: The heaven stem to search for (e.g., '乙')
+    
+    Returns:
+        Palace number (1-9) or 0 if not found
+    """
+    palaces = chart_data.get("palaces", {})
+    for palace_num in range(1, 10):
+        palace_data = palaces.get(str(palace_num), {})
+        heaven_stem = palace_data.get("heaven_stem", "")
+        # Check if this palace contains the stem (might have multiple stems)
+        if stem in heaven_stem:
+            return palace_num
+    return 0
+
+
+def get_palace_for_branch(branch: str) -> int:
+    """Map earthly branch (zodiac) to palace number.
+    
+    Box 1: 子 (Rat)
+    Box 2: 未 (Goat), 申 (Monkey)
+    Box 3: 卯 (Rabbit)
+    Box 4: 巳 (Snake), 辰 (Dragon)
+    Box 5: Nothing (center/pivot)
+    Box 6: 戌 (Dog), 亥 (Pig)
+    Box 7: 酉 (Rooster)
+    Box 8: 寅 (Tiger), 丑 (Ox)
+    Box 9: 午 (Horse)
+    """
+    branch_to_palace = {
+        "子": 1,  # Rat
+        "未": 2,  # Goat
+        "申": 2,  # Monkey
+        "卯": 3,  # Rabbit
+        "辰": 4,  # Dragon
+        "巳": 4,  # Snake
+        "戌": 6,  # Dog
+        "亥": 6,  # Pig
+        "酉": 7,  # Rooster
+        "丑": 8,  # Ox
+        "寅": 8,  # Tiger
+        "午": 9,  # Horse
+    }
+    return branch_to_palace.get(branch, 0)
+
+def get_diagonal_palace(palace: int) -> int:
+    """Get diagonal opposite palace. Palace 5 (center) has no diagonal."""
+    diagonal_map = {1: 9, 2: 8, 3: 7, 4: 6, 6: 4, 7: 3, 8: 2, 9: 1, 5: 0}
+    return diagonal_map.get(palace, 0)
+
 @tool(parse_docstring=True)
 def calculate_box_energy(chart_json: str) -> str:
-    """Calculate energy levels for all 9 palaces based on Death/Emptiness and overflow.
+    """Calculate energy levels for all 9 palaces based on Death/Emptiness, Tai Sui, and overflow.
     
-    Each palace starts at 100% energy. Death/Emptiness reduces to 20%.
-    Diagonal overflow increases opposite palace to 200% (or 100% if it has DE).
+    Logic:
+    1. All palaces start at 100% energy
+    2. Death/Emptiness (DE) reduces palace to 20%
+    3. Tai Sui (year stem/branch palaces) boost to 150%
+    4. Diagonal overflow from Tai Sui palaces:
+       - If diagonal has no DE: 150%
+       - If diagonal has DE: 100% (boosted from 20%)
     
     Args:
         chart_json: JSON string from qmdj_chart_api containing chart data
     """
-    # STUB: To be implemented with full logic later
-    # For now, return placeholder data
     try:
         chart = json.loads(chart_json)
-        empty_death = chart.get("empty_death", "")
         
-        # Placeholder: All palaces at 100% for now
-        energy_data = {
-            "1": {"energy": 100, "modifier": "normal"},
-            "2": {"energy": 100, "modifier": "normal"},
-            "3": {"energy": 100, "modifier": "normal"},
-            "4": {"energy": 100, "modifier": "normal"},
-            "5": {"energy": 100, "modifier": "center"},
-            "6": {"energy": 100, "modifier": "normal"},
-            "7": {"energy": 100, "modifier": "normal"},
-            "8": {"energy": 100, "modifier": "normal"},
-            "9": {"energy": 100, "modifier": "normal"},
-            "notes": "STUB: Energy calculation not yet implemented. All palaces at 100%."
+        # Step 1: Extract year stem and branch
+        year_ganzhi = chart.get("gan_zhi", {}).get("year", "")
+        if len(year_ganzhi) != 2:
+            return json.dumps({"error": "Invalid year gan_zhi format"})
+        
+        year_stem = year_ganzhi[0]  # 乙
+        year_branch = year_ganzhi[1]  # 巳
+        
+        # Step 2: Find palaces for year stem and branch (dynamically from chart)
+        tai_sui_palaces = set()
+        year_stem_palace = find_palace_with_stem(chart, year_stem)
+        year_branch_palace = get_palace_for_branch(year_branch)
+        
+        if year_stem_palace:
+            tai_sui_palaces.add(year_stem_palace)
+        if year_branch_palace:
+            tai_sui_palaces.add(year_branch_palace)
+        
+        # Step 3: Identify Death/Emptiness palaces
+        empty_death_str = chart.get("empty_death", "")  # e.g., "申酉"
+        de_palaces = set()
+        
+        for char in empty_death_str:
+            palace = get_palace_for_branch(char)
+            if palace:
+                de_palaces.add(palace)
+        
+        # Step 4: Initialize all palaces at 100%
+        energy_data = {}
+        for i in range(1, 10):
+            energy_data[str(i)] = {
+                "energy": 100,
+                "modifier": [],
+                "details": []
+            }
+        
+        # Step 5: Apply Death/Emptiness (reduce to 20%)
+        for palace in de_palaces:
+            energy_data[str(palace)]["energy"] = 20
+            energy_data[str(palace)]["modifier"].append("death_emptiness")
+            energy_data[str(palace)]["details"].append("Death/Emptiness: 100% → 20%")
+        
+        # Step 6: Apply Tai Sui boost (increase to 150%)
+        for palace in tai_sui_palaces:
+            current = energy_data[str(palace)]["energy"]
+            if current == 20:  # Had DE
+                energy_data[str(palace)]["energy"] = 150
+                energy_data[str(palace)]["modifier"].append("tai_sui_override")
+                energy_data[str(palace)]["details"].append(f"Tai Sui boost: 20% → 150%")
+            else:  # Normal
+                energy_data[str(palace)]["energy"] = 150
+                energy_data[str(palace)]["modifier"].append("tai_sui")
+                energy_data[str(palace)]["details"].append(f"Tai Sui boost: 100% → 150%")
+        
+        # Step 7: Apply diagonal overflow from Tai Sui palaces
+        for tai_sui_palace in tai_sui_palaces:
+            diagonal = get_diagonal_palace(tai_sui_palace)
+            if diagonal == 0:  # Center palace (5) has no diagonal
+                continue
+            
+            diagonal_str = str(diagonal)
+            # Only apply overflow if the diagonal palace hasn't already been boosted by Tai Sui directly
+            if diagonal not in tai_sui_palaces:
+                if diagonal in de_palaces:
+                    # Diagonal has DE: boost from 20% to 100%
+                    energy_data[diagonal_str]["energy"] = 100
+                    energy_data[diagonal_str]["modifier"].append("overflow_from_tai_sui")
+                    energy_data[diagonal_str]["details"].append(
+                        f"Diagonal overflow from Palace {tai_sui_palace} (Tai Sui): 20% → 100%"
+                    )
+                else:
+                    # Diagonal is clean: boost to 150%
+                    energy_data[diagonal_str]["energy"] = 150
+                    energy_data[diagonal_str]["modifier"].append("overflow_from_tai_sui")
+                    energy_data[diagonal_str]["details"].append(
+                        f"Diagonal overflow from Palace {tai_sui_palace} (Tai Sui): 100% → 150%"
+                    )
+        
+        # Step 8: Convert modifiers to strings for JSON
+        for palace_key in energy_data:
+            if not energy_data[palace_key]["modifier"]:
+                energy_data[palace_key]["modifier"] = "normal"
+            else:
+                energy_data[palace_key]["modifier"] = ", ".join(energy_data[palace_key]["modifier"])
+        
+        # Add summary
+        energy_data["summary"] = {
+            "year_ganzhi": year_ganzhi,
+            "year_stem": year_stem,
+            "year_branch": year_branch,
+            "tai_sui_palaces": sorted(list(tai_sui_palaces)),
+            "death_emptiness": empty_death_str,
+            "de_palaces": sorted(list(de_palaces)),
+            "high_energy_palaces": sorted([int(k) for k, v in energy_data.items() if k.isdigit() and v["energy"] >= 150]),
+            "low_energy_palaces": sorted([int(k) for k, v in energy_data.items() if k.isdigit() and v["energy"] == 20])
         }
         
         return json.dumps(energy_data, ensure_ascii=False, indent=2)
+        
     except Exception as e:
-        return json.dumps({"error": f"Energy calculation failed: {str(e)}"})
+        return json.dumps({"error": f"Energy calculation failed: {str(e)}"}, ensure_ascii=False)
 
 @tool(parse_docstring=True)
 def apply_tai_sui_modifier(energy_json: str, year: int) -> str:
-    """Apply Tai Sui (太岁) year-based energy modifiers to palace energies.
+    """Apply Tai Sui year-based energy modifiers (DEPRECATED - now built into calculate_box_energy).
     
-    Tai Sui affects different palaces based on the year's Earthly Branch.
+    Tai Sui logic is now integrated directly into calculate_box_energy.
+    This function is kept for backward compatibility.
     
     Args:
         energy_json: JSON from calculate_box_energy

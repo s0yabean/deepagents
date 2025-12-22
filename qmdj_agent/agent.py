@@ -58,7 +58,7 @@ energy_analyzer = {
     "name": "energy-analyzer",
     "description": "Calculate box energy levels based on Death/Emptiness, diagonal overflow, and Tai Sui effects.",
     "system_prompt": ENERGY_ANALYZER_INSTRUCTIONS,
-    "tools": [calculate_box_energy, apply_tai_sui_modifier, detect_diagonal_overflow, reflect_on_reading],
+    "tools": [get_current_time, calculate_box_energy, apply_tai_sui_modifier, detect_diagonal_overflow, reflect_on_reading],
 }
 
 # ==============================================================================
@@ -68,7 +68,7 @@ symbol_interpreter = {
     "name": "symbol-interpreter",
     "description": "Analyze QMDJ symbols in context, considering energy levels. Identifies favorable/unfavorable factors.",
     "system_prompt": SYMBOL_INTERPRETER_INSTRUCTIONS,
-    "tools": [symbol_lookup, five_element_interaction, reflect_on_reading],
+    "tools": [get_current_time, symbol_lookup, five_element_interaction, reflect_on_reading],
 }
 
 # ==============================================================================
@@ -78,7 +78,7 @@ pattern_predictor = {
     "name": "pattern-predictor",
     "description": "Identify converging patterns across palaces to make specific, testable predictions. Creates the 'fortune teller effect'.",
     "system_prompt": PATTERN_PREDICTOR_INSTRUCTIONS,
-    "tools": [reflect_on_reading],
+    "tools": [get_current_time, reflect_on_reading],
 }
 
 # ==============================================================================
@@ -88,7 +88,7 @@ qmdj_strategy_advisor = {
     "name": "qmdj-advisor",
     "description": "Generate metaphysical strategic recommendations based on QMDJ principles. Uses calculate_score with energy weighting.",
     "system_prompt": STRATEGY_ADVISOR_INSTRUCTIONS,
-    "tools": [calculate_score, symbol_lookup, reflect_on_reading],
+    "tools": [get_current_time, calculate_score, symbol_lookup, reflect_on_reading],
 }
 
 # ==============================================================================
@@ -98,7 +98,7 @@ context_advisor = {
     "name": "context-advisor",
     "description": "Provide external evidence and real-world context to ground metaphysical insights. Searches for industry data, research, news.",
     "system_prompt": CONTEXT_ADVISOR_INSTRUCTIONS,
-    "tools": [tavily_search, reflect_on_reading],
+    "tools": [get_current_time, tavily_search, reflect_on_reading],
 }
 
 # ==============================================================================
@@ -114,7 +114,7 @@ model = ChatGoogleGenerativeAI(
 # ==============================================================================
 agent = create_deep_agent(
     model=model,
-    tools=[reflect_on_reading],
+    tools=[get_current_time, reflect_on_reading],
     system_prompt=ORCHESTRATOR_INSTRUCTIONS,
     subagents=[
         chart_reader,
