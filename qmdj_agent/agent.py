@@ -102,11 +102,55 @@ context_advisor = {
 }
 
 # ==============================================================================
-# Model Configuration
+# Model Configuration - Using Claude Sonnet 4.5
 # ==============================================================================
-model = ChatGoogleGenerativeAI(
-    model="gemini-3-pro-preview",
-    temperature=0.3  # Slightly creative for interpretations
+
+import os
+from langchain.chat_models import init_chat_model
+# from rotating_model import RotatingGeminiModel  # Commented out - using Claude instead
+
+def get_google_api_keys() -> list:
+    """Get all available Google API keys from environment.
+    
+    Checks for GOOGLE_API_KEY, GOOGLE_API_KEY_2, GOOGLE_API_KEY_3, etc.
+    (Currently not used - switched to Claude)
+    """
+    keys = []
+    # Check for primary key
+    primary_key = os.getenv("GOOGLE_API_KEY")
+    if primary_key:
+        keys.append(primary_key)
+    
+    # Check for numbered backup keys
+    for i in range(2, 10):  # Support up to GOOGLE_API_KEY_9
+        key = os.getenv(f"GOOGLE_API_KEY_{i}")
+        if key:
+            keys.append(key)
+    
+    return keys
+
+# Get all available API keys (for future use if switching back to Gemini)
+api_keys = get_google_api_keys()
+
+# Commented out - using Claude instead
+# if not api_keys:
+#     raise ValueError(
+#         "No GOOGLE_API_KEY found in environment. "
+#         "Please set GOOGLE_API_KEY (and optionally GOOGLE_API_KEY_2, etc.) in .env file"
+#     )
+
+# Create model with automatic key rotation
+# model = RotatingGeminiModel(
+#     api_keys=api_keys,
+#     model="gemini-3-pro-preview",
+#     temperature=0.3,
+#     rotation_strategy="round-robin",  # Rotate through all keys on rate limits
+# )
+
+# Claude Sonnet 4.5 (recommended by DeepAgents - high rate limits)
+model = init_chat_model(
+    model="anthropic:claude-sonnet-4-5-20250929",
+    temperature=0.3
 )
 
 # ==============================================================================

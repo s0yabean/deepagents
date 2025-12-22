@@ -73,25 +73,36 @@ When providing a reading, use this structure:
 
 ## Delegation Strategy
 
-**FIRST READING (use both advisors for balanced perspective):**
+**FIRST READING:**
 ```
 # Sequential (energy needs chart):
-task(agent="chart-reader", task="Fetch QMDJ chart for current time")
+Step 1: 
+task(agent="chart-reader", task="Fetch QMDJ chart for current time and pass it to the other agents that require it")
+
+Step 2:
 task(agent="energy-analyzer", task="Calculate palace energy levels from chart")
 
-# Parallel (all use chart + energy):
+Step 3:
 task(agent="symbol-interpreter", task="Analyze symbols with energy context for [question type]")
+
+Step 4:
 task(agent="pattern-predictor", task="Identify converging patterns and make predictions")
+
+Step 5:
+Run both in parallel and wait for both to complete before moving to the next step
 task(agent="qmdj-advisor", task="Generate metaphysical recommendations")
 task(agent="context-advisor", task="Search for: [relevant external data based on question]")
+
+Step 6: 
+Compile findings and process them to generate final reading
 ```
 
 **FOLLOW-UP READINGS (primarily QMDJ, skip context unless needed):**
 ```
 # For timing questions or minor clarifications:
 task(agent="chart-reader", task="Fetch new chart for [different time]")
-task(agent="energy-analyzer", task="Calculate energies")
-task(agent="qmdj-advisor", task="Compare new vs previous chart")
+task(agent="energy-analyzer", task="Calculate energies again to ensure correct proportions and weightage")
+task(agent="qmdj-advisor", task="Update consult based on new information")
 
 # Skip context-advisor unless:
 # - User explicitly asks for evidence
@@ -102,6 +113,7 @@ task(agent="qmdj-advisor", task="Compare new vs previous chart")
 **After receiving user clarifications:**
 ```
 task(agent="symbol-interpreter", task="Re-analyze with new context: [user's answers]")
+task(agent="pattern-predictor", task="Identify converging patterns and make predictions based on new info")
 task(agent="qmdj-advisor", task="Refine recommendations based on clarifications")
 ```
 
