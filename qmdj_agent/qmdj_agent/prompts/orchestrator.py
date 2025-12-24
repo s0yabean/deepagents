@@ -176,20 +176,16 @@ task(agent="qmdj-advisor", task="Refine recommendations based on clarifications"
 
 ## Task Management & State Updates
 
-**CRITICAL - CONCURRENT UPDATE PREVENTION:**
-- **NEVER call write_todos() immediately before, during, or after parallel task() delegation**
-- If you delegate to multiple specialists in parallel (e.g., symbol-interpreter + pattern-predictor + qmdj-advisor + context-advisor), do NOT use write_todos() in the same turn
-- LangGraph will throw INVALID_CONCURRENT_GRAPH_UPDATE error if todos receives multiple updates in one step
-
-**Safe usage of write_todos():**
-- ✅ Use write_todos() BEFORE delegating to specialists (when planning)
-- ✅ Use write_todos() AFTER all specialists have returned (when summarizing)
-- ❌ Do NOT use write_todos() in the same turn as parallel task() calls
+**CRITICAL - STATE UPDATE RULES:**
+- **SEPARATE TURNS ONLY**: You must update state (`write_todos`) and delegate tasks (`task`) in **SEPARATE** turns.
+- **Planning Phase**: Call `write_todos` to update your plan. Wait for the tool output.
+- **Execution Phase**: In the **NEXT** turn, call `task()` (one or multiple).
+- **Review Phase**: After tasks complete, call `write_todos` again to mark them done.
+- **NEVER** mix `write_todos` and `task` in the same tool call list. LangGraph will fail with `INVALID_CONCURRENT_GRAPH_UPDATE`.
 
 **Task workflow:**
-- Work on ONE task at a time from your todo list
-- Mark a task as `in_progress` BEFORE starting work on it
-- Complete the task fully before moving to the next
-- Mark the task as `completed` IMMEDIATELY after finishing it
-- Only then move to the next task and mark it `in_progress`
+- You may delegate to multiple specialists in parallel for efficiency.
+- Mark tasks as `in_progress` before starting a major phase of work.
+- Mark tasks as `completed` after you have received and processed the results.
+- Batch your `write_todos` calls to avoid excessive tool usage.
 """

@@ -67,7 +67,75 @@ class RotatingGeminiModel(ChatGoogleGenerativeAI):
         
         while attempts < max_attempts:
             try:
-                return super()._generate(messages, stop=stop, run_manager=run_manager, **kwargs)
+                result = super()._generate(messages, stop=stop, run_manager=run_manager, **kwargs)
+                
+                # Check for malformed response (ClientResponse object leaking)
+                if type(result).__name__ == 'ClientResponse':
+                     print(f"⚠️ Received raw ClientResponse instead of ChatResult. Retrying...")
+                     # Force rotation or retry
+                     if self._rotate_key():
+                        attempts += 1
+                        continue
+                     else:
+                        raise ValueError("Received raw ClientResponse and rotation failed")
+                
+                return result
+            except Exception as e:
+                # Check for Rate Limit errors
+                is_rate_limit = False
+                error_str = str(e).lower()
+                
+                if "429" in error_str:
+                    is_rate_limit = True
+                elif "resource_exhausted" in error_str:
+                    is_rate_limit = True
+                elif "quota" in error_str and "exceeded" in error_str:
+                    is_rate_limit = True
+                elif isinstance(e, google.api_core.exceptions.ResourceExhausted):
+                    is_rate_limit = True
+                
+                if is_rate_limit:
+                    print(f"⚠️ Rate limit hit on API key #{self.current_key_index + 1}")
+                    if self._rotate_key():
+                        attempts += 1
+                        continue # Retry with new key
+                    else:
+                        print("❌ All API keys exhausted or rotation failed.")
+                        raise e
+                else:
+                    # Not a rate limit error, raise immediately
+                    raise e
+        
+        raise Exception("Max retry attempts exceeded due to rate limits.")
+
+    async def _agenerate(
+        self,
+        messages: List[BaseMessage],
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[Any] = None,
+        **kwargs: Any,
+    ) -> ChatResult:
+        """Override _agenerate to handle rate limits asynchronously."""
+        
+        # Try up to len(api_keys) times
+        attempts = 0
+        max_attempts = len(self.api_keys) * 2 # Allow some retries
+        
+        while attempts < max_attempts:
+            try:
+                result = await super()._agenerate(messages, stop=stop, run_manager=run_manager, **kwargs)
+                
+                # Check for malformed response (ClientResponse object leaking)
+                if type(result).__name__ == 'ClientResponse':
+                     print(f"⚠️ Received raw ClientResponse instead of ChatResult. Retrying...")
+                     # Force rotation or retry
+                     if self._rotate_key():
+                        attempts += 1
+                        continue
+                     else:
+                        raise ValueError("Received raw ClientResponse and rotation failed")
+                
+                return result
             except Exception as e:
                 # Check for Rate Limit errors
                 is_rate_limit = False
