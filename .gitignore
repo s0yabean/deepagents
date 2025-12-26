@@ -167,3 +167,12 @@ cython_debug/
 .langgraph_api/
 .vscode/
 .DS_Store
+
+# Images
+*.png
+*.jpeg
+*.jpg
+
+# TikTok Slideshow Agent
+output/
+slideshows.json

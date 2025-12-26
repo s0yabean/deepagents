@@ -1,0 +1,168 @@
+[
+  {
+    "id": "339c06bb-b451-4dff-a503-94e4a1921a19",
+    "project_id": "motivation_daily",
+    "topic": "The Power of Silence",
+    "created_at": "2025-12-26T02:54:02.145493",
+    "slide_count": 3,
+    "slides": [
+      {
+        "slide_number": 1,
+        "type": "hook",
+        "text": "Mock Hook 1: The Secret to Success",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/image_library/motivational/slide_1.jpeg",
+        "visual_notes": "A surreal painting of a dark silhouette figure and a black cat, both crying into a sink. The background is orange with a swirling abstract painting on the wall."
+      },
+      {
+        "slide_number": 2,
+        "type": "content",
+        "text": {
+          "text": "Mock Hook 1: The Secret to Success",
+          "score": 9,
+          "reason": "High curiosity"
+        },
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/image_library/motivational/slide_1.jpeg",
+        "visual_notes": "A surreal painting of a dark silhouette figure and a black cat, both crying into a sink. The background is orange with a swirling abstract painting on the wall."
+      },
+      {
+        "slide_number": 3,
+        "type": "cta",
+        "text": {
+          "text": "Mock Hook 2: Why you are failing",
+          "score": 8,
+          "reason": "Negative bias"
+        },
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/image_library/motivational/slide_1.jpeg",
+        "visual_notes": "A surreal painting of a dark silhouette figure and a black cat, both crying into a sink. The background is orange with a swirling abstract painting on the wall."
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-motivation_daily_The_Power_of_Silence"
+  },
+  {
+    "id": "3eace02e-ce8a-4787-aa22-aef33612564d",
+    "project_id": "motivation_daily",
+    "topic": "The Power of Silence",
+    "created_at": "2025-12-26T02:55:28.503888",
+    "slide_count": 3,
+    "slides": [
+      {
+        "slide_number": 1,
+        "type": "hook",
+        "text": "Mock Hook 1: The Secret to Success",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/image_library/motivational/slide_1.jpeg",
+        "visual_notes": "A surreal painting of a dark silhouette figure and a black cat, both crying into a sink. The background is orange with a swirling abstract painting on the wall."
+      },
+      {
+        "slide_number": 2,
+        "type": "content",
+        "text": {
+          "text": "Mock Hook 1: The Secret to Success",
+          "score": 9,
+          "reason": "High curiosity"
+        },
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/image_library/motivational/slide_1.jpeg",
+        "visual_notes": "A surreal painting of a dark silhouette figure and a black cat, both crying into a sink. The background is orange with a swirling abstract painting on the wall."
+      },
+      {
+        "slide_number": 3,
+        "type": "cta",
+        "text": {
+          "text": "Mock Hook 2: Why you are failing",
+          "score": 8,
+          "reason": "Negative bias"
+        },
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/image_library/motivational/slide_1.jpeg",
+        "visual_notes": "A surreal painting of a dark silhouette figure and a black cat, both crying into a sink. The background is orange with a swirling abstract painting on the wall."
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-motivation_daily_The_Power_of_Silence"
+  },
+  {
+    "id": "768b0585-dd4b-44ef-b236-5e58d4295e6c",
+    "project_id": "power-of-silence-stoic",
+    "topic": "The Power of Silence",
+    "created_at": "2025-12-26T03:05:24.054359",
+    "slide_count": 3,
+    "slides": [
+      {
+        "text": "The Stoic secret to winning every argument without saying a word.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "text": "Silence isn't empty. It is the ultimate display of self-mastery and clear judgment.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      },
+      {
+        "text": "Control your reactions, control your life. Follow for more Stoic wisdom.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_3.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-power-of-silence-stoic_The Power of Silence"
+  },
+  {
+    "id": "e1d6abaf-36cc-4b8f-9fb0-a32855b6d502",
+    "project_id": "silence-stoic-001",
+    "topic": "The Power of Silence",
+    "created_at": "2025-12-26T03:10:24.702059",
+    "slide_count": 3,
+    "slides": [
+      {
+        "text": "If you can\u2019t improve the silence, don\u2019t break it.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "text": "Silence is a fortress. Use it to observe, reflect, and master yourself.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      },
+      {
+        "text": "Speak only what is necessary. Practice stillness today.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_3.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-silence-stoic-001_The Power of Silence"
+  },
+  {
+    "id": "11a7384a-ab14-49b8-8039-136f427f3c9a",
+    "project_id": "stoic-silence-slideshow",
+    "topic": "The Power of Silence",
+    "created_at": "2025-12-26T03:12:42.003225",
+    "slide_count": 3,
+    "slides": [
+      {
+        "text": "Stop explaining. Let them misunderstand.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "text": "Your worth is not subject to the opinions of others.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      },
+      {
+        "text": "Speak only if it improves upon silence. Start now.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_3.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-stoic-silence-slideshow_The Power of Silence"
+  },
+  {
+    "id": "b8e27546-5ee0-43ae-818f-5366f0e3fd90",
+    "project_id": "SilenceStoic",
+    "topic": "The Power of Silence",
+    "created_at": "2025-12-26T03:21:54.405688",
+    "slide_count": 3,
+    "slides": [
+      {
+        "text": "The strongest response is often no response at all.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "text": "Silence preserves your energy. Master yourself by refusing to be provoked.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      },
+      {
+        "text": "Reclaim your power. Practice intentional silence in your next conflict.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_3.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-SilenceStoic_The Power of Silence"
+  }
+]

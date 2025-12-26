@@ -1,0 +1,21 @@
+[project]
+name = "tiktok_slideshow_agent"
+version = "0.1.0"
+description = "AI Agent for generating TikTok slideshows"
+authors = [{name = "Mindreader", email = "mindreader@example.com"}]
+dependencies = [
+    "langgraph",
+    "langchain-google-genai",
+    "playwright",
+    "pillow",
+    "google-api-python-client",
+    "google-auth-httplib2",
+    "google-auth-oauthlib",
+    "deepagents>=0.2.6"
+]
+
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tiktok_slideshow_agent*"]

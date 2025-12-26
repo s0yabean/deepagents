@@ -1,0 +1,75 @@
+[
+    {
+        "id": "motivational_01",
+        "filename": "slide_1.jpeg",
+        "category": "motivational",
+        "tags": [
+            "surreal",
+            "dark",
+            "emotional",
+            "cat",
+            "orange"
+        ],
+        "description": "A surreal painting of a dark silhouette figure and a black cat, both crying into a sink. The background is orange with a swirling abstract painting on the wall.",
+        "text_placement": "top_right"
+    },
+    {
+        "id": "motivational_02",
+        "filename": "slide_2.jpeg",
+        "category": "motivational",
+        "tags": [
+            "emotional",
+            "hug",
+            "sad",
+            "skeleton",
+            "cloud",
+            "blue",
+            "orange"
+        ],
+        "description": "Two figures embracing. One is a black, skeleton-like figure, the other is a blue figure made of clouds with tears streaming down its face. Background is a fiery orange.",
+        "text_placement": "center"
+    },
+    {
+        "id": "motivational_03",
+        "filename": "slide_3.jpeg",
+        "category": "motivational",
+        "tags": [
+            "cute",
+            "space",
+            "star",
+            "positive",
+            "yellow"
+        ],
+        "description": "A cute, smiling yellow star character floating in a dark purple space background with planets. Very positive and lighthearted vibe.",
+        "text_placement": "bottom"
+    },
+    {
+        "id": "motivational_04",
+        "filename": "slide_4.jpeg",
+        "category": "motivational",
+        "tags": [
+            "surreal",
+            "skull",
+            "palm_trees",
+            "dark",
+            "orange",
+            "swirl"
+        ],
+        "description": "A skull resting on the ground with palm trees growing out of its eye sockets. The background is a turbulent, swirling orange and red sky.",
+        "text_placement": "top"
+    },
+    {
+        "id": "motivational_05",
+        "filename": "slide_5.jpeg",
+        "category": "motivational",
+        "tags": [
+            "surreal",
+            "skull",
+            "palm_trees",
+            "blue",
+            "calm"
+        ],
+        "description": "A skull with palm trees growing out of its eye sockets, similar to slide_4, but with a calm blue sky background.",
+        "text_placement": "top_left"
+    }
+]

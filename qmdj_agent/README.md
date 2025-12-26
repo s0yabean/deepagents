@@ -213,6 +213,18 @@ The Orchestrator decides whether to:
 - Avoid finalizing on Friday (死门 influence)
 - Be prepared for 1-2 unexpected changes"
 
+## ☁️ Deployment
+
+To deploy this agent to production using **LangGraph Cloud**:
+
+1.  Go to the [LangChain UI](https://smith.langchain.com/).
+2.  Navigate to your deployment (or create a new one linked to this repo).
+3.  Click the **+ New Revision** button.
+4.  Select the branch you want to deploy (e.g., `develop`).
+5.  Click **Submit**.
+
+The system will automatically pull the latest code from your remote repository and deploy the new revision.
+
 ## 📚 Resources
 
 - **[Deepagents Documentation](https://docs.langchain.com/oss/python/deepagents/overview)** - Framework overview
