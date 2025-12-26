@@ -164,5 +164,75 @@
       }
     ],
     "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-SilenceStoic_The Power of Silence"
+  },
+  {
+    "id": "9cca63d0-b223-49ab-87aa-c752bd7bccc9",
+    "project_id": "motivation_aggressive_001",
+    "topic": "Motivation",
+    "created_at": "2025-12-26T05:31:17.716941",
+    "slide_count": 6,
+    "slides": [
+      {
+        "text": "Keep scrolling. Your competition hopes you do.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "text": "While you\u2019re consuming, they\u2019re outworking you. Every swipe is their victory.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      },
+      {
+        "text": "Talent is common. Discipline is rare. Which one are you relying on?",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_3.png"
+      },
+      {
+        "text": "You\u2019re trading your dreams for cheap dopamine. Stop being a spectator.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_4.png"
+      },
+      {
+        "text": "The world doesn't owe you anything. Go out and take what's yours.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_5.png"
+      },
+      {
+        "text": "Stop reading. Start doing. Close the app and outwork everyone today.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_6.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-motivation_aggressive_001_Motivation"
+  },
+  {
+    "id": "7abcfcd0-84bc-4e5a-8ccb-d9beb81b037a",
+    "project_id": "coding_joy",
+    "topic": "The Joy of Coding",
+    "created_at": "2025-12-26T05:39:13.046798",
+    "slide_count": 2,
+    "slides": [
+      {
+        "text": "From 'why isn't this working' to 'I am a literal god' in 5 seconds.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "text": "That\u2019s the pure magic of creation. Share your favorite coding breakthrough in the comments!",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-slideshows"
+  },
+  {
+    "id": "ef93b75e-41bd-42ed-a536-96cdf11de164",
+    "project_id": "coding_joy",
+    "topic": "The Joy of Coding",
+    "created_at": "2025-12-26T05:44:12.803371",
+    "slide_count": 2,
+    "slides": [
+      {
+        "text": "The feeling when your code finally works is pure magic. \u2728\ud83d\udcbb",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "text": "What was your latest \"it works\" moment? Share it below! \ud83d\ude80\ud83d\udc47",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-slideshows"
   }
 ]

@@ -25,7 +25,7 @@ from tiktok_slideshow_agent.prompts.specialists import (
 )
 
 # Import Tools
-from tiktok_slideshow_agent.tools.agent_tools import search_images, render_slide, upload_and_save
+from tiktok_slideshow_agent.tools.agent_tools import render_slide, upload_and_save
 
 # ==============================================================================
 # Specialist 1: Hook Agent
@@ -50,17 +50,17 @@ content_strategist = {
 # ==============================================================================
 # Specialist 3: Visual Designer
 # ==============================================================================
-# Inject Image Library into Prompt
-from tiktok_slideshow_agent.tools.agent_tools import image_lib
-library_context = image_lib.get_all_images_as_text()
-formatted_designer_prompt = DESIGNER_INSTRUCTIONS.format(image_library=library_context)
-
-visual_designer = {
-    "name": "visual-designer",
-    "description": "Selects images and renders the final slides.",
-    "system_prompt": formatted_designer_prompt,
-    "tools": [render_slide], # search_images removed as library is in context
-}
+def get_visual_designer():
+    # We'll use a placeholder and have the orchestrator or a middleware inject it,
+    # or just accept that it's loaded when the subagent is initialized.
+    # To avoid blocking at IMPORT time, we keep this as a function.
+    
+    return {
+        "name": "visual-designer",
+        "description": "Selects images and renders the final slides.",
+        "system_prompt": DESIGNER_INSTRUCTIONS, # Use raw instructions
+        "tools": [render_slide], # search_images removed in favor of filesystem tools
+    }
 
 # ==============================================================================
 # Specialist 4: Publisher
@@ -84,14 +84,31 @@ model = ChatGoogleGenerativeAI(model="gemini-3-flash-preview", temperature=0.7)
 # ==============================================================================
 # Create the Deep Agent
 # ==============================================================================
+from tiktok_slideshow_agent.state import AgentState
+from deepagents.backends import CompositeBackend, StateBackend, FilesystemBackend
+
+# Define the backend to route /image_library/ to the real disk
+def get_backend(rt):
+    return CompositeBackend(
+        default=StateBackend(rt),
+        routes={
+            "/image_library/": FilesystemBackend(
+                root_dir="/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/image_library",
+                virtual_mode=True
+            ),
+        }
+    )
+
 agent = create_deep_agent(
     model=model,
     tools=[], # Orchestrator tools (if any)
     system_prompt=ORCHESTRATOR_INSTRUCTIONS,
+    backend=get_backend,
     subagents=[
         hook_agent,
         content_strategist,
-        visual_designer,
+        get_visual_designer(),
         publisher
     ],
+    context_schema=AgentState,
 )

@@ -1,5 +1,7 @@
 import operator
-from typing import Annotated, List, TypedDict, Optional, Dict, Any
+from typing import Annotated, List, TypedDict, Optional, Dict, Any, NotRequired
+
+from langchain.agents.middleware.types import AgentMiddleware
 
 class Slide(TypedDict):
     slide_number: int

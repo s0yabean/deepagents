@@ -1,82 +1,88 @@
 import os
-from playwright.sync_api import sync_playwright
+import asyncio
+import json
+import sys
 
 class PlaywrightRendererTool:
+    _lock = asyncio.Lock()
+
     def __init__(self, output_dir: str = "output"):
         self.base_path = "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent"
         self.output_dir = os.path.join(self.base_path, output_dir)
-        if not os.path.exists(self.output_dir):
-            os.makedirs(self.output_dir)
+        self.image_library_path = os.path.join(self.base_path, "image_library")
+        self.fonts_dir = os.path.join(self.base_path, "fonts")
+        self.worker_script = os.path.join(self.base_path, "tiktok_slideshow_agent/tools/render_worker.py")
 
-    def render_slide(self, slide_data: dict, project_config: dict) -> str:
+    async def _ensure_dir(self):
+        if not os.path.exists(self.output_dir):
+            await asyncio.to_thread(os.makedirs, self.output_dir)
+
+    def _resolve_path(self, path: str) -> str:
+        """Resolves virtual paths to real absolute paths."""
+        if path.startswith("/image_library/"):
+            resolved = path.replace("/image_library/", self.image_library_path + "/")
+            return resolved
+        return path
+
+    async def render_slide(self, slide_data: dict, project_config: dict) -> str:
         """
-        Generates HTML for the slide and captures a screenshot.
+        Generates HTML for the slide and captures a screenshot using a subprocess worker.
         Returns the path to the generated image.
         """
-        image_path = slide_data["image_path"]
-        text = slide_data["text"]
-        slide_num = slide_data["slide_number"]
-        font = project_config.get("font_style", "Arial")
+        async with self._lock:
+            try:
+                # 90s timeout for the subprocess
+                return await asyncio.wait_for(self._render_internal(slide_data, project_config), timeout=90.0)
+            except asyncio.TimeoutError:
+                print(f"ERROR: [render_slide] Subprocess timed out after 90s for slide {slide_data.get('slide_number')}")
+                return f"Error: Rendering timed out for slide {slide_data.get('slide_number')}"
+            except Exception as e:
+                print(f"ERROR: [render_slide] failed: {str(e)}")
+                return f"Error: {str(e)}"
+
+    async def _render_internal(self, slide_data: dict, project_config: dict) -> str:
+        print(f"DEBUG: [render_slide] Starting subprocess render for slide {slide_data.get('slide_number')}")
+        await self._ensure_dir()
         
-        # Simple template
-        html_content = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-                body {{
-                    margin: 0;
-                    padding: 0;
-                    width: 1080px;
-                    height: 1920px;
-                    background-image: url('file://{image_path}');
-                    background-size: cover;
-                    background-position: center;
-                    font-family: 'Montserrat', sans-serif;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    text-align: center;
-                    color: white;
-                    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-                }}
-                .overlay {{
-                    background: rgba(0, 0, 0, 0.3);
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    z-index: 1;
-                }}
-                .content {{
-                    z-index: 2;
-                    padding: 100px;
-                    font-size: 80px;
-                    font-weight: bold;
-                    line-height: 1.2;
-                }}
-            </style>
-        </head>
-        <body>
-            <div class="overlay"></div>
-            <div class="content">
-                {text}
-            </div>
-        </body>
-        </html>
-        """
+        # Resolve paths to absolute
+        raw_image_path = slide_data["image_path"]
+        image_path = self._resolve_path(raw_image_path)
         
-        output_filename = f"slide_{slide_num}.png"
+        # Prepare data for worker
+        worker_data = {
+            "text": slide_data["text"],
+            "image_path": image_path,
+            "slide_number": slide_data["slide_number"]
+        }
+        
+        output_filename = f"slide_{slide_data['slide_number']}.png"
         output_path = os.path.join(self.output_dir, output_filename)
         
-        with sync_playwright() as p:
-            browser = p.chromium.launch()
-            page = browser.new_page(viewport={"width": 1080, "height": 1920})
-            page.set_content(html_content)
-            page.screenshot(path=output_path)
-            browser.close()
-            
-        return output_path
+        # Launch subprocess
+        print(f"DEBUG: [render_slide] Launching worker: {self.worker_script}")
+        
+        process = await asyncio.create_subprocess_exec(
+            sys.executable,
+            self.worker_script,
+            json.dumps(worker_data),
+            output_path,
+            self.fonts_dir,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        
+        stdout, stderr = await process.communicate()
+        
+        if process.returncode == 0:
+            output = stdout.decode().strip()
+            if output.startswith("SUCCESS:"):
+                rendered_path = output.replace("SUCCESS:", "")
+                print(f"DEBUG: [render_slide] Worker success: {rendered_path}")
+                return rendered_path
+            else:
+                print(f"ERROR: [render_slide] Worker output unexpected: {output}")
+                raise Exception(f"Worker failed with output: {output}")
+        else:
+            error_msg = stderr.decode().strip()
+            print(f"ERROR: [render_slide] Worker failed with code {process.returncode}: {error_msg}")
+            raise Exception(f"Worker failed: {error_msg}")

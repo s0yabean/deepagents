@@ -8,7 +8,13 @@ class ImageLibraryTool:
         # For this setup, we'll make it absolute based on the known path
         self.base_path = "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/image_library"
         self.metadata_file = os.path.join(self.base_path, "images.json")
-        self.images = self._load_images()
+        self._images = None
+
+    @property
+    def images(self) -> List[Dict[str, Any]]:
+        if self._images is None:
+            self._images = self._load_images()
+        return self._images
 
     def _load_images(self) -> List[Dict[str, Any]]:
         if not os.path.exists(self.metadata_file):
