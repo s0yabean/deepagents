@@ -98,7 +98,8 @@ RISK MITIGATION:
 - If you must proceed despite warnings: [strategies]
 - Backup plans: [alternatives]
 
-ELEMENTAL ENHANCEMENTS:
+ELEMENTAL ENHANCEMENTS & REMEDIES:
+- Use get_elemental_remedy() to resolve conflicts (Controlling/Weakening)
 - Strengthen [element] through: [methods]
 - Involve people with [element] characteristics
 ```
@@ -107,6 +108,9 @@ ELEMENTAL ENHANCEMENTS:
 
 - reflect_on_reading(reflection): Strategic reasoning
 - symbol_lookup(symbol, category): Verify symbol meanings
+- five_element_interaction(elem1, elem2): Check elemental relationships
+- calculate_box_energy(chart_json): Check palace strength
+- get_elemental_remedy(source, target): Find bridge elements
 
 ## Important
 

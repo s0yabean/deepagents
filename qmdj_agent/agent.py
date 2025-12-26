@@ -44,6 +44,8 @@ from qmdj_agent.tools.qimen import (
     symbol_lookup,
     five_element_interaction,
     calculate_score,
+    compare_palaces,
+    get_elemental_remedy,
 )
 from qmdj_agent.tools.simulation import run_monte_carlo_simulation
 
@@ -81,7 +83,7 @@ symbol_interpreter = {
     "name": "symbol-interpreter",
     "description": "Analyze QMDJ symbols in context, considering energy levels. Identifies favorable/unfavorable factors.",
     "system_prompt": SYMBOL_INTERPRETER_INSTRUCTIONS,
-    "tools": [get_current_time, symbol_lookup, five_element_interaction, reflect_on_reading],
+    "tools": [get_current_time, symbol_lookup, five_element_interaction, calculate_score, calculate_box_energy, compare_palaces, reflect_on_reading],
 }
 
 # ==============================================================================
@@ -101,7 +103,7 @@ probabilistic_agent = {
     "name": "probabilistic-agent",
     "description": "Run Monte Carlo simulations to provide statistical probabilities for different outcomes based on the reading.",
     "system_prompt": PROBABILISTIC_SCENARIO_AGENT_INSTRUCTIONS,
-    "tools": [run_monte_carlo_simulation, reflect_on_reading, tavily_search, get_current_time],
+    "tools": [run_monte_carlo_simulation, calculate_score, reflect_on_reading, tavily_search, get_current_time],
 }
 
 # ==============================================================================
@@ -121,7 +123,7 @@ qmdj_strategy_advisor = {
     "name": "qmdj-advisor",
     "description": "Generate metaphysical strategic recommendations based on QMDJ principles. Uses calculate_score with energy weighting.",
     "system_prompt": STRATEGY_ADVISOR_INSTRUCTIONS,
-    "tools": [get_current_time, calculate_score, symbol_lookup, reflect_on_reading],
+    "tools": [get_current_time, calculate_score, symbol_lookup, five_element_interaction, calculate_box_energy, get_elemental_remedy, reflect_on_reading],
 }
 
 # ==============================================================================

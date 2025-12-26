@@ -57,6 +57,7 @@ STATISTICAL INSIGHT:
 ## Tools Available
 
 - run_monte_carlo_simulation(base_probability, volatility, energy_factor): Run the simulation
+- calculate_score(palace_num, chart_json, energy_json): Get base probability for specific palaces
 - reflect_on_reading(reflection): Reasoning tool
 
 ## Important

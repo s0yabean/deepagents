@@ -22,21 +22,21 @@ class QimenGenerator:
     # --- Constants ---
     TIAN_GAN = list("甲乙丙丁戊己庚辛壬癸")
     DI_ZHI = list("子丑寅卯辰巳午未申酉戌亥")
-    EIGHT_GUA = list("坎坤震巽中乾兌艮離")
+    EIGHT_GUA = list("坎坤震巽中乾兑艮离")
     # Standard QMDJ Palace Order (1-9)
     # 1:Kan, 2:Kun, 3:Zhen, 4:Xun, 5:Center, 6:Qian, 7:Dui, 8:Gen, 9:Li
-    PALACE_NAMES = ["", "坎", "坤", "震", "巽", "中", "乾", "兌", "艮", "離"]
+    PALACE_NAMES = ["", "坎", "坤", "震", "巽", "中", "乾", "兑", "艮", "离"]
     
-    DOORS = list("休生傷杜景死驚開")
-    STARS = list("蓬任沖輔英禽柱心") # Note: Qin (禽) is usually in center/with Rui
-    DEITIES = list("符蛇陰合虎玄地天") # Yang Dun order
-    DEITIES_YIN = list("符蛇陰合白玄地天") # Yin Dun order (White Tiger instead of Tiger)
+    DOORS = list("休生伤杜景死惊开")
+    STARS = list("蓬任冲辅英禽柱心") # Note: Qin (禽) is usually in center/with Rui
+    DEITIES = ["值符", "腾蛇", "太阴", "六合", "白虎", "玄武", "九地", "九天"] # Yang Dun order
+    DEITIES_YIN = ["值符", "腾蛇", "太阴", "六合", "白虎", "玄武", "九地", "九天"] # Yin Dun order (White Tiger instead of Tiger)
     
     # Magic Square Numbers for Palaces
     # 4 9 2
     # 3 5 7
     # 8 1 6
-    GUA_TO_NUM = {"坎": 1, "坤": 2, "震": 3, "巽": 4, "中": 5, "乾": 6, "兌": 7, "艮": 8, "離": 9}
+    GUA_TO_NUM = {"坎": 1, "坤": 2, "震": 3, "巽": 4, "中": 5, "乾": 6, "兑": 7, "艮": 8, "离": 9}
     NUM_TO_GUA = {v: k for k, v in GUA_TO_NUM.items()}
     
     # Clockwise rotation path for 8 palaces (skipping center)
@@ -63,8 +63,7 @@ class QimenGenerator:
         self.gan_zhi = [] # [Y, M, D, H]
         self.jie_qi = ""
         self.yuan = "" # Upper/Middle/Lower
-        self.ju_num = 0
-        self.yin_yang = "" # 陰/陽
+        self.yin_yang = "" # 阴/阳
         self.chart = {} # Palace data
         
         self.horse_star = "" # 驛馬
@@ -180,18 +179,18 @@ class QimenGenerator:
                        "春分", "清明", "穀雨", "立夏", "小滿", "芒種"]
         
         if self.jie_qi in YANG_DUN_JQ:
-            self.yin_yang = "陽"
+            self.yin_yang = "阳"
         else:
-            self.yin_yang = "陰"
+            self.yin_yang = "阴"
             
         # 2. Ju Number (局數)
         JU_MAP = {
             "冬至": [1, 7, 4], "小寒": [2, 8, 5], "大寒": [3, 9, 6],
-            "立春": [8, 5, 2], "雨水": [9, 6, 3], "驚蟄": [1, 7, 4],
-            "春分": [3, 9, 6], "清明": [4, 1, 7], "穀雨": [5, 2, 8],
-            "立夏": [4, 1, 7], "小滿": [5, 2, 8], "芒種": [6, 3, 9],
+            "立春": [8, 5, 2], "雨水": [9, 6, 3], "惊蛰": [1, 7, 4],
+            "春分": [3, 9, 6], "清明": [4, 1, 7], "谷雨": [5, 2, 8],
+            "立夏": [4, 1, 7], "小满": [5, 2, 8], "芒种": [6, 3, 9],
             "夏至": [9, 3, 6], "小暑": [8, 2, 5], "大暑": [7, 1, 4],
-            "立秋": [2, 5, 8], "處暑": [1, 4, 7], "白露": [9, 3, 6],
+            "立秋": [2, 5, 8], "处暑": [1, 4, 7], "白露": [9, 3, 6],
             "秋分": [7, 1, 4], "寒露": [6, 9, 3], "霜降": [5, 8, 2],
             "立冬": [6, 9, 3], "小雪": [5, 8, 2], "大雪": [4, 7, 1]
         }
@@ -211,7 +210,7 @@ class QimenGenerator:
         curr_pos = self.ju_num
         for stem in pai_gan:
             earth_plate[curr_pos] = stem
-            if self.yin_yang == "陽":
+            if self.yin_yang == "阳":
                 curr_pos += 1
                 if curr_pos > 9: curr_pos = 1
             else:
@@ -243,14 +242,14 @@ class QimenGenerator:
                 lead_loc = loc
                 break
                 
-        STAR_MAP = {1:"天蓬", 2:"天芮", 3:"天沖", 4:"天輔", 5:"天禽", 6:"天心", 7:"天柱", 8:"天任", 9:"天英"}
-        DOOR_MAP = {1:"休門", 2:"死門", 3:"傷門", 4:"杜門", 5:"", 6:"開門", 7:"驚門", 8:"生門", 9:"景門"}
+        STAR_MAP = {1:"天蓬", 2:"天芮", 3:"天冲", 4:"天辅", 5:"天禽", 6:"天心", 7:"天柱", 8:"天任", 9:"天英"}
+        DOOR_MAP = {1:"休门", 2:"死门", 3:"伤门", 4:"杜门", 5:"", 6:"开门", 7:"惊门", 8:"生门", 9:"景门"}
         
         self.zhi_fu_star = STAR_MAP[lead_loc]
         if lead_loc == 5: self.zhi_fu_star = "天禽" 
         
         self.zhi_shi_door = DOOR_MAP[lead_loc]
-        if lead_loc == 5: self.zhi_shi_door = "死門" 
+        if lead_loc == 5: self.zhi_shi_door = "死门" 
         
         # 3. Heaven Plate (Tian Pan)
         target_stem = h_gan
@@ -262,7 +261,7 @@ class QimenGenerator:
                 target_loc = loc
                 break
         
-        STD_STAR_RING = ["天蓬", "天任", "天沖", "天輔", "天英", "天芮", "天柱", "天心"]
+        STD_STAR_RING = ["天蓬", "天任", "天冲", "天辅", "天英", "天芮", "天柱", "天心"]
         
         zf_name = self.zhi_fu_star
         if zf_name == "天禽": zf_name = "天芮"
@@ -313,7 +312,7 @@ class QimenGenerator:
         # Yang Dun: 1->2->3...
         # Yin Dun: 9->8->7...
         
-        if self.yin_yang == "陽":
+        if self.yin_yang == "阳":
             dest_door_loc = (lead_loc + diff_hours)
             while dest_door_loc > 9:
                 dest_door_loc -= 9
@@ -334,7 +333,7 @@ class QimenGenerator:
             # If dest_door_loc is 5 (Center), it usually lodges in 2 (Kun)
             final_door_rot_idx = self.ROTATION_PATH.index(2)
         
-        STD_DOOR_RING = ["休門", "生門", "傷門", "杜門", "景門", "死門", "驚門", "開門"]
+        STD_DOOR_RING = ["休门", "生门", "伤门", "杜门", "景门", "死门", "惊门", "开门"]
         
         zs_name = self.zhi_shi_door
         try:
@@ -351,7 +350,7 @@ class QimenGenerator:
         man_plate[5] = "" 
         
         # 5. Deity Plate (Shen Pan)
-        curr_deity_ring = self.DEITIES if self.yin_yang == "陽" else self.DEITIES_YIN
+        curr_deity_ring = self.DEITIES # Simplified: Both Yang and Yin use same 2-char names now
         
         try:
             deity_rot_idx = self.ROTATION_PATH.index(target_loc)
@@ -361,7 +360,7 @@ class QimenGenerator:
         deity_plate = {}
         for i in range(8):
             deity = curr_deity_ring[i]
-            if self.yin_yang == "陽":
+            if self.yin_yang == "阳":
                 pal_num = self.ROTATION_PATH[(deity_rot_idx + i) % 8]
             else:
                 pal_num = self.ROTATION_PATH[(deity_rot_idx - i) % 8]
@@ -389,29 +388,76 @@ class QimenGenerator:
         empty_branches = list(self.empty_death) # e.g. "申酉" -> ['申', '酉']
         empty_palaces = [self.BRANCH_TO_PALACE.get(b) for b in empty_branches]
         
+        # Identify where Center (5) lodges
+        center_stem = self.earth_plate.get(5, "")
+        lodged_palace = 0
+        for i in range(1, 10):
+            if i == 5: continue
+            h_stem = self.heaven_stem_plate.get(i, "")
+            if center_stem in h_stem:
+                lodged_palace = i
+                break
+        
         for i in range(1, 10):
             markers = []
             if i == horse_palace:
                 markers.append("馬")
             if i in empty_palaces:
                 markers.append("空")
+            
+            if i == 5 and lodged_palace:
+                # Palace 5 inherits from lodged palace
+                lodged_data = palaces_data.get(lodged_palace, {})
+                # Note: We use the data already populated for the lodged palace
+                # but we need to ensure the lodged palace is processed BEFORE palace 5
+                # or we just fetch from the plates directly.
+                # Since the loop is 1-9, and lodged_palace is usually 2 or 8 or something,
+                # it might or might not be processed.
+                # Let's just fetch from plates to be safe.
+                p_h_stem = self.heaven_stem_plate.get(lodged_palace, "")
+                p_star = self.heaven_plate.get(lodged_palace, "")
+                p_door = self.man_plate.get(lodged_palace, "")
+                p_deity = self.deity_plate.get(lodged_palace, "")
                 
-            palaces_data[i] = {
-                "palace_name": self.PALACE_NAMES[i],
-                "earth_stem": self.earth_plate.get(i, ""),
-                "heaven_stem": self.heaven_stem_plate.get(i, ""),
-                "star": self.heaven_plate.get(i, ""),
-                "door": self.man_plate.get(i, ""),
-                "deity": self.deity_plate.get(i, ""),
-                "markers": markers,
-                "all_symbols": [
-                    self.heaven_stem_plate.get(i, ""), 
-                    self.man_plate.get(i, ""),         
-                    self.deity_plate.get(i, ""),       
-                    self.heaven_plate.get(i, ""),      
-                    self.earth_plate.get(i, "")        
-                ]
-            }
+                # Inherit markers from lodged palace as well? 
+                # User said "all the other keys should be same"
+                p_markers = []
+                if lodged_palace == horse_palace: p_markers.append("馬")
+                if lodged_palace in empty_palaces: p_markers.append("空")
+
+                palaces_data[i] = {
+                    "palace_name": self.PALACE_NAMES[i],
+                    "earth_stem": self.earth_plate.get(i, ""),
+                    "heaven_stem": p_h_stem,
+                    "star": p_star,
+                    "door": p_door,
+                    "deity": p_deity,
+                    "markers": p_markers,
+                    "all_symbols": [
+                        p_h_stem, 
+                        p_door,         
+                        p_deity,       
+                        p_star,      
+                        self.earth_plate.get(i, "")        
+                    ]
+                }
+            else:
+                palaces_data[i] = {
+                    "palace_name": self.PALACE_NAMES[i],
+                    "earth_stem": self.earth_plate.get(i, ""),
+                    "heaven_stem": self.heaven_stem_plate.get(i, ""),
+                    "star": self.heaven_plate.get(i, ""),
+                    "door": self.man_plate.get(i, ""),
+                    "deity": self.deity_plate.get(i, ""),
+                    "markers": markers,
+                    "all_symbols": [
+                        self.heaven_stem_plate.get(i, ""), 
+                        self.man_plate.get(i, ""),         
+                        self.deity_plate.get(i, ""),       
+                        self.heaven_plate.get(i, ""),      
+                        self.earth_plate.get(i, "")        
+                    ]
+                }
             
         return {
             "solar_date": self.dt.strftime("%Y-%m-%d %H:%M"),
@@ -435,7 +481,7 @@ class QimenGenerator:
             "palaces": palaces_data
         }
 
-    def to_string(self) -> str:
+    def to_string(self, energy_data: Optional[Dict] = None) -> str:
         """String representation."""
         d = self.generate()
         lines = []
@@ -454,15 +500,42 @@ class QimenGenerator:
             row_str = []
             for p_idx in row:
                 p = d['palaces'][p_idx]
-                # Format: [M]Deity Star Door HeavenStem+EarthStem
                 marker_str = "".join(p['markers'])
                 if marker_str:
                     marker_str = f"[{marker_str}]"
                 
-                s = f"{marker_str}{p['deity']}{p['star']}{p['door']}{p['heaven_stem']}{p['earth_stem']}"
-                row_str.append(f"{s:^22}") # Increased width for markers
+                # Energy info
+                energy_str = ""
+                if energy_data and str(p_idx) in energy_data:
+                    e = energy_data[str(p_idx)]
+                    energy_val = e.get("energy", 100)
+                    modifier = e.get("modifier", "normal")
+                    
+                    # Shorten modifiers for display
+                    mod_abbr = []
+                    if "tai_sui" in modifier: mod_abbr.append("TS")
+                    if "death_emptiness" in modifier: mod_abbr.append("DE")
+                    if "overflow" in modifier: mod_abbr.append("OF")
+                    
+                    mod_str = ",".join(mod_abbr)
+                    energy_str = f"[{energy_val}% {mod_str}]" if mod_str else f"[{energy_val}%]"
+                
+                h_stem = p['heaven_stem']
+                e_stem = p['earth_stem']
+                
+                if p_idx == 5:
+                    # For Palace 5: Keep heaven_stem(earth_stem) with duplicate removal
+                    if e_stem and e_stem in h_stem:
+                        h_stem = h_stem.replace(e_stem, "", 1)
+                    stem_str = f"{h_stem}({e_stem})" if e_stem else h_stem
+                else:
+                    # For all other palaces: Use (heaven_stem)earth_stem
+                    stem_str = f"({h_stem}){e_stem}" if h_stem else e_stem
+                
+                s = f"{energy_str}{marker_str}{p['deity']}{p['star']}{p['door']}{stem_str}"
+                row_str.append(f"{s:^26}") # Increased width for energy info
             lines.append("|".join(row_str))
-            lines.append("-" * 70) # Increased separator width
+            lines.append("-" * 82) # Increased separator width
             
         return "\n".join(lines)
 
