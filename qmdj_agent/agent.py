@@ -29,6 +29,7 @@ from qmdj_agent.prompts.new_agents import (
     PROBABILISTIC_SCENARIO_AGENT_INSTRUCTIONS,
     CONTRARIAN_AGENT_INSTRUCTIONS,
 )
+from qmdj_agent.prompts.packaging import PLAIN_SPEAKER_INSTRUCTIONS
 
 # Import Tools from new modular structure
 from qmdj_agent.tools.general import (
@@ -50,8 +51,8 @@ from qmdj_agent.tools.qimen import (
 from qmdj_agent.tools.simulation import run_monte_carlo_simulation
 
 # Configuration
-max_concurrent_specialists = 8
-max_consultation_rounds = 5
+max_concurrent_specialists = 10
+max_consultation_rounds = 10
 
 # Get current date for context
 current_date = datetime.now().strftime("%Y-%m-%d")
@@ -137,6 +138,16 @@ context_advisor = {
 }
 
 # ==============================================================================
+# Specialist 9: Plain Speaker (Packaging Layer)
+# ==============================================================================
+plain_speaker = {
+    "name": "plain-speaker",
+    "description": "Reframe complex QMDJ analysis into plain English insights for the end user. Acts as a packaging layer.",
+    "system_prompt": PLAIN_SPEAKER_INSTRUCTIONS,
+    "tools": [reflect_on_reading],
+}
+
+# ==============================================================================
 # Model Configuration
 # ==============================================================================
 
@@ -201,5 +212,6 @@ agent = create_deep_agent(
         contrarian_agent,
         qmdj_strategy_advisor,
         context_advisor,
+        plain_speaker,
     ],
 )
