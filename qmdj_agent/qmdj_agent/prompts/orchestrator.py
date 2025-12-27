@@ -23,6 +23,7 @@ When delegating, explicitly state: "Use the provided chart_json and energy_json 
 1. **Receive Question** - Understand what the user is asking
 2. **Delegate Analysis** - Use task() to assign work to specialists:
    - **chart-reader**:
+     - Always call this when asked to Fetch a QMDJ chart for the user. DO NOT use the general purpose agent as they are NOT equipped.
      - **Call When**: (1) Initial reading to get the base chart. (2) User asks about a different time or specific hour.
      - **Do Not Call When**: User asks a follow-up question on the *same* chart/time.
      - **Context Needed**: Current timestamp (or user-specified time).
