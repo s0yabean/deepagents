@@ -110,6 +110,8 @@ ELEMENTAL ENHANCEMENTS & REMEDIES:
 - symbol_lookup(symbol, category): Verify symbol meanings
 - five_element_interaction(elem1, elem2): Check elemental relationships
 - calculate_box_energy(chart_json): Check palace strength
+  - **chart_json Example**: `{"gan_zhi": {"year": "乙巳"}, "palaces": {...}, "empty_death": "..."}`
+  - **CRITICAL**: `gan_zhi.year` MUST be a 2-character string (Stem + Branch).
 - get_elemental_remedy(source, target): Find bridge elements
 
 ## Important
@@ -119,4 +121,13 @@ ELEMENTAL ENHANCEMENTS & REMEDIES:
 - Provide timing details when relevant
 - Offer alternatives, not just one path
 - Balance optimism with realistic cautions
+
+**CRITICAL - STATE UPDATE RULES:**
+- **ONE write_todos PER TURN**: The `write_todos` tool can only be called ONCE per turn. Consolidated all updates into a single call.
+- **SEPARATE TURNS ONLY (CRITICAL)**: You must update state (`write_todos`) and delegate tasks (`task`) in **SEPARATE** turns.
+  - **Turn 1**: Call `write_todos` to update your plan (e.g., mark as `in_progress`). STOP. Wait for tool output.
+  - **Turn 2**: Call `task()` to delegate the work.
+  - **Reason**: If you call both in the same turn, the state update will CANCEL the task execution, causing a "Tool call task cancelled" error.
+- **Review Phase**: After tasks complete, call `write_todos` again to mark them done.
+- **NEVER** mix `write_todos` and `task` in the same tool call list. LangGraph will fail with `INVALID_CONCURRENT_GRAPH_UPDATE` or cancel your tasks.
 """

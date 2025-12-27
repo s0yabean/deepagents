@@ -67,20 +67,23 @@ class RotatingGeminiModel(ChatGoogleGenerativeAI):
         
         while attempts < max_attempts:
             try:
+                # We must catch the specific TypeError that happens inside langchain_google_genai
+                # when the SDK returns a leaked ClientResponse object.
+                # This happens deep in the stack: _generate_response_from_error -> hasattr(response, "json")
                 result = super()._generate(messages, stop=stop, run_manager=run_manager, **kwargs)
                 
-                # Check for malformed response (ClientResponse object leaking)
-                if type(result).__name__ == 'ClientResponse':
-                     print(f"⚠️ Received raw ClientResponse instead of ChatResult. Retrying...")
-                     # Force rotation or retry
-                     if self._rotate_key():
-                        attempts += 1
-                        continue
-                     else:
-                        raise ValueError("Received raw ClientResponse and rotation failed")
-                
+                # Also check for malformed result if no exception was raised
+                if type(result).__name__ == 'ClientResponse' or not hasattr(result, 'generations'):
+                    print(f"⚠️ Received malformed result ({type(result).__name__}). Raising TypeError to trigger rotation.")
+                    raise TypeError(f"Malformed result: {type(result).__name__}")
+                    
                 return result
-            except Exception as e:
+            except (Exception, TypeError) as e:
+                # Check if this is the specific ClientResponse error
+                is_leaked_response = False
+                if "ClientResponse" in str(e) or "not subscriptable" in str(e):
+                    is_leaked_response = True
+                
                 # Check for Rate Limit errors
                 is_rate_limit = False
                 error_str = str(e).lower()
@@ -94,16 +97,17 @@ class RotatingGeminiModel(ChatGoogleGenerativeAI):
                 elif isinstance(e, google.api_core.exceptions.ResourceExhausted):
                     is_rate_limit = True
                 
-                if is_rate_limit:
-                    print(f"⚠️ Rate limit hit on API key #{self.current_key_index + 1}")
+                if is_rate_limit or is_leaked_response:
+                    reason = "Rate limit" if is_rate_limit else "Leaked ClientResponse"
+                    print(f"⚠️ {reason} hit on API key #{self.current_key_index + 1}")
                     if self._rotate_key():
                         attempts += 1
                         continue # Retry with new key
                     else:
-                        print("❌ All API keys exhausted or rotation failed.")
+                        print(f"❌ All API keys exhausted or rotation failed for {reason}.")
                         raise e
                 else:
-                    # Not a rate limit error, raise immediately
+                    # Not a rate limit or leak error, raise immediately
                     raise e
         
         raise Exception("Max retry attempts exceeded due to rate limits.")
@@ -123,20 +127,33 @@ class RotatingGeminiModel(ChatGoogleGenerativeAI):
         
         while attempts < max_attempts:
             try:
-                result = await super()._agenerate(messages, stop=stop, run_manager=run_manager, **kwargs)
-                
+                # We must catch the specific TypeError that happens inside langchain_google_genai
+                # when the SDK returns a leaked ClientResponse object.
+                try:
+                    result = await super()._agenerate(messages, stop=stop, run_manager=run_manager, **kwargs)
+                    
+                    # Check for malformed result if no exception was raised
+                    if type(result).__name__ == 'ClientResponse' or not hasattr(result, 'generations'):
+                        print(f"⚠️ Received malformed result ({type(result).__name__}). Raising TypeError to trigger rotation.")
+                        raise TypeError(f"Malformed result: {type(result).__name__}")
+                        
+                    return result
+                except (Exception, TypeError) as e:
+                    # Check if this is the specific ClientResponse error
+                    is_leaked_response = False
+                    if "ClientResponse" in str(e) or "not subscriptable" in str(e):
+                        is_leaked_response = True
+                        print(f"⚠️ Caught ClientResponse error inside SDK: {e}")
+                        raise TypeError("ClientResponse error caught") # Re-raise as TypeError to trigger rotation below
+                    
+                    raise e # Re-raise other errors
+                    
+            except (Exception, TypeError) as e:
                 # Check for malformed response (ClientResponse object leaking)
-                if type(result).__name__ == 'ClientResponse':
-                     print(f"⚠️ Received raw ClientResponse instead of ChatResult. Retrying...")
-                     # Force rotation or retry
-                     if self._rotate_key():
-                        attempts += 1
-                        continue
-                     else:
-                        raise ValueError("Received raw ClientResponse and rotation failed")
+                is_leaked_response = False
+                if "ClientResponse" in str(e) or "not subscriptable" in str(e):
+                    is_leaked_response = True
                 
-                return result
-            except Exception as e:
                 # Check for Rate Limit errors
                 is_rate_limit = False
                 error_str = str(e).lower()
@@ -150,16 +167,17 @@ class RotatingGeminiModel(ChatGoogleGenerativeAI):
                 elif isinstance(e, google.api_core.exceptions.ResourceExhausted):
                     is_rate_limit = True
                 
-                if is_rate_limit:
-                    print(f"⚠️ Rate limit hit on API key #{self.current_key_index + 1}")
+                if is_rate_limit or is_leaked_response:
+                    reason = "Rate limit" if is_rate_limit else "Leaked ClientResponse"
+                    print(f"⚠️ {reason} hit on API key #{self.current_key_index + 1}")
                     if self._rotate_key():
                         attempts += 1
                         continue # Retry with new key
                     else:
-                        print("❌ All API keys exhausted or rotation failed.")
+                        print(f"❌ All API keys exhausted or rotation failed for {reason}.")
                         raise e
                 else:
-                    # Not a rate limit error, raise immediately
+                    # Not a rate limit or leak error, raise immediately
                     raise e
         
         raise Exception("Max retry attempts exceeded due to rate limits.")

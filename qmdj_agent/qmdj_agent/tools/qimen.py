@@ -89,9 +89,16 @@ def get_symbol_element(symbol_name: str) -> str:
 @tool(parse_docstring=True)
 def calculate_box_energy(chart_json: str) -> str:
     """Calculate energy levels for all 9 palaces based on Death/Emptiness, Tai Sui, and overflow.
+
+    The input chart_json MUST follow this structure:
+    {
+        "gan_zhi": {"year": "乙巳"},  # Year Stem+Branch (2 chars)
+        "palaces": { ... },
+        "empty_death": "..."
+    }
     
     Args:
-        chart_json: JSON string from qmdj_chart_api containing chart data
+        chart_json: JSON string from qmdj_chart_api containing chart data.
     """
     try:
         chart = json.loads(chart_json)
@@ -99,7 +106,11 @@ def calculate_box_energy(chart_json: str) -> str:
         # Step 1: Extract year stem and branch
         year_ganzhi = chart.get("gan_zhi", {}).get("year", "")
         if len(year_ganzhi) != 2:
-            return json.dumps({"error": "Invalid year gan_zhi format"})
+            return json.dumps({
+                "error": "Invalid year gan_zhi format. Expected 2 characters (Stem+Branch).",
+                "received": year_ganzhi,
+                "expected_format_example": {"gan_zhi": {"year": "乙巳"}}
+            }, ensure_ascii=False)
         
         year_stem = year_ganzhi[0]
         year_branch = year_ganzhi[1]
@@ -500,8 +511,16 @@ def calculate_score(palace_num: int, chart_json: str, energy_json: str) -> str:
     score = max(0, min(100, score))
     
     # Energy Scaling
-    p_energy_data = energy_data.get(str(palace_num), {})
-    energy_pct = p_energy_data.get("energy", 100)
+    energy_pct = 100
+    if isinstance(energy_data, dict):
+        p_energy_data = energy_data.get(str(palace_num), {})
+        if isinstance(p_energy_data, dict):
+            energy_pct = p_energy_data.get("energy", 100)
+        elif isinstance(p_energy_data, (int, float)):
+            energy_pct = p_energy_data
+    elif isinstance(energy_data, (int, float)):
+        energy_pct = energy_data
+
     final_score = int(score * (energy_pct / 100.0))
     
     # Strength Rating

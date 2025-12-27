@@ -24,12 +24,13 @@ from qmdj_agent.prompts.specialists import (
     PATTERN_PREDICTOR_INSTRUCTIONS,
     CONTEXT_ADVISOR_INSTRUCTIONS,
 )
-from qmdj_agent.prompts.advisors import STRATEGY_ADVISOR_INSTRUCTIONS
-from qmdj_agent.prompts.new_agents import (
+from qmdj_agent.prompts.qimen_advisor import STRATEGY_ADVISOR_INSTRUCTIONS
+from qmdj_agent.prompts.analytical_agents import (
     PROBABILISTIC_SCENARIO_AGENT_INSTRUCTIONS,
     CONTRARIAN_AGENT_INSTRUCTIONS,
 )
 from qmdj_agent.prompts.packaging import PLAIN_SPEAKER_INSTRUCTIONS
+from qmdj_agent.state import AgentState
 
 # Import Tools from new modular structure
 from qmdj_agent.tools.general import (
@@ -214,4 +215,5 @@ agent = create_deep_agent(
         context_advisor,
         plain_speaker,
     ],
+    context_schema=AgentState,
 )
