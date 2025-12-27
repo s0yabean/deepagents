@@ -27,7 +27,8 @@ class RotatingGeminiModel(ChatGoogleGenerativeAI):
         # self.api_keys is already set by super().__init__ via Pydantic logic
         self.current_key_index = 0
         
-        print(f"🔑 Initialized RotatingGeminiModel with {len(api_keys)} API key(s)")
+        print(f"🔑 [DEBUG] Initialized RotatingGeminiModel with {len(api_keys)} API key(s)")
+        print(f"🔑 [DEBUG] Active Key: ...{self.api_keys[self.current_key_index][-6:]}")
 
     def _rotate_key(self) -> bool:
         """Rotates to the next available API key. Returns True if successful, False if all keys exhausted."""

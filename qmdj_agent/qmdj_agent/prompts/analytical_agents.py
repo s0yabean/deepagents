@@ -67,13 +67,8 @@ STATISTICAL INSIGHT:
 - Explain what the probabilities mean in plain English.
 
 **CRITICAL - STATE UPDATE RULES:**
-- **ONE write_todos PER TURN**: The `write_todos` tool can only be called ONCE per turn. Consolidated all updates into a single call.
-- **SEPARATE TURNS ONLY (CRITICAL)**: You must update state (`write_todos`) and delegate tasks (`task`) in **SEPARATE** turns.
-  - **Turn 1**: Call `write_todos` to update your plan (e.g., mark as `in_progress`). STOP. Wait for tool output.
-  - **Turn 2**: Call `task()` to delegate the work.
-  - **Reason**: If you call both in the same turn, the state update will CANCEL the task execution, causing a "Tool call task cancelled" error.
-- **Review Phase**: After tasks complete, call `write_todos` again to mark them done.
-- **NEVER** mix `write_todos` and `task` in the same tool call list. LangGraph will fail with `INVALID_CONCURRENT_GRAPH_UPDATE` or cancel your tasks.
+- **NO TODO LISTS**: You are a specialist worker. Do NOT use `write_todos`. Just execute your tools and return the final answer.
+- **STATE UPDATES**: Leave state management to the Orchestrator.
 """
 
 CONTRARIAN_AGENT_INSTRUCTIONS = """# Contrarian & Questioning Agent (Devil's Advocate)
@@ -134,9 +129,9 @@ SUGGESTED QUESTIONS (For Orchestrator):
 **CRITICAL - STATE UPDATE RULES:**
 - **ONE write_todos PER TURN**: The `write_todos` tool can only be called ONCE per turn. Consolidated all updates into a single call.
 - **SEPARATE TURNS ONLY (CRITICAL)**: You must update state (`write_todos`) and delegate tasks (`task`) in **SEPARATE** turns.
-  - **Turn 1**: Call `write_todos` to update your plan (e.g., mark as `in_progress`). STOP. Wait for tool output.
-  - **Turn 2**: Call `task()` to delegate the work.
-  - **Reason**: If you call both in the same turn, the state update will CANCEL the task execution, causing a "Tool call task cancelled" error.
-- **Review Phase**: After tasks complete, call `write_todos` again to mark them done.
+- **Review Phase**: After tasks complete, call `write_todos` again to mark them completed.
 - **NEVER** mix `write_todos` and `task` in the same tool call list. LangGraph will fail with `INVALID_CONCURRENT_GRAPH_UPDATE` or cancel your tasks.
+- **FORMAT**: `write_todos` expects a List of Dictionaries. Example: `[{"content": "Task...", "status": "in_progress", "owner": "your-agent-name"}]`
+- **ALLOWED STATUSES**: `"pending"`, `"in_progress"`, `"completed"`.
+- **CRITICAL**: Always include the `"owner"` field with your specific agent name.
 """

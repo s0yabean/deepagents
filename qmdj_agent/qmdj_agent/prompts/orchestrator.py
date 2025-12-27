@@ -205,6 +205,11 @@ task(agent="qmdj-advisor", task="Refine recommendations based on clarifications"
   - **Reason**: If you call both in the same turn, the state update will CANCEL the task execution, causing a "Tool call task cancelled" error.
 - **Review Phase**: After tasks complete, call `write_todos` again to mark them done.
 - **NEVER** mix `write_todos` and `task` in the same tool call list. LangGraph will fail with `INVALID_CONCURRENT_GRAPH_UPDATE` or cancel your tasks.
+- **VALID JSON ONLY**: Ensure your tool calls are valid JSON. Do NOT output multiple JSON objects concatenated together (e.g., `{"..."}{"..."}`). If you need to update multiple items, send them in a SINGLE list within ONE `write_todos` call.
+- **FORMAT**: `write_todos` expects a List of Dictionaries.
+  - Example: `[{"content": "Fetch QMDJ chart...", "status": "in_progress", "owner": "orchestrator"}]`
+  - **ALLOWED STATUSES**: `"pending"`, `"in_progress"`, `"completed"`.
+  - **CRITICAL**: Always include the `"owner"` field with your agent name (e.g., `"orchestrator"`).
 
 **Task workflow:**
 - You may delegate to multiple specialists in parallel for efficiency.

@@ -193,7 +193,8 @@ from qmdj_agent.rotating_model import RotatingGeminiModel
 # Google Gemini (Active - with Key Rotation)
 model = RotatingGeminiModel(
     api_keys=api_keys,
-    model="gemini-3-flash-preview",
+    #model="gemini-3-flash-preview",
+    model="gemini-3-pro-preview", #seems to drastically reduce errors around wrong ClientResponses compared to flash.
     temperature=0.3
 )
 
