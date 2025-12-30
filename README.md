@@ -76,3 +76,56 @@ When building your own custom deepagent, you can provide a `system_prompt` param
 - ❌ Re-explain what standard tools do (already covered by middleware)
 - ❌ Duplicate middleware instructions about tool usage
 - ❌ Contradict default instructions (work with them, not against them)
+
+## Troubleshooting & Concepts
+
+### Why use `TypedDict` instead of `dict`?
+
+In **LangGraph** (the underlying framework for DeepAgents), the state schema is critical. It defines:
+1.  **What keys exist**: The framework needs to know valid state keys ahead of time.
+2.  **How to merge updates**: When a node returns `{"key": "new_value"}`, should it overwrite the old value or append to it?
+
+A standard Python `dict` is unstructured. The framework doesn't know what keys to expect or how to handle updates. A `TypedDict` provides this schema definition.
+
+### Error: "Cannot merge two undefined objects" / `InvalidUpdateError`
+
+**Symptoms:**
+- You see an error like `InvalidUpdateError: ...`
+- Or `ValueError: Cannot merge two undefined objects`
+- This often happens when using `TodoListMiddleware` (which adds a `todos` field) alongside a custom state that *also* tries to define `todos` or inherits incorrectly.
+
+**Cause:**
+This usually happens when there is a conflict in how a state key (like `todos`) is defined.
+- **Scenario A**: You inherit from `BaseAgentState` (which defines `todos`) BUT you also define `todos` manually in your subclass without a reducer.
+- **Scenario B**: You define a key in your state but don't provide a **reducer** function (e.g., `operator.add` for lists), so the framework doesn't know how to merge a new update into the existing value.
+
+**Solution:**
+1.  **Prefer Composition**: Instead of inheriting from `BaseAgentState`, define your state as a clean `TypedDict`. Let the middleware handle its own state keys (like `todos`) automatically.
+    ```python
+    # ✅ Good: Clean TypedDict
+    class AgentState(TypedDict):
+        my_custom_field: str
+    ```
+    ```python
+    # ❌ Bad: Conflicting inheritance + manual re-definition
+    class AgentState(BaseAgentState):
+        todos: List[Todo] # Conflict!
+    ```
+2.  **Add Reducers**: If you MUST define a field that receives multiple updates (like a log or list of messages), use `Annotated` with a reducer.
+    ```python
+    from typing import Annotated
+    import operator
+    
+    class AgentState(TypedDict):
+        # operator.add tells LangGraph to APPEND new items to the list
+        logs: Annotated[List[str], operator.add]
+    ```
+3.  **Singleton State (The "Replace" Pattern)**: For objects that represent a "single source of truth" (like a Todo List or User Profile), you often want the *latest* update to overwrite previous ones, rather than appending duplicates.
+    ```python
+    from typing import Annotated, List, Dict, Any
+    
+    class AgentState(TypedDict):
+        # lambda x, y: y tells LangGraph to KEEP THE NEW VALUE (y) and discard the old (x)
+        # This prevents the "InvalidConcurrentGraphUpdate" error while avoiding duplication
+        todos: Annotated[List[Dict[str, Any]], lambda x, y: y]
+    ```

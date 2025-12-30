@@ -211,6 +211,7 @@ task(agent="qmdj-advisor", task="Refine recommendations based on clarifications"
   - Example: `[{"content": "Fetch QMDJ chart...", "status": "in_progress", "owner": "orchestrator"}]`
   - **ALLOWED STATUSES**: `"pending"`, `"in_progress"`, `"completed"`.
   - **CRITICAL**: Always include the `"owner"` field with your agent name (e.g., `"orchestrator"`).
+- **FINAL UPDATE**: Before providing your final response, call `write_todos` one last time to ensure all planned tasks are either marked as completed or removed if they were not reached.
 
 **Task workflow:**
 - You may delegate to multiple specialists in parallel for efficiency.

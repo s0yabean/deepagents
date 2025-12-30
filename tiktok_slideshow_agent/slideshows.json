@@ -234,5 +234,73 @@
       }
     ],
     "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-slideshows"
+  },
+  {
+    "id": "d4fe42e7-a100-4326-be0d-4a73244aff27",
+    "project_id": "voice-affirmations-001",
+    "topic": "Power of Voice Affirmations",
+    "created_at": "2025-12-26T05:48:27.263497",
+    "slide_count": 5,
+    "slides": [
+      {
+        "text": "Stop thinking it. Your brain needs to HEAR it. \ud83d\udde3\ufe0f\u2728",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "text": "Speaking aloud triggers neuroplasticity, rewiring your subconscious mind faster than silent thought. \ud83e\udde0\u26a1",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      },
+      {
+        "text": "Speak with conviction. Use 'I am' statements and feel the emotion in every word. \ud83d\udd25",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_3.png"
+      },
+      {
+        "text": "Effortlessly record and track your daily affirmations with the Sayura app. \ud83c\udf99\ufe0f\ud83d\udcf1",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_4.png"
+      },
+      {
+        "text": "Silence is a wish. Speech is a command. Claim your future today. \ud83d\udc51\ud83d\udc8e",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_5.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-slideshows"
+  },
+  {
+    "id": "aaf2e9dd-d3a5-4059-90ab-e1678e8fb5fb",
+    "project_id": "Sayura Affirmations Reel",
+    "topic": "Speaking affirmations for a new reality and confidence",
+    "created_at": "2025-12-27T05:52:42.724373",
+    "slide_count": 7,
+    "slides": [
+      {
+        "text": "How to attract a new reality by just talking to yourself \ud83e\udd2f",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "text": "Your subconscious mind believes every single word you speak.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      },
+      {
+        "text": "Stop feeding your doubts and start fueling your dreams.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_3.png"
+      },
+      {
+        "text": "Affirmations aren't just words\u2014they\u2019re instructions for your future.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_4.png"
+      },
+      {
+        "text": "Repeat: \"I am magnetizing abundance and radiant confidence.\"",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_5.png"
+      },
+      {
+        "text": "Consistency creates the shift. Speak it until you see it.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_6.png"
+      },
+      {
+        "text": "Start your manifestation journey. Download Sayura and transform today! \u2728",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_7.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-slideshows"
   }
 ]
