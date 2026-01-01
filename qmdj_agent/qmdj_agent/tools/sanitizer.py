@@ -49,9 +49,6 @@ def sanitize_output(text: str) -> str:
     
     Args:
         text: The draft response text to be checked.
-        
-    Returns:
-        str: "success" if clean, or an error message detailing what to fix.
     """
     feedback = []
     
