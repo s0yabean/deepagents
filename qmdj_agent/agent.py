@@ -38,6 +38,7 @@ from qmdj_agent.tools.general import (
     tavily_search,
     reflect_on_reading,
 )
+from qmdj_agent.tools.sanitizer import sanitize_output, sanitize_agent_names
 from qmdj_agent.tools.qimen import (
     qmdj_chart_api,
     calculate_box_energy,
@@ -203,7 +204,7 @@ model = RotatingGeminiModel(
 # ==============================================================================
 agent = create_deep_agent(
     model=model,
-    tools=[get_current_time, reflect_on_reading],
+    tools=[get_current_time, reflect_on_reading, sanitize_output, sanitize_agent_names],
     system_prompt=ORCHESTRATOR_INSTRUCTIONS,
     subagents=[
         chart_reader,
