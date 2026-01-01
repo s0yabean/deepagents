@@ -41,59 +41,48 @@ AGENT_NAMES = [
 
 @tool(parse_docstring=True)
 def sanitize_output(text: str) -> str:
-    """Check the provided text for complex Qi Men Dun Jia jargon.
+    """Check the provided text for BOTH complex QMDJ jargon AND internal agent names.
     
-    This tool should be called on your almost-final response to the human.
-    If any jargon terms are found, it will return a message identifying them
-    and requesting a rephrase. If no jargon is found, it returns "success".
+    This tool acts as a single gatekeeper. It ensures the response is:
+    1. Free of forbidden QMDJ technical terms (unless explained simply).
+    2. Free of internal agent names (e.g., 'chart-reader').
     
     Args:
-        text: The draft response text to be checked for jargon.
+        text: The draft response text to be checked.
+        
+    Returns:
+        str: "success" if clean, or an error message detailing what to fix.
     """
-    found_terms = []
+    feedback = []
     
-    # Check for each jargon term (case-insensitive)
+    # Check 1: Jargon Terms
+    found_jargon = []
     for term in JARGON_TERMS:
-        # User wants full match for the term anywhere in the text, case-insensitive.
-        # Removing word boundaries (\b) to catch substrings as well.
         pattern = re.compile(re.escape(term), re.IGNORECASE)
         if pattern.search(text):
-            found_terms.append(term)
-    
-    if found_terms:
-        terms_str = ", ".join([f'"{t}"' for t in found_terms])
-        return (
-            f"Jargon detected: {terms_str}. "
-            "Please remove these terms and rephrase your answer in simpler, "
-            "layman-friendly consulting language before responding to the human."
+            found_jargon.append(term)
+            
+    if found_jargon:
+        jargon_str = ", ".join([f'"{t}"' for t in found_jargon])
+        feedback.append(
+            f"Jargon detected: {jargon_str}. Remove or rephrase into plain English."
         )
-    
-    return "success, no jargon detected."
 
-@tool(parse_docstring=True)
-def sanitize_agent_names(text: str) -> str:
-    """Check the provided text for internal agent names that should not be exposed.
-    
-    This tool should be called on your almost-final response to the human, 
-    in addition to the sanitize_output tool.
-    
-    Args:
-        text: The draft response text to be checked for agent names.
-    """
+    # Check 2: Agent Names
     found_names = []
-    
     for name in AGENT_NAMES:
-        # Case-insensitive substring match
         pattern = re.compile(re.escape(name), re.IGNORECASE)
         if pattern.search(text):
             found_names.append(name)
             
     if found_names:
         names_str = ", ".join([f'"{n}"' for n in found_names])
-        return (
-            f"Internal agent names detected: {names_str}. "
-            "Please replace these specific agent names with phrases like 'Kiyun's agents', "
-            "'our analysis', or 'the team' to accept the response."
+        feedback.append(
+            f"Internal agent names detected: {names_str}. Replace with phrases like 'Kiyun's agents' or 'our analysis'."
         )
-        
-    return "success"
+    
+    # Return consolidated feedback
+    if feedback:
+        return "Sanitization Failed:\n" + "\n".join(feedback)
+    
+    return "success, no jargon or agent names detected."
