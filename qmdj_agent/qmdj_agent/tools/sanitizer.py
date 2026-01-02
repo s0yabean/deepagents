@@ -23,7 +23,8 @@ JARGON_TERMS = [
     "Eight Doors",
     "Eight Gods",
     "Ten Gan",
-    "Twelve Zhi"
+    "Twelve Zhi",
+    "deity"
 ]
 
 # List of internal agent names to avoid exposing
