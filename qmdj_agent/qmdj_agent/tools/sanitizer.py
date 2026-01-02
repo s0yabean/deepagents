@@ -23,7 +23,27 @@ JARGON_TERMS = [
     "Eight Doors",
     "Eight Gods",
     "Ten Gan",
-    "Twelve Zhi"
+    "Twelve Zhi",
+    "deity",
+    "Deities",
+    "神",
+    "Shén",
+    "Spirit",
+    "值符",
+    "Zhí Fú",
+    "值使",
+    "Zhí Shǐ",
+    "天盘",
+    "地盘",
+    "人盘",
+    "Xuan Wu",
+    "玄武",
+    "Teng She",
+    "螣蛇",
+    "Jiu Tian",
+    "Jiu Di",
+    "九天",
+    "九地"
 ]
 
 # List of internal agent names to avoid exposing
