@@ -30,6 +30,7 @@ from qmdj_agent.prompts.analytical_agents import (
     CONTRARIAN_AGENT_INSTRUCTIONS,
 )
 from qmdj_agent.prompts.packaging import PLAIN_SPEAKER_INSTRUCTIONS
+from qmdj_agent.prompts.fast_track import FAST_TRACK_ANALYST_INSTRUCTIONS
 from qmdj_agent.state import AgentState
 
 # Import Tools from new modular structure
@@ -38,6 +39,8 @@ from qmdj_agent.tools.general import (
     tavily_search,
     reflect_on_reading,
 )
+from qmdj_agent.tools.persistence import save_to_file, read_from_file
+from qmdj_agent.tools.sanitizer import sanitize_output
 from qmdj_agent.tools.qimen import (
     qmdj_chart_api,
     calculate_box_energy,
@@ -65,7 +68,7 @@ chart_reader = {
     "name": "chart-reader",
     "description": "Fetch and parse the Qi Men Dun Jia chart for the current time window.",
     "system_prompt": CHART_READER_INSTRUCTIONS,
-    "tools": [get_current_time, qmdj_chart_api, reflect_on_reading],
+    "tools": [get_current_time, qmdj_chart_api, reflect_on_reading, save_to_file, read_from_file],
 }
 
 # ==============================================================================
@@ -75,7 +78,7 @@ energy_analyzer = {
     "name": "energy-analyzer",
     "description": "Calculate box energy levels based on Death/Emptiness, diagonal overflow, and Tai Sui effects.",
     "system_prompt": ENERGY_ANALYZER_INSTRUCTIONS,
-    "tools": [get_current_time, calculate_box_energy, apply_tai_sui_modifier, detect_diagonal_overflow, reflect_on_reading],
+    "tools": [get_current_time, calculate_box_energy, apply_tai_sui_modifier, detect_diagonal_overflow, reflect_on_reading, save_to_file, read_from_file],
 }
 
 # ==============================================================================
@@ -83,9 +86,9 @@ energy_analyzer = {
 # ==============================================================================
 symbol_interpreter = {
     "name": "symbol-interpreter",
-    "description": "Analyze QMDJ symbols in context, considering energy levels. Identifies favorable/unfavorable factors.",
+    "description": "Analyze specific chart symbols (Doors, Stars, Deities) in relevant palaces for the user's question.",
     "system_prompt": SYMBOL_INTERPRETER_INSTRUCTIONS,
-    "tools": [get_current_time, symbol_lookup, five_element_interaction, calculate_score, calculate_box_energy, compare_palaces, reflect_on_reading],
+    "tools": [get_current_time, symbol_lookup, five_element_interaction, calculate_score, compare_palaces, reflect_on_reading, read_from_file],
 }
 
 # ==============================================================================
@@ -93,9 +96,9 @@ symbol_interpreter = {
 # ==============================================================================
 pattern_predictor = {
     "name": "pattern-predictor",
-    "description": "Identify converging patterns across palaces to make specific, testable predictions. Creates the 'fortune teller effect'.",
+    "description": "Identify converging patterns across the chart (e.g., Fan Yin, Fu Yin, specific combinations) to make predictions.",
     "system_prompt": PATTERN_PREDICTOR_INSTRUCTIONS,
-    "tools": [get_current_time, reflect_on_reading],
+    "tools": [get_current_time, reflect_on_reading, read_from_file],
 }
 
 # ==============================================================================
@@ -103,9 +106,9 @@ pattern_predictor = {
 # ==============================================================================
 probabilistic_agent = {
     "name": "probabilistic-agent",
-    "description": "Run Monte Carlo simulations to provide statistical probabilities for different outcomes based on the reading.",
+    "description": "Run Monte Carlo simulations to calculate the probability of success/failure based on energy levels and risk factors.",
     "system_prompt": PROBABILISTIC_SCENARIO_AGENT_INSTRUCTIONS,
-    "tools": [run_monte_carlo_simulation, calculate_score, reflect_on_reading, tavily_search, get_current_time],
+    "tools": [get_current_time, run_monte_carlo_simulation, reflect_on_reading, read_from_file],
 }
 
 # ==============================================================================
@@ -115,7 +118,7 @@ contrarian_agent = {
     "name": "contrarian-agent",
     "description": "Challenge assumptions, identify missing info, and mediate conflicts. Acts as Devil's Advocate.",
     "system_prompt": CONTRARIAN_AGENT_INSTRUCTIONS,
-    "tools": [reflect_on_reading, tavily_search, get_current_time],
+    "tools": [reflect_on_reading, tavily_search, get_current_time, read_from_file],
 }
 
 # ==============================================================================
@@ -125,7 +128,7 @@ qmdj_strategy_advisor = {
     "name": "qmdj-advisor",
     "description": "Generate metaphysical strategic recommendations based on QMDJ principles. Uses calculate_score with energy weighting.",
     "system_prompt": STRATEGY_ADVISOR_INSTRUCTIONS,
-    "tools": [get_current_time, calculate_score, symbol_lookup, five_element_interaction, calculate_box_energy, get_elemental_remedy, reflect_on_reading],
+    "tools": [get_current_time, calculate_score, symbol_lookup, five_element_interaction, calculate_box_energy, get_elemental_remedy, reflect_on_reading, read_from_file],
 }
 
 # ==============================================================================
@@ -133,9 +136,9 @@ qmdj_strategy_advisor = {
 # ==============================================================================
 context_advisor = {
     "name": "context-advisor",
-    "description": "Provide external evidence and real-world context to ground metaphysical insights. Searches for industry data, research, news.",
+    "description": "Search for external, real-world context and evidence (market trends, news, data) to ground the reading.",
     "system_prompt": CONTEXT_ADVISOR_INSTRUCTIONS,
-    "tools": [get_current_time, tavily_search, reflect_on_reading],
+    "tools": [get_current_time, tavily_search, reflect_on_reading, read_from_file],
 }
 
 # ==============================================================================
@@ -146,6 +149,16 @@ plain_speaker = {
     "description": "Reframe complex QMDJ analysis into plain English insights for the end user. Acts as a packaging layer.",
     "system_prompt": PLAIN_SPEAKER_INSTRUCTIONS,
     "tools": [reflect_on_reading],
+}
+
+# ==============================================================================
+# Specialist 10: Fast-Track Analyst (Consolidated Tier 1)
+# ==============================================================================
+fast_track_analyst = {
+    "name": "fast-track-analyst",
+    "description": "Consolidated specialist for rapid Tier 1 readings. Combines symbol analysis, patterns, and plain speaking.",
+    "system_prompt": FAST_TRACK_ANALYST_INSTRUCTIONS,
+    "tools": [get_current_time, reflect_on_reading, read_from_file],
 }
 
 # ==============================================================================
@@ -203,7 +216,7 @@ model = RotatingGeminiModel(
 # ==============================================================================
 agent = create_deep_agent(
     model=model,
-    tools=[get_current_time, reflect_on_reading],
+    tools=[get_current_time, reflect_on_reading, sanitize_output],
     system_prompt=ORCHESTRATOR_INSTRUCTIONS,
     subagents=[
         chart_reader,
@@ -215,6 +228,7 @@ agent = create_deep_agent(
         qmdj_strategy_advisor,
         context_advisor,
         plain_speaker,
+        fast_track_analyst,
     ],
     context_schema=AgentState,
 )

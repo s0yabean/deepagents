@@ -7,13 +7,19 @@ from langchain_core.tools import tool
 
 # Import Deep Agent Factory
 # Assuming deepagents is installed or available in path
-try:
-    from deepagents import create_deep_agent
-except ImportError:
-    # Fallback for dev environment if package not installed
-    import sys
-    sys.path.append(os.path.join(os.path.dirname(__file__), "../qmdj_agent/.venv/lib/python3.12/site-packages"))
-    from deepagents import create_deep_agent
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "../qmdj_agent/.venv/lib/python3.12/site-packages"))
+from deepagents import create_deep_agent
+
+# Import LangChain Community Tools
+from langchain_community.tools import TavilySearchResults
+from langchain_google_community import GoogleDriveSearchTool, GmailSearchTool 
+# Note: GoogleDriveTool/GmailToolkit might require more setup (credentials.json). 
+# For quickstart, we'll assume environment variables are handled or mock it if complex auth is needed.
+# Using standard community tools as placeholders for now.
+
+# Import State
+from tiktok_slideshow_agent.state import AgentState
 
 # Import Prompts
 from tiktok_slideshow_agent.prompts.orchestrator import ORCHESTRATOR_INSTRUCTIONS
@@ -21,7 +27,8 @@ from tiktok_slideshow_agent.prompts.specialists import (
     HOOK_AGENT_INSTRUCTIONS,
     STRATEGIST_INSTRUCTIONS,
     DESIGNER_INSTRUCTIONS,
-    PUBLISHER_INSTRUCTIONS
+    PUBLISHER_INSTRUCTIONS,
+    QA_INSTRUCTIONS
 )
 
 # Import Tools
@@ -34,7 +41,7 @@ hook_agent = {
     "name": "hook-agent",
     "description": "Generates and selects the best hook for the slideshow.",
     "system_prompt": HOOK_AGENT_INSTRUCTIONS,
-    "tools": [], # Pure LLM task, or maybe search_images if it needs inspiration
+    "tools": [TavilySearchResults(max_results=3)], 
 }
 
 # ==============================================================================
@@ -69,7 +76,17 @@ publisher = {
     "name": "publisher",
     "description": "Uploads assets and logs the project.",
     "system_prompt": PUBLISHER_INSTRUCTIONS,
-    "tools": [upload_and_save],
+    "tools": [upload_and_save, GoogleDriveSearchTool(), GmailSearchTool()],
+}
+
+# ==============================================================================
+# Specialist 5: QA Specialist
+# ==============================================================================
+qa_specialist = {
+    "name": "qa-specialist",
+    "description": "Final quality control check.",
+    "system_prompt": QA_INSTRUCTIONS,
+    "tools": [], # Pure LLM evaluation
 }
 
 # ==============================================================================
@@ -99,6 +116,10 @@ def get_backend(rt):
         }
     )
 
+# Check for Human-in-the-Loop config
+enable_human_review = os.getenv("ENABLE_HUMAN_REVIEW", "False").lower() == "true"
+interrupt_points = ["publisher"] if enable_human_review else []
+
 agent = create_deep_agent(
     model=model,
     tools=[], # Orchestrator tools (if any)
@@ -108,7 +129,9 @@ agent = create_deep_agent(
         hook_agent,
         content_strategist,
         get_visual_designer(),
+        qa_specialist,
         publisher
     ],
     context_schema=AgentState,
+    interrupt_on=interrupt_points, 
 )

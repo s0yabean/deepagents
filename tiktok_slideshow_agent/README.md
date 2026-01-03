@@ -1,5 +1,13 @@
 # TikTok Slideshow Agent - Product Spec
 
+## 🚀 Quickstart
+
+Run the local LangGraph Studio:
+
+```bash
+langgraph dev
+```
+
 ## 1. Vision
 To build an automated, intelligent agent capable of generating high-quality, engaging TikTok slideshows (images with text overlays) daily. The agent learns from past performance, adapts to different project requirements, and seamlessly integrates with the user's workflow by delivering final assets to Google Drive.
 
@@ -80,3 +88,24 @@ The system will use a multi-agent architecture orchestrated by a main supervisor
 -   **LLM**: Gemini 1.5 Pro.
 -   **Browser**: Playwright (Chromium).
 -   **Storage**: Local FS + Google Drive API.
+
+## 7. Configuration
+
+To run this agent, you need to set up the following in your `.env` file:
+
+```bash
+# Required
+GOOGLE_API_KEY=...
+ANTHROPIC_API_KEY=... # If using Claude
+TAVILY_API_KEY=...    # For Hook Agent research
+
+# Google Drive & Gmail (Optional but recommended)
+# Follow LangChain Google Community setup instructions
+GOOGLE_APPLICATION_CREDENTIALS=credentials.json 
+```
+
+### Human-in-the-Loop
+To enable manual review before publishing, add this to your `.env` file:
+`ENABLE_HUMAN_REVIEW=True` 
+
+If set to `True`, the agent will pause before the `publisher` step to allow you to review the generated artifacts.

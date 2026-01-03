@@ -176,3 +176,5 @@ cython_debug/
 # TikTok Slideshow Agent
 output/
 slideshows.json
+
+.qmdj_cache
