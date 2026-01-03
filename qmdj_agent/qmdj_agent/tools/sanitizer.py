@@ -95,7 +95,7 @@ def sanitize_output(text: str) -> str:
     if found_names:
         names_str = ", ".join([f'"{n}"' for n in found_names])
         feedback.append(
-            f"Internal agent names detected: {names_str}. Replace with phrases like 'Kiyun's agents' or 'our analysis'."
+            f"Internal agent names detected: {names_str}. Reframe with professional terms like 'Energy Module' or 'Strategic Analysis Module'."
         )
     
     # Return consolidated feedback
