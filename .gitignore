@@ -178,5 +178,6 @@ output/
 slideshows.json
 tiktok_slideshow_agent/credentials.json
 tiktok_slideshow_agent/token_gmail.json
+tiktok_slideshow_agent/token_drive.json
 
 .qmdj_cache

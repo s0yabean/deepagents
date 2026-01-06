@@ -302,5 +302,35 @@
       }
     ],
     "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-slideshows"
+  },
+  {
+    "id": "e7831d66-29a0-4987-a3b0-3ad25bb7e105",
+    "project_id": "Manifestation Mistakes",
+    "topic": "Manifestation: What NOT to do",
+    "created_at": "2026-01-06T06:38:52.659313",
+    "slide_count": 5,
+    "slides": [
+      {
+        "text": "Your vision board failed. You\u2019re trying too hard.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "text": "Manifesting isn\u2019t wishing. It\u2019s matching frequency.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      },
+      {
+        "text": "Stop 'chasing' your desires. Chasing signals to the universe that you lack it.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_3.png"
+      },
+      {
+        "text": "Shift from 'wanting' to 'being.' Embody the version of you who already has it.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_4.png"
+      },
+      {
+        "text": "Stop the chase. Comment 'ALIGN' to start attracting your reality.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_5.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-slideshows"
   }
 ]

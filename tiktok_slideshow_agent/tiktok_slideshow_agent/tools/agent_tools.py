@@ -59,8 +59,8 @@ async def render_slide(text: str, image_path: str, slide_number: int) -> str:
     return await get_renderer().render_slide(slide_data, config)
 
 @tool
-async def upload_and_save(project_id: str, topic: str, slides: str) -> str:
-    """Upload slides to Drive and save to Knowledge Base.
+async def save_locally(project_id: str, topic: str, slides: str) -> str:
+    """Save slides locally and record in the Knowledge Base.
     
     Args:
         project_id: Unique identifier for the project.
@@ -68,6 +68,9 @@ async def upload_and_save(project_id: str, topic: str, slides: str) -> str:
         slides: A JSON string representing a list of slide objects. 
                 Each object should have 'text' and 'image_path'.
     """
+    import datetime
+    import re
+    
     try:
         if isinstance(slides, list):
             slides_data = slides
@@ -76,8 +79,15 @@ async def upload_and_save(project_id: str, topic: str, slides: str) -> str:
     except json.JSONDecodeError:
         return "Error: 'slides' argument must be a valid JSON string representing a list of slides."
 
-    # 1. Create root project folder
-    root_folder_name = f"{project_id}_{topic}"
+    # 1. Format folder name: DDMMYYYY_HHMM_topic
+    now = datetime.datetime.now()
+    timestamp = now.strftime("%d%m%Y_%H%M")
+    
+    # Clean and truncate topic
+    clean_topic = re.sub(r'[^a-zA-Z0-0\s]', '', topic)
+    reel_name = clean_topic.replace(' ', '_').lower()[:12]
+    
+    root_folder_name = f"{timestamp}_{reel_name}"
     root_folder_path = await asyncio.to_thread(get_drive().create_folder, root_folder_name)
     
     # 2. Create standardized subfolders
@@ -92,11 +102,11 @@ async def upload_and_save(project_id: str, topic: str, slides: str) -> str:
     
     await asyncio.to_thread(save_metadata)
     
-    # 4. Move rendered images to the 'slideshows' folder
+    # 4. Move rendered images to the local 'slideshows' folder
     image_files = [s.get("image_path") for s in slides_data if s.get("image_path")]
-    link = await asyncio.to_thread(get_drive().upload_files, image_files, slideshows_folder)
+    local_path = await asyncio.to_thread(get_drive().upload_files, image_files, slideshows_folder)
     
     # 5. Save to KB (historical record)
-    await asyncio.to_thread(get_kb().save_slideshow, project_id, topic, slides_data, link)
+    await asyncio.to_thread(get_kb().save_slideshow, project_id, topic, slides_data, local_path)
     
-    return link
+    return f"Slideshow saved locally to: {root_folder_path}"

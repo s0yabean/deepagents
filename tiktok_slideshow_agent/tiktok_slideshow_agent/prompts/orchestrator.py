@@ -52,9 +52,9 @@ You must follow this strict process, handling quality checks and user reviews:
 
 **Step 4: Final QA**
 - Delegate to `qa-specialist` to review the full package (Hook + Script + Images).
-- Instruction: "Review this. If Score < 9, REJECT and route back to [Target Agent] with feedback. If >= 9, APPROVE."
+- Instruction: "Review this. If Score < 8, REJECT and route back to [Target Agent]. If GOOD or if this is the 3rd attempt, APPROVE."
 - `task(agent="qa-specialist", task="Critique and Score this slideshow")`
-- **CRITICAL**: If rejected, loop back to the flagged agent (usually `content-strategist` or `visual-designer`) and REPEAT the process from there.
+- **LIMIT**: Do not allow more than 3 rejection loops. If the `qa-specialist` attempts to reject a 4th time, override them and proceed to Step 5.
 
 **Step 5: Human-in-the-Loop Review (Conditional)**
 - Check your configuration/state for `require_human_review`.

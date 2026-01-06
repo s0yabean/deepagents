@@ -32,7 +32,7 @@ from tiktok_slideshow_agent.prompts.specialists import (
 )
 
 # Import Tools
-from tiktok_slideshow_agent.tools.agent_tools import render_slide, upload_and_save
+from tiktok_slideshow_agent.tools.agent_tools import render_slide, save_locally
 
 # ==============================================================================
 # Specialist 1: Hook Agent
@@ -73,40 +73,47 @@ def get_visual_designer():
 # Custom Google Drive Upload Tool
 # ==============================================================================
 @tool
-def upload_to_google_drive(file_path: str, folder_id: str = None) -> str:
-    """Upload a file to Google Drive.
+def upload_to_google_drive(file_paths: list[str], folder_id: str = "1HQv0qrW1AUlUs2PWM3cQ572NyqonpLks") -> str:
+    """Upload multiple files to Google Drive.
 
     Args:
-        file_path: Local path to the file to upload
-        folder_id: Optional Google Drive folder ID to upload to
+        file_paths: List of local paths to the files to upload
+        folder_id: Google Drive folder ID to upload to (defaults to TikTok Reels folder)
 
     Returns:
-        String with the file ID and shareable link
+        String with the status and shareable link to the folder
     """
     from googleapiclient.discovery import build
     from googleapiclient.http import MediaFileUpload
 
     try:
-        # Get credentials (will use same OAuth flow as Gmail)
+        # Get credentials
         creds = get_google_credentials(
             scopes=["https://www.googleapis.com/auth/drive.file"],
             token_file="token_drive.json"
         )
 
         service = build('drive', 'v3', credentials=creds)
+        uploaded_files = []
 
-        file_metadata = {'name': os.path.basename(file_path)}
-        if folder_id:
-            file_metadata['parents'] = [folder_id]
+        for file_path in file_paths:
+            if not os.path.exists(file_path):
+                continue
+                
+            file_metadata = {'name': os.path.basename(file_path)}
+            if folder_id:
+                file_metadata['parents'] = [folder_id]
 
-        media = MediaFileUpload(file_path, resumable=True)
-        file = service.files().create(
-            body=file_metadata,
-            media_body=media,
-            fields='id, webViewLink'
-        ).execute()
+            media = MediaFileUpload(file_path, resumable=True)
+            file_resp = service.files().create(
+                body=file_metadata,
+                media_body=media,
+                fields='id, webViewLink'
+            ).execute()
+            uploaded_files.append(file_resp.get('webViewLink'))
 
-        return f"File uploaded! ID: {file.get('id')}, Link: {file.get('webViewLink')}"
+        folder_link = f"https://drive.google.com/drive/folders/{folder_id}"
+        return f"Successfully uploaded {len(uploaded_files)} files. Folder Link: {folder_link}"
     except Exception as e:
         return f"Error uploading to Google Drive: {str(e)}"
 
@@ -129,7 +136,7 @@ def get_publisher():
             "name": "publisher",
             "description": "Uploads assets and logs the project.",
             "system_prompt": PUBLISHER_INSTRUCTIONS,
-            "tools": [upload_and_save, upload_to_google_drive] + gmail_tools,
+            "tools": [save_locally, upload_to_google_drive] + gmail_tools,
         }
     except Exception as e:
         # Fallback if credentials not configured
@@ -138,7 +145,7 @@ def get_publisher():
             "name": "publisher",
             "description": "Uploads assets and logs the project.",
             "system_prompt": PUBLISHER_INSTRUCTIONS,
-            "tools": [upload_and_save],
+            "tools": [save_locally],
         }
 
 # ==============================================================================
