@@ -13,10 +13,10 @@ from deepagents import create_deep_agent
 
 # Import LangChain Community Tools
 from langchain_community.tools import TavilySearchResults
-from langchain_google_community import GoogleDriveSearchTool, GmailSearchTool 
-# Note: GoogleDriveTool/GmailToolkit might require more setup (credentials.json). 
-# For quickstart, we'll assume environment variables are handled or mock it if complex auth is needed.
-# Using standard community tools as placeholders for now.
+from langchain_google_community import GmailToolkit
+from langchain_google_community.gmail.utils import build_resource_service, get_google_credentials
+# Note: Gmail/Google Drive tools require OAuth credentials (credentials.json and token.json)
+# Make sure you have proper Google Cloud project setup with Gmail API enabled
 
 # Import State
 from tiktok_slideshow_agent.state import AgentState
@@ -70,14 +70,76 @@ def get_visual_designer():
     }
 
 # ==============================================================================
+# Custom Google Drive Upload Tool
+# ==============================================================================
+@tool
+def upload_to_google_drive(file_path: str, folder_id: str = None) -> str:
+    """Upload a file to Google Drive.
+
+    Args:
+        file_path: Local path to the file to upload
+        folder_id: Optional Google Drive folder ID to upload to
+
+    Returns:
+        String with the file ID and shareable link
+    """
+    from googleapiclient.discovery import build
+    from googleapiclient.http import MediaFileUpload
+
+    try:
+        # Get credentials (will use same OAuth flow as Gmail)
+        creds = get_google_credentials(
+            scopes=["https://www.googleapis.com/auth/drive.file"],
+            token_file="token_drive.json"
+        )
+
+        service = build('drive', 'v3', credentials=creds)
+
+        file_metadata = {'name': os.path.basename(file_path)}
+        if folder_id:
+            file_metadata['parents'] = [folder_id]
+
+        media = MediaFileUpload(file_path, resumable=True)
+        file = service.files().create(
+            body=file_metadata,
+            media_body=media,
+            fields='id, webViewLink'
+        ).execute()
+
+        return f"File uploaded! ID: {file.get('id')}, Link: {file.get('webViewLink')}"
+    except Exception as e:
+        return f"Error uploading to Google Drive: {str(e)}"
+
+# ==============================================================================
 # Specialist 4: Publisher
 # ==============================================================================
-publisher = {
-    "name": "publisher",
-    "description": "Uploads assets and logs the project.",
-    "system_prompt": PUBLISHER_INSTRUCTIONS,
-    "tools": [upload_and_save, GoogleDriveSearchTool(), GmailSearchTool()],
-}
+def get_publisher():
+    """Initialize publisher with Gmail toolkit."""
+    try:
+        # Initialize Gmail toolkit
+        gmail_creds = get_google_credentials(
+            scopes=["https://www.googleapis.com/auth/gmail.modify"],
+            token_file="token_gmail.json"
+        )
+        gmail_api_resource = build_resource_service(credentials=gmail_creds)
+        gmail_toolkit = GmailToolkit(api_resource=gmail_api_resource)
+        gmail_tools = gmail_toolkit.get_tools()
+
+        return {
+            "name": "publisher",
+            "description": "Uploads assets and logs the project.",
+            "system_prompt": PUBLISHER_INSTRUCTIONS,
+            "tools": [upload_and_save, upload_to_google_drive] + gmail_tools,
+        }
+    except Exception as e:
+        # Fallback if credentials not configured
+        print(f"Warning: Could not initialize Google tools: {e}")
+        return {
+            "name": "publisher",
+            "description": "Uploads assets and logs the project.",
+            "system_prompt": PUBLISHER_INSTRUCTIONS,
+            "tools": [upload_and_save],
+        }
 
 # ==============================================================================
 # Specialist 5: QA Specialist
@@ -118,7 +180,7 @@ def get_backend(rt):
 
 # Check for Human-in-the-Loop config
 enable_human_review = os.getenv("ENABLE_HUMAN_REVIEW", "False").lower() == "true"
-interrupt_points = ["publisher"] if enable_human_review else []
+interrupt_points = {"publisher": {}} if enable_human_review else {}
 
 agent = create_deep_agent(
     model=model,
@@ -130,8 +192,8 @@ agent = create_deep_agent(
         content_strategist,
         get_visual_designer(),
         qa_specialist,
-        publisher
+        get_publisher()
     ],
     context_schema=AgentState,
-    interrupt_on=interrupt_points, 
+    interrupt_on=interrupt_points,
 )

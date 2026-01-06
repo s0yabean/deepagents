@@ -176,5 +176,7 @@ cython_debug/
 # TikTok Slideshow Agent
 output/
 slideshows.json
+tiktok_slideshow_agent/credentials.json
+tiktok_slideshow_agent/token_gmail.json
 
 .qmdj_cache

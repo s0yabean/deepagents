@@ -6,6 +6,9 @@ authors = [{name = "Mindreader", email = "mindreader@example.com"}]
 dependencies = [
     "langgraph",
     "langchain-google-genai",
+    "langchain-community",
+    "langchain-google-community",
+    "protobuf>=4.21.0,<6.0.0",
     "playwright",
     "pillow",
     "google-api-python-client",
