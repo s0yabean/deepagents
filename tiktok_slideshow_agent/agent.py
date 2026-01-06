@@ -32,7 +32,7 @@ from tiktok_slideshow_agent.prompts.specialists import (
 )
 
 # Import Tools
-from tiktok_slideshow_agent.tools.agent_tools import render_slide, save_locally
+from tiktok_slideshow_agent.tools.agent_tools import render_slide, save_locally, get_sync_tool
 
 # ==============================================================================
 # Specialist 1: Hook Agent
@@ -66,7 +66,7 @@ def get_visual_designer():
         "name": "visual-designer",
         "description": "Selects images and renders the final slides.",
         "system_prompt": DESIGNER_INSTRUCTIONS, # Use raw instructions
-        "tools": [render_slide], # search_images removed in favor of filesystem tools
+        "tools": [render_slide, get_sync_tool()], # search_images removed in favor of filesystem tools and sync
     }
 
 # ==============================================================================

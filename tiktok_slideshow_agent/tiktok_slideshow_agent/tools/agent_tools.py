@@ -4,13 +4,16 @@ import os
 from tiktok_slideshow_agent.tools.images import ImageLibraryTool
 from tiktok_slideshow_agent.tools.renderer import PlaywrightRendererTool
 from tiktok_slideshow_agent.tools.drive import GoogleDriveTool
+from tiktok_slideshow_agent.tools.drive import GoogleDriveTool
 from tiktok_slideshow_agent.tools.knowledge import KnowledgeBaseTool
+from tiktok_slideshow_agent.tools.sync_tool import sync_image_library
 
 # Lazy Tool Getters to avoid BlockingError during import
 _image_lib = None
 _renderer = None
 _drive = None
 _kb = None
+_sync_tool = None
 
 def get_image_lib():
     global _image_lib
@@ -35,6 +38,12 @@ def get_kb():
     if _kb is None:
         _kb = KnowledgeBaseTool()
     return _kb
+
+def get_sync_tool():
+    global _sync_tool
+    if _sync_tool is None:
+        _sync_tool = sync_image_library
+    return _sync_tool
 
 import asyncio
 
