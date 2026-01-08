@@ -14,7 +14,8 @@ class PlaywrightRendererTool:
         self.worker_script = os.path.join(self.base_path, "tiktok_slideshow_agent/tools/render_worker.py")
 
     async def _ensure_dir(self):
-        if not os.path.exists(self.output_dir):
+        exists = await asyncio.to_thread(os.path.exists, self.output_dir)
+        if not exists:
             await asyncio.to_thread(os.makedirs, self.output_dir)
 
     def _resolve_path(self, path: str) -> str:
@@ -22,9 +23,12 @@ class PlaywrightRendererTool:
         if path.startswith("/image_library/"):
             resolved = path.replace("/image_library/", self.image_library_path + "/")
             return resolved
+        elif path.startswith("image_library/"):
+            resolved = path.replace("image_library/", self.image_library_path + "/")
+            return resolved
         return path
 
-    async def render_slide(self, slide_data: dict, project_config: dict) -> str:
+    async def render_slide(self, slide_data: dict, project_config: dict, output_dir: str = None) -> str:
         """
         Generates HTML for the slide and captures a screenshot using a subprocess worker.
         Returns the path to the generated image.
@@ -32,7 +36,7 @@ class PlaywrightRendererTool:
         async with self._lock:
             try:
                 # 90s timeout for the subprocess
-                return await asyncio.wait_for(self._render_internal(slide_data, project_config), timeout=90.0)
+                return await asyncio.wait_for(self._render_internal(slide_data, project_config, output_dir), timeout=90.0)
             except asyncio.TimeoutError:
                 print(f"ERROR: [render_slide] Subprocess timed out after 90s for slide {slide_data.get('slide_number')}")
                 return f"Error: Rendering timed out for slide {slide_data.get('slide_number')}"
@@ -40,9 +44,13 @@ class PlaywrightRendererTool:
                 print(f"ERROR: [render_slide] failed: {str(e)}")
                 return f"Error: {str(e)}"
 
-    async def _render_internal(self, slide_data: dict, project_config: dict) -> str:
+    async def _render_internal(self, slide_data: dict, project_config: dict, output_dir: str = None) -> str:
         print(f"DEBUG: [render_slide] Starting subprocess render for slide {slide_data.get('slide_number')}")
-        await self._ensure_dir()
+        
+        target_dir = output_dir if output_dir else self.output_dir
+        exists = await asyncio.to_thread(os.path.exists, target_dir)
+        if not exists:
+            await asyncio.to_thread(os.makedirs, target_dir)
         
         # Resolve paths to absolute
         raw_image_path = slide_data["image_path"]
@@ -56,7 +64,7 @@ class PlaywrightRendererTool:
         }
         
         output_filename = f"slide_{slide_data['slide_number']}.png"
-        output_path = os.path.join(self.output_dir, output_filename)
+        output_path = os.path.join(target_dir, output_filename)
         
         # Launch subprocess
         print(f"DEBUG: [render_slide] Launching worker: {self.worker_script}")

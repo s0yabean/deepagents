@@ -32,7 +32,7 @@ from tiktok_slideshow_agent.prompts.specialists import (
 )
 
 # Import Tools
-from tiktok_slideshow_agent.tools.agent_tools import render_slide, save_locally, get_sync_tool
+from tiktok_slideshow_agent.tools.agent_tools import render_slide, save_locally, get_sync_tool, setup_project_folder
 
 # ==============================================================================
 # Specialist 1: Hook Agent
@@ -64,56 +64,67 @@ def get_visual_designer():
     
     return {
         "name": "visual-designer",
-        "description": "Selects images and renders the final slides.",
+        "description": "Selects images suitables for the reel from content library.",
         "system_prompt": DESIGNER_INSTRUCTIONS, # Use raw instructions
-        "tools": [render_slide, get_sync_tool()], # search_images removed in favor of filesystem tools and sync
+        "tools": [get_sync_tool()], # render_slide moved to Publisher
     }
 
 # ==============================================================================
 # Custom Google Drive Upload Tool
 # ==============================================================================
 @tool
-def upload_to_google_drive(file_paths: list[str], folder_id: str = "1HQv0qrW1AUlUs2PWM3cQ572NyqonpLks") -> str:
-    """Upload multiple files to Google Drive.
+def upload_to_google_drive(local_path: str, folder_id: str = "1HQv0qrW1AUlUs2PWM3cQ572NyqonpLks") -> str:
+    """Upload a file or an entire folder to Google Drive.
 
     Args:
-        file_paths: List of local paths to the files to upload
-        folder_id: Google Drive folder ID to upload to (defaults to TikTok Reels folder)
+        local_path: Absolute path to the file or folder to upload.
+        folder_id: Google Drive folder ID to upload to.
 
     Returns:
-        String with the status and shareable link to the folder
+        Status message with folder link.
     """
     from googleapiclient.discovery import build
     from googleapiclient.http import MediaFileUpload
+    import os
 
     try:
-        # Get credentials
         creds = get_google_credentials(
             scopes=["https://www.googleapis.com/auth/drive.file"],
             token_file="token_drive.json"
         )
-
         service = build('drive', 'v3', credentials=creds)
-        uploaded_files = []
 
-        for file_path in file_paths:
-            if not os.path.exists(file_path):
-                continue
-                
-            file_metadata = {'name': os.path.basename(file_path)}
-            if folder_id:
-                file_metadata['parents'] = [folder_id]
+        def upload_file(path, parent_id, name=None):
+            file_metadata = {'name': name or os.path.basename(path), 'parents': [parent_id]}
+            media = MediaFileUpload(path, resumable=True)
+            return service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
-            media = MediaFileUpload(file_path, resumable=True)
-            file_resp = service.files().create(
-                body=file_metadata,
-                media_body=media,
-                fields='id, webViewLink'
-            ).execute()
-            uploaded_files.append(file_resp.get('webViewLink'))
+        def upload_folder_recursive(local_dir, parent_id):
+            folder_metadata = {
+                'name': os.path.basename(local_dir),
+                'mimeType': 'application/vnd.google-apps.folder',
+                'parents': [parent_id]
+            }
+            drive_folder = service.files().create(body=folder_metadata, fields='id').execute()
+            drive_folder_id = drive_folder.get('id')
 
-        folder_link = f"https://drive.google.com/drive/folders/{folder_id}"
-        return f"Successfully uploaded {len(uploaded_files)} files. Folder Link: {folder_link}"
+            for item in os.listdir(local_dir):
+                item_path = os.path.join(local_dir, item)
+                if os.path.isdir(item_path):
+                    upload_folder_recursive(item_path, drive_folder_id)
+                else:
+                    upload_file(item_path, drive_folder_id)
+            return drive_folder_id
+
+        if os.path.isdir(local_path):
+            final_id = upload_folder_recursive(local_path, folder_id)
+            # If we uploaded the root project folder, the link is for that new folder
+            link = f"https://drive.google.com/drive/folders/{final_id}"
+        else:
+            upload_file(local_path, folder_id)
+            link = f"https://drive.google.com/drive/folders/{folder_id}"
+
+        return f"Successfully uploaded to Google Drive. Access link: {link}"
     except Exception as e:
         return f"Error uploading to Google Drive: {str(e)}"
 
@@ -121,7 +132,7 @@ def upload_to_google_drive(file_paths: list[str], folder_id: str = "1HQv0qrW1AUl
 # Specialist 4: Publisher
 # ==============================================================================
 def get_publisher():
-    """Initialize publisher with Gmail toolkit."""
+    """Initialize publisher with Gmail toolkit and Rendering tools."""
     try:
         # Initialize Gmail toolkit
         gmail_creds = get_google_credentials(
@@ -134,18 +145,18 @@ def get_publisher():
 
         return {
             "name": "publisher",
-            "description": "Uploads assets and logs the project.",
+            "description": "Sets up project, renders slides, and uploads everything.",
             "system_prompt": PUBLISHER_INSTRUCTIONS,
-            "tools": [save_locally, upload_to_google_drive] + gmail_tools,
+            "tools": [setup_project_folder, render_slide, save_locally, upload_to_google_drive] + gmail_tools,
         }
     except Exception as e:
         # Fallback if credentials not configured
         print(f"Warning: Could not initialize Google tools: {e}")
         return {
             "name": "publisher",
-            "description": "Uploads assets and logs the project.",
+            "description": "Sets up project, renders slides, and uploads everything.",
             "system_prompt": PUBLISHER_INSTRUCTIONS,
-            "tools": [save_locally],
+            "tools": [setup_project_folder, render_slide, save_locally, upload_to_google_drive],
         }
 
 # ==============================================================================
@@ -161,10 +172,29 @@ qa_specialist = {
 # ==============================================================================
 # Model Configuration
 # ==============================================================================
-load_dotenv()
+from tiktok_slideshow_agent.rotating_model import RotatingGeminiModel
 
-# Use Gemini 3 Flash Preview as requested
-model = ChatGoogleGenerativeAI(model="gemini-3-flash-preview", temperature=0.7)
+def get_google_api_keys() -> list:
+    """Get all available Google API keys from environment."""
+    keys = []
+    primary_key = os.getenv("GOOGLE_API_KEY")
+    if primary_key:
+        keys.append(primary_key)
+    
+    for i in range(2, 11): 
+        key = os.getenv(f"GOOGLE_API_KEY_{i}")
+        if key:
+            keys.append(key)
+    return keys
+
+api_keys = get_google_api_keys()
+
+# Use Gemini 2.5 Pro with Rotation support
+model = RotatingGeminiModel(
+    api_keys=api_keys,
+    model="gemini-2.5-pro",
+    temperature=0.7
+)
 
 
 # ==============================================================================
@@ -185,8 +215,8 @@ def get_backend(rt):
         }
     )
 
-# Check for Human-in-the-Loop config
-enable_human_review = os.getenv("ENABLE_HUMAN_REVIEW", "False").lower() == "true"
+# Check for Human-in-the-Loop config - Defaulting to True for user visibility
+enable_human_review = os.getenv("ENABLE_HUMAN_REVIEW", "True").lower() == "true"
 interrupt_points = {"publisher": {}} if enable_human_review else {}
 
 agent = create_deep_agent(

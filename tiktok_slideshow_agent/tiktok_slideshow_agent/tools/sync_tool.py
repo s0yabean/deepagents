@@ -64,12 +64,30 @@ def sync_image_library() -> str:
     
     # 3. Process Disk vs JSON
     
+    # 3. Process Disk vs JSON
+    
     # First, keep valid existing entries
     for item in data:
         fname = item.get('filename')
         if fname in files_on_disk:
-            # Update the absolute path to be sure (helper for designer)
-            item['absolute_path'] = files_on_disk[fname]
+            abs_path = files_on_disk[fname]
+            
+            # Determine path relative to project root
+            # parent_dir is 'minimalist_bright', 'cinematic_moody' etc.
+            parent_dir = os.path.basename(os.path.dirname(abs_path))
+            
+            if parent_dir == "image_library":
+                 rel_path = f"/image_library/{fname}"
+                 item['category'] = "uncategorized"
+                 item['visual_theme'] = "uncategorized"
+            else:
+                 rel_path = f"/image_library/{parent_dir}/{fname}"
+                 item['category'] = parent_dir
+                 item['visual_theme'] = parent_dir
+            
+            # Store VIRTUAL path (starting with /) for portability
+            item['absolute_path'] = rel_path 
+            
             new_data.append(item)
             # Remove from files_on_disk so we know it's handled
             del files_on_disk[fname]
@@ -83,17 +101,22 @@ def sync_image_library() -> str:
         parent_dir = os.path.basename(os.path.dirname(abs_path))
         if parent_dir == "image_library":
             category = "uncategorized"
+            visual_theme = "uncategorized"
+            rel_path = f"/image_library/{basename}"
         else:
             category = parent_dir
+            visual_theme = parent_dir
+            rel_path = f"/image_library/{parent_dir}/{basename}"
             
         new_entry = {
             "id": f"{category}_{basename.replace('.', '_')}", # simple ID gen
             "filename": basename,
             "category": category,
+            "visual_theme": visual_theme,
             "tags": ["new", category],
             "description": "Auto-discovered image.",
             "text_placement": "center",
-            "absolute_path": abs_path 
+            "absolute_path": rel_path 
         }
         new_data.append(new_entry)
         added_count += 1

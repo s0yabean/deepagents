@@ -33,7 +33,7 @@ class GoogleDriveTool:
                 dest_path = os.path.join(folder_id, os.path.basename(file_path))
                 if os.path.exists(dest_path):
                     os.remove(dest_path)
-                shutil.move(file_path, folder_id)
+                shutil.copy2(file_path, folder_id) # Use copy instead of move to preserve originals
         
         # Return a mock link
         folder_name = os.path.basename(folder_id)

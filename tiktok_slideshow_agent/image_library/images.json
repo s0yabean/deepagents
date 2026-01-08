@@ -17,7 +17,7 @@
         ],
         "description": "Close-up of a person holding a rolled-up yoga mat. Warm lighting, suggesting a gym or studio setting.",
         "text_placement": "center",
-        "absolute_path": "image_library/cinematic_moody/holding_yoga_mat.jpg",
+        "absolute_path": "/image_library/cinematic_moody/holding_yoga_mat.jpg",
         "visual_theme": "cinematic_moody"
     },
     {
@@ -38,7 +38,7 @@
         ],
         "description": "A woman dining on a rooftop restaurant at night with a stunning city skyline background.",
         "text_placement": "center",
-        "absolute_path": "image_library/cinematic_moody/night_city_dining.jpg",
+        "absolute_path": "/image_library/cinematic_moody/night_city_dining.jpg",
         "visual_theme": "cinematic_moody"
     },
     {
@@ -59,7 +59,7 @@
         ],
         "description": "A workspace scene in a coffee shop with a laptop, iced latte, and a handbag on a wooden table.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/coffee_shop_laptop_work.jpg",
+        "absolute_path": "/image_library/minimalist_bright/coffee_shop_laptop_work.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -80,7 +80,7 @@
         ],
         "description": "Close-up of two people shaking hands in a professional business setting. One wearing a starry shirt, the other a suit.",
         "text_placement": "center",
-        "absolute_path": "image_library/corporate_professional/business_handshake_closeup.jpg",
+        "absolute_path": "/image_library/corporate_professional/business_handshake_closeup.jpg",
         "visual_theme": "corporate_professional"
     },
     {
@@ -101,7 +101,7 @@
         ],
         "description": "A woman lying on a couch with a laptop and a candle nearby, creating a cozy and relaxing atmosphere.",
         "text_placement": "center",
-        "absolute_path": "image_library/cinematic_moody/cozy_couch_reading_laptop.jpg",
+        "absolute_path": "/image_library/cinematic_moody/cozy_couch_reading_laptop.jpg",
         "visual_theme": "cinematic_moody"
     },
     {
@@ -122,7 +122,7 @@
         ],
         "description": "Rear view of a blonde woman wearing a grey blazer, working intently on a laptop at an office desk.",
         "text_placement": "center",
-        "absolute_path": "image_library/corporate_professional/office_desk_blonde_working.jpg",
+        "absolute_path": "/image_library/corporate_professional/office_desk_blonde_working.jpg",
         "visual_theme": "corporate_professional"
     },
     {
@@ -143,7 +143,7 @@
         ],
         "description": "Close-up shot focusing on black stiletto heels and a matching luxury black handbag.",
         "text_placement": "center",
-        "absolute_path": "image_library/cinematic_moody/luxury_heels_and_handbag.jpg",
+        "absolute_path": "/image_library/cinematic_moody/luxury_heels_and_handbag.jpg",
         "visual_theme": "cinematic_moody"
     },
     {
@@ -164,7 +164,7 @@
         ],
         "description": "A spa setting showing a massage therapist pouring oil onto a client's back for a treatment.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/spa_massage_oil_treatment.jpg",
+        "absolute_path": "/image_library/minimalist_bright/spa_massage_oil_treatment.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -185,7 +185,7 @@
         ],
         "description": "Close-up of a woman applying a sheet mask to her face as part of a skincare routine.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/skincare_sheet_mask.jpg",
+        "absolute_path": "/image_library/minimalist_bright/skincare_sheet_mask.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -206,7 +206,7 @@
         ],
         "description": "A woman relaxing in an infinity pool overlooking a lush jungle during a beautiful sunset.",
         "text_placement": "center",
-        "absolute_path": "image_library/cinematic_moody/infinity_pool_jungle_sunset.jpg",
+        "absolute_path": "/image_library/cinematic_moody/infinity_pool_jungle_sunset.jpg",
         "visual_theme": "cinematic_moody"
     },
     {
@@ -227,7 +227,7 @@
         ],
         "description": "A woman touching her face while sitting at a bar counter with a drink. Dark, moody lighting.",
         "text_placement": "center",
-        "absolute_path": "image_library/cinematic_moody/night_bar_woman_drink.jpg",
+        "absolute_path": "/image_library/cinematic_moody/night_bar_woman_drink.jpg",
         "visual_theme": "cinematic_moody"
     },
     {
@@ -248,7 +248,7 @@
         ],
         "description": "Top-down view of someone working on a laptop in a cafe, wearing jeans and white heels.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/cafe_laptop_jeans_crossed.jpg",
+        "absolute_path": "/image_library/minimalist_bright/cafe_laptop_jeans_crossed.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -269,7 +269,7 @@
         ],
         "description": "A tastefully arranged flatlay of fashion accessories including a handbag, sunglasses, and jewelry on a beige background.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/luxury_accessories_flatlay.jpg",
+        "absolute_path": "/image_library/minimalist_bright/luxury_accessories_flatlay.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -290,7 +290,7 @@
         ],
         "description": "A desk setup featuring an open planner showing a February calendar, alongside an iced coffee.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/planner_calendar_coffee.jpg",
+        "absolute_path": "/image_library/minimalist_bright/planner_calendar_coffee.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -311,7 +311,7 @@
         ],
         "description": "A woman in a white dress standing on stage and speaking into a microphone to an audience.",
         "text_placement": "center",
-        "absolute_path": "image_library/corporate_professional/woman_speaking_on_stage.jpg",
+        "absolute_path": "/image_library/corporate_professional/woman_speaking_on_stage.jpg",
         "visual_theme": "corporate_professional"
     },
     {
@@ -332,7 +332,7 @@
         ],
         "description": "POV shot of someone holding a glass of green juice while reading a book about goal setting.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/reading_book_green_juice.jpg",
+        "absolute_path": "/image_library/minimalist_bright/reading_book_green_juice.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -353,7 +353,7 @@
         ],
         "description": "A woman in a bathroom with a towel on her head, doing her skincare routine in front of a mirror with candles nearby.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/bathroom_skincare_routine.jpg",
+        "absolute_path": "/image_library/minimalist_bright/bathroom_skincare_routine.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -374,7 +374,7 @@
         ],
         "description": "A person writing in a journal surrounded by healing crystals and lit candles.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/journaling_crystals_candle.jpg",
+        "absolute_path": "/image_library/minimalist_bright/journaling_crystals_candle.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -395,7 +395,7 @@
         ],
         "description": "A woman sitting alone at a bar with a drink, looking contemplative. Dark and moody atmosphere.",
         "text_placement": "center",
-        "absolute_path": "image_library/cinematic_moody/solo_bar_night_drink.jpg",
+        "absolute_path": "/image_library/cinematic_moody/solo_bar_night_drink.jpg",
         "visual_theme": "cinematic_moody"
     },
     {
@@ -416,7 +416,7 @@
         ],
         "description": "Top-down view of a cafe table with a latte with latte art and a black designer purse.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/cafe_table_purse_latte.jpg",
+        "absolute_path": "/image_library/minimalist_bright/cafe_table_purse_latte.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -437,7 +437,7 @@
         ],
         "description": "A person meditating in the lotus position with incense smoke swirling in the foreground.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/meditation_lotus_incense.jpg",
+        "absolute_path": "/image_library/minimalist_bright/meditation_lotus_incense.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -458,7 +458,7 @@
         ],
         "description": "Two women seated on stage chairs engaged in a panel discussion or interview.",
         "text_placement": "center",
-        "absolute_path": "image_library/corporate_professional/women_panel_discussion.jpg",
+        "absolute_path": "/image_library/corporate_professional/women_panel_discussion.jpg",
         "visual_theme": "corporate_professional"
     },
     {
@@ -479,7 +479,7 @@
         ],
         "description": "A woman lying on a light-colored couch reading a book, wearing a matching beige knit outfit.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/cozy_reading_knit_outfit.jpg",
+        "absolute_path": "/image_library/minimalist_bright/cozy_reading_knit_outfit.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -500,7 +500,7 @@
         ],
         "description": "A desk workspace cluttered with skincare products, a laptop, and candles.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/desk_skincare_products.jpg",
+        "absolute_path": "/image_library/minimalist_bright/desk_skincare_products.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -521,7 +521,7 @@
         ],
         "description": "A bright desk setup featuring a large vase of pink flowers, a coffee cup, and a pink notebook.",
         "text_placement": "center",
-        "absolute_path": "image_library/minimalist_bright/pink_flowers_desk_setup.jpg",
+        "absolute_path": "/image_library/minimalist_bright/pink_flowers_desk_setup.jpg",
         "visual_theme": "minimalist_bright"
     },
     {
@@ -542,7 +542,7 @@
         ],
         "description": "Close-up of a woman's legs crossed at the ankles, wearing chic black heels and black pants.",
         "text_placement": "center",
-        "absolute_path": "image_library/cinematic_moody/woman_black_heels_crossed.jpg",
+        "absolute_path": "/image_library/cinematic_moody/woman_black_heels_crossed.jpg",
         "visual_theme": "cinematic_moody"
     },
     {
@@ -563,7 +563,7 @@
         ],
         "description": "A person writing in a notebook at a table with a glass of white wine during a golden sunset.",
         "text_placement": "center",
-        "absolute_path": "image_library/cinematic_moody/writing_journal_sunset_wine.png",
+        "absolute_path": "/image_library/cinematic_moody/writing_journal_sunset_wine.png",
         "visual_theme": "cinematic_moody"
     },
     {
@@ -584,7 +584,7 @@
         ],
         "description": "A stylish woman wearing a white shirt and purple tie, pointing playfully at the camera while wearing sunglasses.",
         "text_placement": "center",
-        "absolute_path": "image_library/cinematic_moody/woman_white_shirt_tie.png",
+        "absolute_path": "/image_library/cinematic_moody/woman_white_shirt_tie.png",
         "visual_theme": "cinematic_moody"
     },
     {
@@ -605,7 +605,7 @@
         ],
         "description": "A raw, close-up photo of a woman crying in bed, looking visibly upset and emotional.",
         "text_placement": "center",
-        "absolute_path": "image_library/cinematic_moody/woman_crying_in_bed.jpg",
+        "absolute_path": "/image_library/cinematic_moody/woman_crying_in_bed.jpg",
         "visual_theme": "cinematic_moody"
     },
     {
@@ -626,7 +626,7 @@
         ],
         "description": "A happy couple posing at a high school reunion event, holding a photobooth strip.",
         "text_placement": "center",
-        "absolute_path": "image_library/corporate_professional/high_school_reunion_couple.jpg",
+        "absolute_path": "/image_library/corporate_professional/high_school_reunion_couple.jpg",
         "visual_theme": "corporate_professional"
     },
     {
@@ -647,7 +647,7 @@
         ],
         "description": "A surreal painting depicting a dark shadow figure and a black cat crying into a sink.",
         "text_placement": "center",
-        "absolute_path": "image_library/art_surreal/surreal_art_crying_shadow.jpg",
+        "absolute_path": "/image_library/art_surreal/surreal_art_crying_shadow.jpg",
         "visual_theme": "art_surreal"
     },
     {
@@ -668,7 +668,7 @@
         ],
         "description": "A surreal painting of a black skeleton embracing a blue figure made of clouds.",
         "text_placement": "center",
-        "absolute_path": "image_library/art_surreal/surreal_art_skeleton_hug.jpg",
+        "absolute_path": "/image_library/art_surreal/surreal_art_skeleton_hug.jpg",
         "visual_theme": "art_surreal"
     },
     {
@@ -689,7 +689,7 @@
         ],
         "description": "An illustration of a cute, smiling yellow star character floating in space.",
         "text_placement": "center",
-        "absolute_path": "image_library/art_surreal/cute_star_character_space.jpg",
+        "absolute_path": "/image_library/art_surreal/cute_star_character_space.jpg",
         "visual_theme": "art_surreal"
     },
     {
@@ -710,7 +710,7 @@
         ],
         "description": "A surreal painting of a skull with palm trees growing out of it somewhat, set against an orange sky.",
         "text_placement": "center",
-        "absolute_path": "image_library/art_surreal/surreal_skull_palm_trees_orange.jpg",
+        "absolute_path": "/image_library/art_surreal/surreal_skull_palm_trees_orange.jpg",
         "visual_theme": "art_surreal"
     },
     {
@@ -731,7 +731,7 @@
         ],
         "description": "Variant of the skull and palm trees painting, but with a calm blue background.",
         "text_placement": "center",
-        "absolute_path": "image_library/art_surreal/surreal_skull_palm_trees_blue.jpg",
+        "absolute_path": "/image_library/art_surreal/surreal_skull_palm_trees_blue.jpg",
         "visual_theme": "art_surreal"
     }
 ]

@@ -48,13 +48,14 @@ def get_sync_tool():
 import asyncio
 
 @tool
-async def render_slide(text: str, image_path: str, slide_number: int) -> str:
+async def render_slide(text: str, image_path: str, slide_number: int, output_dir: str = None) -> str:
     """Render a slide with text and image, returning the output path.
     
     Args:
         text: The overlay text for the slide.
         image_path: The absolute path to the background image.
         slide_number: The sequence number of the slide.
+        output_dir: Optional absolute path to the directory where the slide should be saved.
     """
     slide_data = {
         "text": text,
@@ -65,21 +66,53 @@ async def render_slide(text: str, image_path: str, slide_number: int) -> str:
     config = {"font_style": "Montserrat"} 
     
     # Run async renderer
-    return await get_renderer().render_slide(slide_data, config)
+    return await get_renderer().render_slide(slide_data, config, output_dir=output_dir)
 
 @tool
-async def save_locally(project_id: str, topic: str, slides: str) -> str:
-    """Save slides locally and record in the Knowledge Base.
+async def setup_project_folder(topic: str) -> dict:
+    """Creates a timestamped project folder and standardized subfolders.
     
-    Args:
-        project_id: Unique identifier for the project.
-        topic: The main topic of the slideshow.
-        slides: A JSON string representing a list of slide objects. 
-                Each object should have 'text' and 'image_path'.
+    Returns:
+        A dictionary containing absolute paths:
+        - project_root: The root folder (DDMMYYYY_HHMM_topic)
+        - slideshows_dir: Subfolder for rendered images.
+        - metadata_dir: Subfolder for metadata.json.
     """
     import datetime
     import re
     
+    now = datetime.datetime.now()
+    timestamp = now.strftime("%d%m%Y_%H%M")
+    
+    # Increase descriptiveness: Target 15-40 chars for the topic portion
+    clean_topic = re.sub(r'[^a-zA-Z0-0\s]', '', topic)
+    reel_name = clean_topic.replace(' ', '_').lower().strip()
+    # Take a healthy slice to ensure descriptiveness without hitting OS path limits
+    reel_name = reel_name[:40] 
+    
+    root_folder_name = f"{timestamp}_{reel_name}"
+    root_folder_path = await asyncio.to_thread(get_drive().create_folder, root_folder_name)
+    
+    slideshows_dir = await asyncio.to_thread(get_drive().create_folder, os.path.join(root_folder_name, "slideshows"))
+    metadata_dir = await asyncio.to_thread(get_drive().create_folder, os.path.join(root_folder_name, "metadata"))
+    
+    return {
+        "project_root": root_folder_path,
+        "slideshows_dir": slideshows_dir,
+        "metadata_dir": metadata_dir,
+        "folder_name": root_folder_name
+    }
+
+@tool
+async def save_locally(project_id: str, topic: str, slides: str, metadata_dir: str) -> str:
+    """Save metadata locally and record in the Knowledge Base.
+    
+    Args:
+        project_id: Unique identifier for the project.
+        topic: The main topic of the slideshow.
+        slides: A JSON string representing a list of slide objects.
+        metadata_dir: The absolute path to the project's metadata directory.
+    """
     try:
         if isinstance(slides, list):
             slides_data = slides
@@ -88,34 +121,17 @@ async def save_locally(project_id: str, topic: str, slides: str) -> str:
     except json.JSONDecodeError:
         return "Error: 'slides' argument must be a valid JSON string representing a list of slides."
 
-    # 1. Format folder name: DDMMYYYY_HHMM_topic
-    now = datetime.datetime.now()
-    timestamp = now.strftime("%d%m%Y_%H%M")
-    
-    # Clean and truncate topic
-    clean_topic = re.sub(r'[^a-zA-Z0-0\s]', '', topic)
-    reel_name = clean_topic.replace(' ', '_').lower()[:12]
-    
-    root_folder_name = f"{timestamp}_{reel_name}"
-    root_folder_path = await asyncio.to_thread(get_drive().create_folder, root_folder_name)
-    
-    # 2. Create standardized subfolders
-    slideshows_folder = await asyncio.to_thread(get_drive().create_folder, os.path.join(root_folder_name, "slideshows"))
-    metadata_folder = await asyncio.to_thread(get_drive().create_folder, os.path.join(root_folder_name, "metadata"))
-    
-    # 3. Save metadata.json for reproducibility
-    metadata_path = os.path.join(metadata_folder, "metadata.json")
-    def save_metadata():
+    # 1. Save metadata.json for reproducibility
+    metadata_path = os.path.join(metadata_dir, "metadata.json")
+    def save_metadata_sync():
         with open(metadata_path, "w", encoding="utf-8") as f:
             json.dump(slides_data, f, indent=4)
     
-    await asyncio.to_thread(save_metadata)
+    await asyncio.to_thread(save_metadata_sync)
     
-    # 4. Move rendered images to the local 'slideshows' folder
-    image_files = [s.get("image_path") for s in slides_data if s.get("image_path")]
-    local_path = await asyncio.to_thread(get_drive().upload_files, image_files, slideshows_folder)
+    # 2. Save to KB (historical record)
+    # local_path here is used for KB reference, use metadata_dir or project_root
+    project_root = os.path.dirname(metadata_dir)
+    await asyncio.to_thread(get_kb().save_slideshow, project_id, topic, slides_data, project_root)
     
-    # 5. Save to KB (historical record)
-    await asyncio.to_thread(get_kb().save_slideshow, project_id, topic, slides_data, local_path)
-    
-    return f"Slideshow saved locally to: {root_folder_path}"
+    return f"Metadata and KB record saved to: {project_root}"

@@ -332,5 +332,175 @@
       }
     ],
     "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-slideshows"
+  },
+  {
+    "id": "ce975150-7165-4423-9dfc-ee02a56d104d",
+    "project_id": "AFFIRMATIONS_SLIDESHOW_01",
+    "topic": "Affirmations and their Benefits",
+    "created_at": "2026-01-07T10:59:03.683360",
+    "slide_count": 5,
+    "slides": [
+      {
+        "text": "Your brain is lying. \ud83e\udde0 Words reshape your neural pathways. Stop the loop. Start the rewrite.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "text": "Neuroplasticity is real. \u26a1\ufe0f Your thoughts are blueprints. Affirmations are training, not magic.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      },
+      {
+        "text": "I swapped 'I can't' for 'I am.' 10 minutes every morning. Consistency rewires your default mode.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_3.png"
+      },
+      {
+        "text": "Lower cortisol. Higher focus. \ud83d\udcc8 Self-belief becomes your new baseline. The mental fog finally clears.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_4.png"
+      },
+      {
+        "text": "Ready to rewrite your story? \u270d\ufe0f Comment 'REWIRE' for my top 5 affirmations. Follow for more mindset shifts.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_5.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-slideshows"
+  },
+  {
+    "id": "43aa5033-7df8-489b-91ae-ca5818ad8de9",
+    "project_id": "affirmations_slideshow_01",
+    "topic": "Affirmations and their Benefits",
+    "created_at": "2026-01-07T11:36:04.636872",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "You've been told affirmations are silly. The science says otherwise.",
+        "image_path": "/image_library/minimalist_bright/journaling_crystals_candle.jpg"
+      },
+      {
+        "slide": 2,
+        "text": "They physically change your brain, boosting neural pathways for positivity.",
+        "image_path": "/image_library/minimalist_bright/reading_book_green_juice.jpg"
+      },
+      {
+        "slide": 3,
+        "text": "This simple practice can reduce stress and increase problem-solving skills.",
+        "image_path": "/image_library/minimalist_bright/meditation_lotus_incense.jpg"
+      },
+      {
+        "slide": 4,
+        "text": "Ready to rewire your mindset? Start your journey with the Sayura app.",
+        "image_path": "/image_library/minimalist_bright/planner_calendar_coffee.jpg"
+      },
+      {
+        "slide": 5,
+        "text": "Download today to unlock your potential.",
+        "image_path": "/image_library/minimalist_bright/journaling_crystals_candle.jpg"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-slideshows"
+  },
+  {
+    "id": "15d8e1fc-bb40-48ac-aafd-1c622dc529ce",
+    "project_id": "affirmations-and-their-benefits",
+    "topic": "Affirmations and their benefits",
+    "created_at": "2026-01-07T12:04:49.830966",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "Your brain is lying. It tells you stories. Here's how to rewrite them.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "slide": 2,
+        "text": "These stories become your reality. \"I'm not good enough.\" \"I'll never succeed.\"",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      },
+      {
+        "slide": 3,
+        "text": "You can challenge these narratives. Start by choosing a new story. This is an affirmation.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_3.png"
+      },
+      {
+        "slide": 4,
+        "text": "The Sayura app helps you do this. Create and practice your new story.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_4.png"
+      },
+      {
+        "slide": 5,
+        "text": "Download now. Start rewriting your story today.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_5.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-slideshows"
+  },
+  {
+    "id": "39db3066-914b-4dcc-9063-42a2dd156367",
+    "project_id": "affirmations-and-their-benefits",
+    "topic": "Affirmations and their benefits",
+    "created_at": "2026-01-07T12:05:52.033072",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "Your brain is lying. It tells you stories. Here's how to rewrite them.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_1.png"
+      },
+      {
+        "slide": 2,
+        "text": "These stories become your reality. \"I'm not good enough.\" \"I'll never succeed.\"",
+        "image__path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_2.png"
+      },
+      {
+        "slide": 3,
+        "text": "You can challenge these narratives. Start by choosing a new story. This is an affirmation.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_3.png"
+      },
+      {
+        "slide": 4,
+        "text": "The Sayura app helps you do this. Create and practice your new story.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_4.png"
+      },
+      {
+        "slide": 5,
+        "text": "Download now. Start rewriting your story today.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/slide_5.png"
+      }
+    ],
+    "drive_folder_link": "https://drive.google.com/drive/folders/mock-id-slideshows"
+  },
+  {
+    "id": "7d4ac61d-ab02-4052-bbcf-ef2cdf9f7b17",
+    "project_id": "07012026_2018_the_power_of_daily_affirmations_and_thei",
+    "topic": "The power of daily affirmations and their benefits",
+    "created_at": "2026-01-07T12:19:06.916831",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "Most affirmations are useless. Here's how to make them actually work.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/07012026_2018_the_power_of_daily_affirmations_and_thei/slideshows/slide_1.png"
+      },
+      {
+        "slide": 2,
+        "text": "Your brain rejects what it doesn\u2019t believe. It\u2019s called cognitive dissonance.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/07012026_2018_the_power_of_daily_affirmations_and_thei/slideshows/slide_2.png"
+      },
+      {
+        "slide": 3,
+        "text": "Instead, try this: \u201cI am in the process of becoming\u2026\u201d",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/07012026_2018_the_power_of_daily_affirmations_and_thei/slideshows/slide_3.png"
+      },
+      {
+        "slide": 4,
+        "text": "This simple change makes your goals feel achievable. Practice it on the Sayura app.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/07012026_2018_the_power_of_daily_affirmations_and_thei/slideshows/slide_4.png"
+      },
+      {
+        "slide": 5,
+        "text": "Download now to rewire your mind.",
+        "image_path": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/07012026_2018_the_power_of_daily_affirmations_and_thei/slideshows/slide_5.png"
+      }
+    ],
+    "drive_folder_link": "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/output/07012026_2018_the_power_of_daily_affirmations_and_thei"
   }
 ]
