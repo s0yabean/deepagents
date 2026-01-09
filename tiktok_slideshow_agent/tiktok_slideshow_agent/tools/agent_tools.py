@@ -109,8 +109,10 @@ async def setup_project_folder(topic: str) -> dict:
     await asyncio.to_thread(os.makedirs, local_metadata_dir, exist_ok=True)
     
     # 2. Drive Creation (Target Folder ID specified by user)
-    # Target ID: 1HQv0qrW1AUlUs2PWM3cQ572NyqonpLks
-    TARGET_DRIVE_PARENT_ID = "1HQv0qrW1AUlUs2PWM3cQ572NyqonpLks"
+    # Target ID: Configured in .env (GOOGLE_DRIVE_PARENT_ID)
+    TARGET_DRIVE_PARENT_ID = os.getenv("GOOGLE_DRIVE_PARENT_ID")
+    if not TARGET_DRIVE_PARENT_ID:
+        return {"error": "GOOGLE_DRIVE_PARENT_ID not set in .env"}
     
     root_folder_id = await get_drive().create_folder(root_folder_name, parent_id=TARGET_DRIVE_PARENT_ID)
     
@@ -177,12 +179,31 @@ async def send_email_notification(subject: str, content: str, to_email: str = No
     Args:
         subject: The email subject line.
         content: The body text of the email.
-        to_email: The recipient's email address. Defaults to RECIPIENT_NOTIFICATION env var.
+        to_email: Optional additional recipient. The system ALWAYS sends to RECIPIENT_NOTIFICATION in .env.
     """
-    if to_email is None:
-        to_email = os.getenv("RECIPIENT_NOTIFICATION")
+    recipients = []
     
-    if not to_email:
-        return "Error: No recipient email provided."
+    # 1. Always include the admin email from .env
+    env_email = os.getenv("RECIPIENT_NOTIFICATION")
+    if env_email:
+        recipients.append(env_email)
         
-    return await get_drive().send_email(to_email, subject, content)
+    # 2. Include agent-specified email if provided and different
+    if to_email and to_email.strip() and to_email != env_email:
+        recipients.append(to_email)
+    
+    if not recipients:
+        return "Error: No recipient email provided in .env or arguments."
+        
+    # Send to all recipients
+    results = []
+    for recipient in recipients:
+        try:
+            # We treat subject slightly differently to avoid threading issues if desired, 
+            # but usually same subject is fine.
+            res = await get_drive().send_email(recipient, subject, content)
+            results.append(f"Sent to {recipient}: {res}")
+        except Exception as e:
+            results.append(f"Failed to send to {recipient}: {str(e)}")
+            
+    return "\n".join(results)

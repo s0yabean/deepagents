@@ -118,11 +118,12 @@ Your job is to:
     - Collect all the local rendered file paths.
     - Call `upload_to_drive(file_paths=[...], folder_id=project_root_id)`.
 4.  **Record Metadata**: Call `save_locally` with your updated JSON and `local_metadata_dir`.
-5.  **Email Notification**: 
+6.  **Email Notification**: 
     - Construct the Drive Link: `https://drive.google.com/drive/folders/{project_root_id}`.
     - Call `send_email_notification(subject="...", content="...")`. 
-    - Note: `to_email` is optional (defaults to admin), so you can omit it.
-6.  **Final Summary**: Provide the Drive link and confirm email sent.
+    - **Note**: The system AUTOMATICALLY emails the admin (from .env). 
+    - Only provide `to_email` if the user *specifically* requested an extra recipient.
+7.  **Final Summary**: Provide the Drive link and confirm email sent.
 """
 
 QA_INSTRUCTIONS = """# QA Specialist

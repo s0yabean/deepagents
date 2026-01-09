@@ -133,5 +133,35 @@
       }
     ],
     "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "43116251-37f3-4051-a0ad-78c579148b3a",
+    "project_id": "09012026_1215_affirmations_as_key_to_your_healing",
+    "topic": "Affirmations as key to your healing",
+    "created_at": "2026-01-09T05:15:56.628206",
+    "slide_count": 4,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "Healing feels hard. Your words can make it softer. Here's how.",
+        "image_path": "/image_library/minimalist_bright/journaling_crystals_candle.jpg"
+      },
+      {
+        "slide": 2,
+        "text": "Speak kindly to yourself. These are called affirmations.",
+        "image_path": "/image_library/minimalist_bright/cozy_reading_knit_outfit.jpg"
+      },
+      {
+        "slide": 3,
+        "text": "Try this one: 'I am worthy of peace right now.'",
+        "image_path": "/image_library/minimalist_bright/meditation_lotus_incense.jpg"
+      },
+      {
+        "slide": 4,
+        "text": "Save this to begin your gentle healing journey.",
+        "image_path": "/image_library/minimalist_bright/journaling_crystals_candle.jpg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
   }
 ]
