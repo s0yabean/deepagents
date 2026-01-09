@@ -140,6 +140,7 @@ Follow the Brief's `product_position`:
 
 Follow the Brief's `cta_style`:
 
+- **effortless_plug**: "Link in bio (if you want)", "Anyway, just thought I'd share". The plug must feel completely incidental or pivot to a peer-level recommendation of an unrelated item.
 - **engagement_first**: "Save this", "What's your experience?", "Comment below"
 - **soft_follow**: "Follow for more", "Part 2 on my page"
 - **direct_action**: Only use if Brief specifically says so
@@ -224,14 +225,28 @@ Given image_arc: `["moody", "moody", "transitional", "bright", "bright"]`
 ## Selection Policy
 1.  **Local First**: Check `images.json`. If a good match exists, use it.
 2.  **Pexels Fallback**: If no local image fits the vibe, use `search_pexels(query)`.
-    - **Query Strategy**: To avoid text in the image (since we overlay text), append terms like "background", "minimalist", "nature", "texture", or "abstract" to your query.
+    - **Query Strategy**: 
+      - **Slide 1 (Hook)**: Can feature people/faces to stop the scroll.
+      - **Slides 2+**: **MUST be background-focused**. Append "no people", "texture", "scenery", "object", or "abstract" to your query.
+      - **Reason**: Different people in different slides breaks the story. We want a consistent "POV" feel, not a cast of random stock actors.
     - **E.g.**: Instead of just "office", search "office background minimalist".
 3.  **Asset Scarcity Protocol**:
     - If needed, reuse high-impact images for Hook/CTA consistency.
 
+4.  **Self-Correction (MANDATORY)**:
+    - Once you have a candidate list of images, call `verify_visual_consistency(image_paths=[...], style_description="...", creative_context="Topic + intended creative direction")`.
+    - If the tool reports low consistency (< 7/10) or outliers, YOU MUST REPLACE THEM using the **"Smart Selection"** process:
+      1. Search for 3 candidates: `search_pexels(query="...", per_page=3)`
+      2. Identify reference images: Collect the paths of your other selected images (the ones that are NOT outliers).
+      3. Select the best one: `select_best_fitting_image(candidate_urls=[...], creative_context="...", slide_need="...", context_image_paths=[...])`
+      4. Use the `best_url` returned.
+    - Run the check again if you make major changes.
+
 ## Tools
 - `sync_image_library`: Scan local library. Run FIRST.
 - `search_pexels`: Search online if local assets are missing.
+- `verify_visual_consistency`: Check if your selected images look good together.
+- `select_best_fitting_image`: Pick the best image from a list of candidates.
 """
 
 PUBLISHER_INSTRUCTIONS = """# Publisher
@@ -331,5 +346,6 @@ If compliance passes, evaluate:
      - "Hook Image: [Path/Description of Slide 1 Image]"
      - "Product Plug: Slide [N] - [Brief context]"
   2. Wait for human review.
-  3. If tool returns success, return `{"status": "APPROVE"}`.
+  3. If tool returns "Human approved", return `{"status": "APPROVE"}`.
+  4. If tool returns "Human Feedback: ...", read the feedback and return `{"status": "REJECT", "feedback": "Human Request: [feedback]", "target": "visual-designer"}` (or whichever specialist is relevant to the request).
 """

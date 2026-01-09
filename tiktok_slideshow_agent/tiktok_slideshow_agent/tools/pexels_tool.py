@@ -29,7 +29,7 @@ def search_pexels(query: str, per_page: int = 2) -> str:
         return json.dumps({"error": "PEXELS_API_KEY not found in environment settings."})
 
     # Strict limits to respect rate limiting (200/hour)
-    limit = min(per_page, 5)
+    limit = min(per_page, 15)
     
     # Force portrait (9:16 aspect ratio roughly)
     params = {

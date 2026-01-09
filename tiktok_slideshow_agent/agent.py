@@ -76,6 +76,8 @@ content_strategist = {
     "tools": [], # Pure LLM task
 }
 
+from tiktok_slideshow_agent.tools.vision_tool import verify_visual_consistency, select_best_fitting_image
+
 # ==============================================================================
 # Specialist 3: Visual Designer
 # ==============================================================================
@@ -88,7 +90,7 @@ def get_visual_designer():
         "name": "visual-designer",
         "description": "Selects images suitables for the reel from content library.",
         "system_prompt": DESIGNER_INSTRUCTIONS, # Use raw instructions
-        "tools": [get_sync_tool(), search_pexels], # render_slide moved to Publisher
+        "tools": [get_sync_tool(), search_pexels, verify_visual_consistency, select_best_fitting_image], # render_slide moved to Publisher
     }
 
 
@@ -157,7 +159,8 @@ api_keys = get_google_api_keys()
 model = RotatingGeminiModel(
     api_keys=api_keys,
     model="gemini-2.5-pro",
-    temperature=0.7
+    temperature=0.7,
+    max_function_calls=25  # Increased from default 10 to allow comprehensive search & checking loops
 )
 
 

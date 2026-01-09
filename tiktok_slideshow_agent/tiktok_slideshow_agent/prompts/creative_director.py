@@ -71,8 +71,8 @@ Return a JSON object with this structure:
   "product_position": "incidental",
   "product_mention_guidance": "Mention in slide 3 as 'by the way, what helped was...'",
   "image_arc": ["moody", "moody", "transitional", "bright", "bright"],
-  "cta_style": "engagement-first",
-  "cta_examples": ["Save this for later", "What's your story?"],
+  "cta_style": "effortless_plug",
+  "cta_examples": ["Link in bio (if you want)", "Also linked my favorite [unrelated_item]"],
   "reference_hooks": [
     "I was skeptical until I tried it for 30 days",
     "Nobody warned me this would happen"

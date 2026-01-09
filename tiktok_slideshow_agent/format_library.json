@@ -2,7 +2,6 @@
   "version": "1.0",
   "last_updated": "2026-01-09",
   "description": "Proven TikTok slideshow formats with structures, hooks, and best practices. Used by Creative Director agent to select optimal format for each project.",
-  
   "formats": [
     {
       "id": "transformation-story",
@@ -54,7 +53,14 @@
       ],
       "product_position": "incidental",
       "product_position_guidance": "Mention product in slide 4 as part of the discovery, framed as 'by the way, this helped' or 'I found this'. Never lead with product.",
-      "image_arc": ["moody/tension", "moody/tension", "transitional", "bright/hopeful", "bright/aspirational", "bright/aspirational"],
+      "image_arc": [
+        "moody/tension",
+        "moody/tension",
+        "transitional",
+        "bright/hopeful",
+        "bright/aspirational",
+        "bright/aspirational"
+      ],
       "example_hooks": [
         "I was skeptical until I tried it for 30 days",
         "Nobody warned me this would happen",
@@ -69,9 +75,13 @@
         "Generic CTAs like 'Download now'",
         "Explaining the product before showing the journey"
       ],
-      "psychological_triggers": ["relatability", "hope", "curiosity", "transformation"]
+      "psychological_triggers": [
+        "relatability",
+        "hope",
+        "curiosity",
+        "transformation"
+      ]
     },
-
     {
       "id": "myth-busting",
       "name": "Myth-Busting / Contrarian",
@@ -116,7 +126,13 @@
       ],
       "product_position": "authority",
       "product_position_guidance": "Position product as 'the solution' after exposing the problem. Product represents 'what actually works'.",
-      "image_arc": ["bold/attention-grabbing", "neutral", "transitional", "bright/confident", "bright/confident"],
+      "image_arc": [
+        "bold/attention-grabbing",
+        "neutral",
+        "transitional",
+        "bright/confident",
+        "bright/confident"
+      ],
       "example_hooks": [
         "Everything you know about productivity is wrong...",
         "The worst advice that everyone follows...",
@@ -130,9 +146,13 @@
         "Attacking people (attack ideas instead)",
         "Overpromising on the 'truth'"
       ],
-      "psychological_triggers": ["cognitive_dissonance", "curiosity", "insider_knowledge", "authority"]
+      "psychological_triggers": [
+        "cognitive_dissonance",
+        "curiosity",
+        "insider_knowledge",
+        "authority"
+      ]
     },
-
     {
       "id": "listicle",
       "name": "Listicle / Tips",
@@ -177,7 +197,13 @@
       ],
       "product_position": "embedded",
       "product_position_guidance": "Product can be one of the tips, or the tool that enables one of the tips. Frame as 'One thing that helps with this is...'",
-      "image_arc": ["bold", "consistent", "consistent", "consistent", "consistent"],
+      "image_arc": [
+        "bold",
+        "consistent",
+        "consistent",
+        "consistent",
+        "consistent"
+      ],
       "example_hooks": [
         "7 signs you're about to be successful (most people miss #5)",
         "I tried 15 morning routines. Here are the only 3 that worked...",
@@ -190,9 +216,13 @@
         "Generic tips without specificity",
         "All items being product-focused"
       ],
-      "psychological_triggers": ["curiosity", "completion", "value", "saveability"]
+      "psychological_triggers": [
+        "curiosity",
+        "completion",
+        "value",
+        "saveability"
+      ]
     },
-
     {
       "id": "pov-scenario",
       "name": "POV / Scenario",
@@ -231,7 +261,12 @@
       ],
       "product_position": "solution",
       "product_position_guidance": "Product appears as the natural solution to the relatable scenario. 'POV: you finally found [product category]' or product solves the scenario's problem.",
-      "image_arc": ["lifestyle/relatable", "lifestyle/relatable", "bright/satisfied", "bright/satisfied"],
+      "image_arc": [
+        "lifestyle/relatable",
+        "lifestyle/relatable",
+        "bright/satisfied",
+        "bright/satisfied"
+      ],
       "example_hooks": [
         "POV: you figured out how to not pay a fortune for drinks at festivals",
         "POV: You don't feel like cooking, but still want a home-cooked meal",
@@ -244,9 +279,13 @@
         "Forcing product into unnatural scenarios",
         "Losing the relatable humor"
       ],
-      "psychological_triggers": ["relatability", "humor", "shared_experience", "aspiration"]
+      "psychological_triggers": [
+        "relatability",
+        "humor",
+        "shared_experience",
+        "aspiration"
+      ]
     },
-
     {
       "id": "secret-insider",
       "name": "Secret / Insider Knowledge",
@@ -291,7 +330,13 @@
       ],
       "product_position": "enabler",
       "product_position_guidance": "Product is what allows you to apply the secret knowledge. 'The tool I use for this is...' or 'This is why I started using...'",
-      "image_arc": ["mysterious/intriguing", "mysterious", "bright/reveal", "bright/actionable", "bright/actionable"],
+      "image_arc": [
+        "mysterious/intriguing",
+        "mysterious",
+        "bright/reveal",
+        "bright/actionable",
+        "bright/actionable"
+      ],
       "example_hooks": [
         "What rich people know that you don't...",
         "The algorithm change TikTok doesn't want you to know...",
@@ -304,9 +349,13 @@
         "Making up 'secrets' that aren't true",
         "Being too sensational"
       ],
-      "psychological_triggers": ["fomo", "curiosity", "exclusivity", "insider_status"]
+      "psychological_triggers": [
+        "fomo",
+        "curiosity",
+        "exclusivity",
+        "insider_status"
+      ]
     },
-
     {
       "id": "before-after",
       "name": "Before / After",
@@ -351,7 +400,13 @@
       ],
       "product_position": "direct",
       "product_position_guidance": "Product is the catalyst for transformation. Can be more direct since proof is visual. 'This is what [product] did for me'.",
-      "image_arc": ["attention-grabbing", "problem/before", "transitional", "aspirational/after", "aspirational/after"],
+      "image_arc": [
+        "attention-grabbing",
+        "problem/before",
+        "transitional",
+        "aspirational/after",
+        "aspirational/after"
+      ],
       "example_hooks": [
         "3 years of back progress in 30 seconds",
         "What 60 days of [X] did to my [Y]",
@@ -363,9 +418,13 @@
         "Too much text overshadowing visuals",
         "Unrealistic transformation claims"
       ],
-      "psychological_triggers": ["visual_proof", "aspiration", "transformation", "hope"]
+      "psychological_triggers": [
+        "visual_proof",
+        "aspiration",
+        "transformation",
+        "hope"
+      ]
     },
-
     {
       "id": "problem-solution",
       "name": "Problem-Solution",
@@ -410,7 +469,13 @@
       ],
       "product_position": "solution",
       "product_position_guidance": "Product IS the solution or a key part of it. More direct positioning is acceptable because you've established the problem first.",
-      "image_arc": ["attention-grabbing", "problem/tension", "transitional", "solution/bright", "solution/bright"],
+      "image_arc": [
+        "attention-grabbing",
+        "problem/tension",
+        "transitional",
+        "solution/bright",
+        "solution/bright"
+      ],
       "example_hooks": [
         "If you're struggling to get followers, here's what you're doing wrong...",
         "Still getting rejected? These 3 changes will fix that...",
@@ -423,10 +488,14 @@
         "Jumping to solution too fast",
         "Generic problems that don't resonate"
       ],
-      "psychological_triggers": ["pain_point", "relief", "hope", "solution_seeking"]
+      "psychological_triggers": [
+        "pain_point",
+        "relief",
+        "hope",
+        "solution_seeking"
+      ]
     }
   ],
-
   "hook_formulas": {
     "description": "Universal hook formulas that work across formats",
     "formulas": [
@@ -467,10 +536,20 @@
       }
     ]
   },
-
   "cta_styles": {
     "description": "Call-to-action approaches ranked by engagement potential",
     "styles": [
+      {
+        "type": "effortless_plug",
+        "description": "The gold standard. Product is mentioned casually or pivot to unrelated authentic item. Zero sales pressure.",
+        "examples": [
+          "Link in bio (if you want)",
+          "Anyway, just thought I'd share",
+          "My favorite [unrelated item] is linked too",
+          "Check it out if you're curious"
+        ],
+        "when_to_use": "Default for viral hooks. Makes the ad feel like a friend's recommendation."
+      },
       {
         "type": "engagement_first",
         "description": "Prioritizes saves, comments, shares over direct conversion",
@@ -481,7 +560,7 @@
           "Share this with a friend going through it",
           "Which one resonated with you?"
         ],
-        "when_to_use": "Default for awareness content. Builds algorithm favor and organic reach."
+        "when_to_use": "Good for awareness content. Builds algorithm favor and organic reach."
       },
       {
         "type": "soft_follow",
@@ -506,7 +585,6 @@
       }
     ]
   },
-
   "image_arc_definitions": {
     "moody": "Dark, cinematic, tension-building. Use for problem/struggle slides.",
     "transitional": "Neutral, bridge between moody and bright. The turning point.",
@@ -516,7 +594,6 @@
     "mysterious": "Intriguing, shadowy. Use for secret/insider content.",
     "consistent": "Same visual style throughout. Use for listicles."
   },
-
   "product_positioning_guide": {
     "incidental": {
       "description": "Product is mentioned as a 'by the way' discovery",
@@ -565,7 +642,6 @@
       "slide_position": "Throughout, but backed by proof"
     }
   },
-
   "universal_principles": [
     "First slide is everything - you have 3 seconds to stop the scroll",
     "Entertainment value > promotional value. TikTok is not an ad platform.",
