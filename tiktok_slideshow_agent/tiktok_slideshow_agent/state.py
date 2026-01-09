@@ -64,6 +64,7 @@ class AgentState(TypedDict):
     tone: str
     font_style: str
     require_human_review: bool
+    user_requirements: List[str]
     
     # Working Memory
     generated_hooks: List[str]

@@ -14,7 +14,9 @@ dependencies = [
     "google-api-python-client==2.187.0",
     "google-auth-httplib2==0.3.0",
     "google-auth-oauthlib",
-    "deepagents==0.2.5"
+    "deepagents==0.2.5",
+    "langchain-tavily",
+    "httpx"
 ]
 
 requires-python = ">=3.11"

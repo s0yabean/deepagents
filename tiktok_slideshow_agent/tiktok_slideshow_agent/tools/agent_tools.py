@@ -1,12 +1,21 @@
 from langchain_core.tools import tool
 import json
 import os
+from pathlib import Path
 from tiktok_slideshow_agent.tools.images import ImageLibraryTool
 from tiktok_slideshow_agent.tools.renderer import PlaywrightRendererTool
 from tiktok_slideshow_agent.tools.drive import GoogleDriveTool
 from tiktok_slideshow_agent.tools.drive import GoogleDriveTool
 from tiktok_slideshow_agent.tools.knowledge import KnowledgeBaseTool
 from tiktok_slideshow_agent.tools.sync_tool import sync_image_library
+from tiktok_slideshow_agent.tools.pexels_tool import search_pexels
+
+# Format Library path - relative to project root
+def _get_format_library_path():
+    current_file = Path(__file__).resolve()
+    # tools -> tiktok_slideshow_agent -> PROJECT_ROOT
+    base_path = current_file.parent.parent.parent
+    return base_path / "format_library.json"
 
 # Lazy Tool Getters to avoid BlockingError during import
 _image_lib = None
@@ -207,3 +216,45 @@ async def send_email_notification(subject: str, content: str, to_email: str = No
             results.append(f"Failed to send to {recipient}: {str(e)}")
             
     return "\n".join(results)
+
+@tool
+def request_human_approval(summary: str) -> str:
+    """Request human approval for the current plan or content.
+    
+    This tool triggers a system interrupt. Execution will pause until the human approves.
+    
+    Args:
+        summary: A brief summary of what is being approved (e.g., "QA Approved: Script and Images look good").
+    """
+    from langgraph.types import interrupt
+    
+    # This pauses execution. The value passed to interrupt() is shown to the user/client.
+    # The value returned by interrupt() is what the user provides when resuming (or None).
+    user_feedback = interrupt(summary)
+    
+    if user_feedback and isinstance(user_feedback, str):
+        return f"Human Feedback: {user_feedback}"
+        
+    return "Human approved"
+
+
+@tool
+def read_format_library() -> str:
+    """Read the Format Library containing proven TikTok slideshow formats.
+    
+    Returns the full format library JSON with:
+    - formats: List of proven formats (transformation-story, myth-busting, listicle, etc.)
+    - hook_formulas: Universal hook templates
+    - cta_styles: Call-to-action approaches
+    - product_positioning_guide: How to position products
+    - universal_principles: Key rules for viral content
+    
+    The Creative Director should ALWAYS read this before creating a Creative Brief.
+    """
+    format_lib_path = _get_format_library_path()
+    
+    if not format_lib_path.exists():
+        return json.dumps({"error": f"Format library not found at {format_lib_path}"})
+    
+    with open(format_lib_path, "r", encoding="utf-8") as f:
+        return f.read()

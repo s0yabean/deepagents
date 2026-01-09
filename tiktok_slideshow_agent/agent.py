@@ -24,6 +24,7 @@ from tiktok_slideshow_agent.state import AgentState
 
 # Import Prompts
 from tiktok_slideshow_agent.prompts.orchestrator import ORCHESTRATOR_INSTRUCTIONS
+from tiktok_slideshow_agent.prompts.creative_director import CREATIVE_DIRECTOR_INSTRUCTIONS
 from tiktok_slideshow_agent.prompts.specialists import (
     HOOK_AGENT_INSTRUCTIONS,
     STRATEGIST_INSTRUCTIONS,
@@ -39,15 +40,28 @@ from tiktok_slideshow_agent.tools.agent_tools import (
     get_sync_tool, 
     setup_project_folder, 
     upload_to_drive, 
-    send_email_notification
+    send_email_notification,
+    request_human_approval,
+    read_format_library,
+    search_pexels
 )
+
+# ==============================================================================
+# Specialist 0: Creative Director (NEW - runs first)
+# ==============================================================================
+creative_director = {
+    "name": "creative-director",
+    "description": "Analyzes product/topic, selects optimal format from Format Library, creates Creative Brief that guides all downstream agents.",
+    "system_prompt": CREATIVE_DIRECTOR_INSTRUCTIONS,
+    "tools": [read_format_library, TavilySearchResults(max_results=3)],
+}
 
 # ==============================================================================
 # Specialist 1: Hook Agent
 # ==============================================================================
 hook_agent = {
     "name": "hook-agent",
-    "description": "Generates and selects the best hook for the slideshow.",
+    "description": "Generates and selects the best hook for the slideshow following the Creative Brief.",
     "system_prompt": HOOK_AGENT_INSTRUCTIONS,
     "tools": [TavilySearchResults(max_results=3)], 
 }
@@ -74,7 +88,7 @@ def get_visual_designer():
         "name": "visual-designer",
         "description": "Selects images suitables for the reel from content library.",
         "system_prompt": DESIGNER_INSTRUCTIONS, # Use raw instructions
-        "tools": [get_sync_tool()], # render_slide moved to Publisher
+        "tools": [get_sync_tool(), search_pexels], # render_slide moved to Publisher
     }
 
 
@@ -116,7 +130,7 @@ qa_specialist = {
     "name": "qa-specialist",
     "description": "Final quality control check.",
     "system_prompt": QA_INSTRUCTIONS,
-    "tools": [], # Pure LLM evaluation
+    "tools": [request_human_approval], 
 }
 
 # ==============================================================================
@@ -171,7 +185,11 @@ def get_backend(rt):
 
 # Check for Human-in-the-Loop config - Defaulting to True for user visibility
 enable_human_review = os.getenv("ENABLE_HUMAN_REVIEW", "True").lower() == "true"
-interrupt_points = {"publisher": {}} if enable_human_review else {}
+
+# INTERRUPT CONFIGURATION
+# We will handle interrupts DYNAMICALLY inside the 'request_human_approval' tool using langgraph.types.interrupt.
+# So we do not need to configure static node interrupts here anymore.
+interrupt_points = {}
 
 agent = create_deep_agent(
     model=model,
@@ -179,6 +197,7 @@ agent = create_deep_agent(
     system_prompt=ORCHESTRATOR_INSTRUCTIONS,
     backend=get_backend,
     subagents=[
+        creative_director,  # NEW: Runs first to create Creative Brief
         hook_agent,
         content_strategist,
         get_visual_designer(),

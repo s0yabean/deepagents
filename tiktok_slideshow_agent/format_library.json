@@ -1,0 +1,581 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-01-09",
+  "description": "Proven TikTok slideshow formats with structures, hooks, and best practices. Used by Creative Director agent to select optimal format for each project.",
+  
+  "formats": [
+    {
+      "id": "transformation-story",
+      "name": "Transformation Story",
+      "description": "Personal narrative showing a before/after journey. The viewer follows a character through struggle to success.",
+      "when_to_use": [
+        "Wellness and self-improvement products",
+        "Lifestyle and personal development",
+        "Services with tangible outcomes",
+        "When you have a relatable problem the product solves"
+      ],
+      "structure": [
+        {
+          "slide": 1,
+          "purpose": "hook",
+          "guidance": "First-person story entry. Start with 'I', 'My', 'When I'. Create tension or curiosity.",
+          "word_count": "5-15 words"
+        },
+        {
+          "slide": 2,
+          "purpose": "problem",
+          "guidance": "Expand on the pain point. Make it deeply relatable. Show the struggle.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 3,
+          "purpose": "failed_attempts",
+          "guidance": "Optional: Show what didn't work. Builds credibility and relatability.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 4,
+          "purpose": "discovery",
+          "guidance": "The turning point. What changed. Product mention if natural - framed as incidental discovery.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 5,
+          "purpose": "transformation",
+          "guidance": "Results and new state. Emotional payoff. Show the 'after'.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 6,
+          "purpose": "cta",
+          "guidance": "Engagement-first: 'Save this', 'What's your story?', 'Comment below'. NOT 'Download now'.",
+          "word_count": "10-20 words"
+        }
+      ],
+      "product_position": "incidental",
+      "product_position_guidance": "Mention product in slide 4 as part of the discovery, framed as 'by the way, this helped' or 'I found this'. Never lead with product.",
+      "image_arc": ["moody/tension", "moody/tension", "transitional", "bright/hopeful", "bright/aspirational", "bright/aspirational"],
+      "example_hooks": [
+        "I was skeptical until I tried it for 30 days",
+        "Nobody warned me this would happen",
+        "I never thought I'd say this but...",
+        "I was broke 2 years ago. Here's what changed everything...",
+        "My biggest mistake cost me $50k. Don't make the same one...",
+        "The day I realized I was the problem..."
+      ],
+      "avoid": [
+        "Starting with 'You' (use 'I' instead)",
+        "Direct product pitch in hook",
+        "Generic CTAs like 'Download now'",
+        "Explaining the product before showing the journey"
+      ],
+      "psychological_triggers": ["relatability", "hope", "curiosity", "transformation"]
+    },
+
+    {
+      "id": "myth-busting",
+      "name": "Myth-Busting / Contrarian",
+      "description": "Challenge common beliefs or expose what 'everyone gets wrong'. Positions the brand as an authority.",
+      "when_to_use": [
+        "Educational content",
+        "B2B or expert positioning",
+        "Contrarian takes that challenge industry norms",
+        "When you have insider knowledge to share"
+      ],
+      "structure": [
+        {
+          "slide": 1,
+          "purpose": "hook",
+          "guidance": "Challenge a common belief. 'Everyone thinks X. They're wrong.' Create cognitive dissonance.",
+          "word_count": "5-15 words"
+        },
+        {
+          "slide": 2,
+          "purpose": "common_belief",
+          "guidance": "Explain what most people believe or do wrong.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 3,
+          "purpose": "truth_reveal",
+          "guidance": "Reveal the surprising truth. Use specific data or examples if possible.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 4,
+          "purpose": "proof",
+          "guidance": "Back it up. Why this works. Product can be introduced as 'the right way'.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 5,
+          "purpose": "cta",
+          "guidance": "Invite debate or saves. 'Agree or disagree?', 'Save this before you make this mistake'.",
+          "word_count": "10-20 words"
+        }
+      ],
+      "product_position": "authority",
+      "product_position_guidance": "Position product as 'the solution' after exposing the problem. Product represents 'what actually works'.",
+      "image_arc": ["bold/attention-grabbing", "neutral", "transitional", "bright/confident", "bright/confident"],
+      "example_hooks": [
+        "Everything you know about productivity is wrong...",
+        "The worst advice that everyone follows...",
+        "Why working harder is making you poorer...",
+        "Stop doing this. It's ruining your [X]...",
+        "Your [industry expert] lied to you about this...",
+        "Most affirmations are useless. Here's how to make them work..."
+      ],
+      "avoid": [
+        "Being contrarian without substance",
+        "Attacking people (attack ideas instead)",
+        "Overpromising on the 'truth'"
+      ],
+      "psychological_triggers": ["cognitive_dissonance", "curiosity", "insider_knowledge", "authority"]
+    },
+
+    {
+      "id": "listicle",
+      "name": "Listicle / Tips",
+      "description": "Numbered tips, signs, or items. Easy to consume, highly saveable content.",
+      "when_to_use": [
+        "Quick tips or hacks",
+        "Productivity content",
+        "When you have actionable advice",
+        "Content that should be saved for later"
+      ],
+      "structure": [
+        {
+          "slide": 1,
+          "purpose": "hook",
+          "guidance": "Number + promise. '5 signs you're...', '3 things that will...'. Add intrigue with '(most people miss #3)'.",
+          "word_count": "5-15 words"
+        },
+        {
+          "slide": 2,
+          "purpose": "item_1",
+          "guidance": "First tip/sign. Start with the most relatable or surprising one.",
+          "word_count": "10-20 words"
+        },
+        {
+          "slide": 3,
+          "purpose": "item_2",
+          "guidance": "Second tip/sign. Build momentum.",
+          "word_count": "10-20 words"
+        },
+        {
+          "slide": 4,
+          "purpose": "item_3",
+          "guidance": "Third tip/sign. This is often where product fits naturally.",
+          "word_count": "10-20 words"
+        },
+        {
+          "slide": 5,
+          "purpose": "cta",
+          "guidance": "Save prompt or question. 'Save this for later', 'Which one surprised you?'",
+          "word_count": "10-15 words"
+        }
+      ],
+      "product_position": "embedded",
+      "product_position_guidance": "Product can be one of the tips, or the tool that enables one of the tips. Frame as 'One thing that helps with this is...'",
+      "image_arc": ["bold", "consistent", "consistent", "consistent", "consistent"],
+      "example_hooks": [
+        "7 signs you're about to be successful (most people miss #5)",
+        "I tried 15 morning routines. Here are the only 3 that worked...",
+        "3 words that will change how people see you...",
+        "5 things I wish I knew before [X]...",
+        "The 3 biggest mistakes everyone makes with [X]..."
+      ],
+      "avoid": [
+        "Too many items (3-7 is optimal)",
+        "Generic tips without specificity",
+        "All items being product-focused"
+      ],
+      "psychological_triggers": ["curiosity", "completion", "value", "saveability"]
+    },
+
+    {
+      "id": "pov-scenario",
+      "name": "POV / Scenario",
+      "description": "Relatable scenarios framed as 'POV'. Advice disguised as entertainment. Defenses are down.",
+      "when_to_use": [
+        "Relatable humor and lifestyle content",
+        "When you want to give advice without being preachy",
+        "Products that solve everyday problems",
+        "Building community through shared experiences"
+      ],
+      "structure": [
+        {
+          "slide": 1,
+          "purpose": "hook",
+          "guidance": "POV: [relatable scenario]. Make viewer immediately say 'that's me'.",
+          "word_count": "8-15 words"
+        },
+        {
+          "slide": 2,
+          "purpose": "scenario_build",
+          "guidance": "Expand on the scenario. Add specific, relatable details.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 3,
+          "purpose": "twist_or_solution",
+          "guidance": "The payoff. How the scenario resolves. Product fits naturally here.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 4,
+          "purpose": "cta",
+          "guidance": "Engagement question. 'Tell me you relate', 'Tag someone who does this'.",
+          "word_count": "10-15 words"
+        }
+      ],
+      "product_position": "solution",
+      "product_position_guidance": "Product appears as the natural solution to the relatable scenario. 'POV: you finally found [product category]' or product solves the scenario's problem.",
+      "image_arc": ["lifestyle/relatable", "lifestyle/relatable", "bright/satisfied", "bright/satisfied"],
+      "example_hooks": [
+        "POV: you figured out how to not pay a fortune for drinks at festivals",
+        "POV: You don't feel like cooking, but still want a home-cooked meal",
+        "POV: you finally stopped doom scrolling and started [positive action]",
+        "POV: it's Sunday night and you actually feel prepared for Monday",
+        "POV: you stopped explaining yourself to people who don't get it"
+      ],
+      "avoid": [
+        "Making the POV too niche",
+        "Forcing product into unnatural scenarios",
+        "Losing the relatable humor"
+      ],
+      "psychological_triggers": ["relatability", "humor", "shared_experience", "aspiration"]
+    },
+
+    {
+      "id": "secret-insider",
+      "name": "Secret / Insider Knowledge",
+      "description": "Promise exclusive or hidden information. Triggers fear of missing out and curiosity.",
+      "when_to_use": [
+        "Industry insights",
+        "When you have genuine insider knowledge",
+        "Building authority and trust",
+        "Educational content with a twist"
+      ],
+      "structure": [
+        {
+          "slide": 1,
+          "purpose": "hook",
+          "guidance": "Promise forbidden or exclusive knowledge. 'What [authority] doesn't want you to know...'",
+          "word_count": "8-15 words"
+        },
+        {
+          "slide": 2,
+          "purpose": "context",
+          "guidance": "Set up why this is hidden or unknown. Build intrigue.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 3,
+          "purpose": "reveal",
+          "guidance": "The secret itself. Make it genuinely valuable.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 4,
+          "purpose": "application",
+          "guidance": "How to use this knowledge. Product can fit as 'how I apply this'.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 5,
+          "purpose": "cta",
+          "guidance": "Save for later or follow for more secrets. 'More insider tips on my page'.",
+          "word_count": "10-15 words"
+        }
+      ],
+      "product_position": "enabler",
+      "product_position_guidance": "Product is what allows you to apply the secret knowledge. 'The tool I use for this is...' or 'This is why I started using...'",
+      "image_arc": ["mysterious/intriguing", "mysterious", "bright/reveal", "bright/actionable", "bright/actionable"],
+      "example_hooks": [
+        "What rich people know that you don't...",
+        "The algorithm change TikTok doesn't want you to know...",
+        "Industry secret: This is how we really make money...",
+        "I'm not allowed to share this but my [expert] friend revealed...",
+        "The supplement industry doesn't want you to know this..."
+      ],
+      "avoid": [
+        "Clickbait without delivering real value",
+        "Making up 'secrets' that aren't true",
+        "Being too sensational"
+      ],
+      "psychological_triggers": ["fomo", "curiosity", "exclusivity", "insider_status"]
+    },
+
+    {
+      "id": "before-after",
+      "name": "Before / After",
+      "description": "Visual transformation with minimal text. Perfect for products with visible results.",
+      "when_to_use": [
+        "Physical products with visible transformation",
+        "Fitness, beauty, home improvement",
+        "Any service with tangible before/after",
+        "When visuals speak louder than words"
+      ],
+      "structure": [
+        {
+          "slide": 1,
+          "purpose": "hook",
+          "guidance": "Tease the transformation. 'What 30 days did to my [X]' or just 'Before'.",
+          "word_count": "3-10 words"
+        },
+        {
+          "slide": 2,
+          "purpose": "before",
+          "guidance": "The 'before' state. Let the visual do the work. Minimal text.",
+          "word_count": "3-10 words"
+        },
+        {
+          "slide": 3,
+          "purpose": "process",
+          "guidance": "Optional: What you did. Product mention fits here.",
+          "word_count": "10-20 words"
+        },
+        {
+          "slide": 4,
+          "purpose": "after",
+          "guidance": "The transformation. 'After' with stunning visual proof.",
+          "word_count": "3-10 words"
+        },
+        {
+          "slide": 5,
+          "purpose": "cta",
+          "guidance": "Results-focused CTA. 'Want the same results?', 'Save for your transformation'.",
+          "word_count": "8-15 words"
+        }
+      ],
+      "product_position": "direct",
+      "product_position_guidance": "Product is the catalyst for transformation. Can be more direct since proof is visual. 'This is what [product] did for me'.",
+      "image_arc": ["attention-grabbing", "problem/before", "transitional", "aspirational/after", "aspirational/after"],
+      "example_hooks": [
+        "3 years of back progress in 30 seconds",
+        "What 60 days of [X] did to my [Y]",
+        "My skin before vs after using [approach]",
+        "Same person. Different mindset. Here's what changed."
+      ],
+      "avoid": [
+        "Fake or misleading before/afters",
+        "Too much text overshadowing visuals",
+        "Unrealistic transformation claims"
+      ],
+      "psychological_triggers": ["visual_proof", "aspiration", "transformation", "hope"]
+    },
+
+    {
+      "id": "problem-solution",
+      "name": "Problem-Solution",
+      "description": "Start with a pain point, deliver the solution. Classic marketing structure adapted for TikTok.",
+      "when_to_use": [
+        "Products that solve clear problems",
+        "Educational content",
+        "How-to and tutorial content",
+        "When the pain point is highly relatable"
+      ],
+      "structure": [
+        {
+          "slide": 1,
+          "purpose": "hook",
+          "guidance": "Call out the problem. 'If you struggle with [X], stop scrolling'. Qualify your audience.",
+          "word_count": "8-15 words"
+        },
+        {
+          "slide": 2,
+          "purpose": "problem_expand",
+          "guidance": "Make the problem vivid and relatable. Add specific details.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 3,
+          "purpose": "solution_intro",
+          "guidance": "Introduce the approach or solution. 'Here's what actually works...'",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 4,
+          "purpose": "solution_detail",
+          "guidance": "The how. Product fits as part of the solution. Be specific.",
+          "word_count": "15-25 words"
+        },
+        {
+          "slide": 5,
+          "purpose": "cta",
+          "guidance": "Action-oriented. 'Try this today', 'Save and share with someone who needs this'.",
+          "word_count": "10-15 words"
+        }
+      ],
+      "product_position": "solution",
+      "product_position_guidance": "Product IS the solution or a key part of it. More direct positioning is acceptable because you've established the problem first.",
+      "image_arc": ["attention-grabbing", "problem/tension", "transitional", "solution/bright", "solution/bright"],
+      "example_hooks": [
+        "If you're struggling to get followers, here's what you're doing wrong...",
+        "Still getting rejected? These 3 changes will fix that...",
+        "Your business isn't growing because you're missing this...",
+        "Tired of [problem]? I found something that actually works...",
+        "If you've ever secretly [relatable specific action], this is for you"
+      ],
+      "avoid": [
+        "Making the problem feel too heavy/depressing",
+        "Jumping to solution too fast",
+        "Generic problems that don't resonate"
+      ],
+      "psychological_triggers": ["pain_point", "relief", "hope", "solution_seeking"]
+    }
+  ],
+
+  "hook_formulas": {
+    "description": "Universal hook formulas that work across formats",
+    "formulas": [
+      {
+        "name": "If This, Then That",
+        "template": "If you want [desired outcome], then [specific action]",
+        "example": "If you want clearer skin, stop doing this one thing"
+      },
+      {
+        "name": "Everyone Does This Wrong",
+        "template": "Everyone thinks [common belief], but [contrarian truth]",
+        "example": "Everyone thinks affirmations are about words. They're about frequency."
+      },
+      {
+        "name": "Before/After Formula",
+        "template": "I used to [struggle], now I [success] - here's how",
+        "example": "I used to overthink everything. Now I trust myself. Here's what changed."
+      },
+      {
+        "name": "What Nobody Tells You",
+        "template": "What [authority figures] don't tell you about [topic]",
+        "example": "What therapists don't tell you about anxiety"
+      },
+      {
+        "name": "The Contradiction",
+        "template": "[Unexpected state]. [Contrasting action/outcome].",
+        "example": "Terrified? Absolutely. Ready? Not really. Worth it? 100%."
+      },
+      {
+        "name": "Specific Timeframe",
+        "template": "[Long effort] in [short time]",
+        "example": "3 years of personal growth in 30 seconds"
+      },
+      {
+        "name": "Hyper-Specific Callout",
+        "template": "If you've ever [very specific relatable action], this is for you",
+        "example": "If you've ever secretly unbuttoned your jeans at dinner and hoped no one noticed - this is for you"
+      }
+    ]
+  },
+
+  "cta_styles": {
+    "description": "Call-to-action approaches ranked by engagement potential",
+    "styles": [
+      {
+        "type": "engagement_first",
+        "description": "Prioritizes saves, comments, shares over direct conversion",
+        "examples": [
+          "Save this for later",
+          "What's your experience? Comment below",
+          "Tag someone who needs to hear this",
+          "Share this with a friend going through it",
+          "Which one resonated with you?"
+        ],
+        "when_to_use": "Default for awareness content. Builds algorithm favor and organic reach."
+      },
+      {
+        "type": "soft_follow",
+        "description": "Encourages follow without aggressive selling",
+        "examples": [
+          "Follow for more like this",
+          "Part 2 on my page",
+          "I share tips like this every day",
+          "More on my journey in my other posts"
+        ],
+        "when_to_use": "When building account following is the goal."
+      },
+      {
+        "type": "direct_action",
+        "description": "Clear call to external action",
+        "examples": [
+          "Link in bio to try it",
+          "Download the app to start",
+          "Check out [product] - it changed everything for me"
+        ],
+        "when_to_use": "Only after story/value is established. Use sparingly. Better for warm audiences."
+      }
+    ]
+  },
+
+  "image_arc_definitions": {
+    "moody": "Dark, cinematic, tension-building. Use for problem/struggle slides.",
+    "transitional": "Neutral, bridge between moody and bright. The turning point.",
+    "bright": "Light, aspirational, hopeful. Use for solution/transformation slides.",
+    "bold": "High contrast, attention-grabbing. Use for hook slides.",
+    "lifestyle": "Relatable, everyday scenarios. Use for POV content.",
+    "mysterious": "Intriguing, shadowy. Use for secret/insider content.",
+    "consistent": "Same visual style throughout. Use for listicles."
+  },
+
+  "product_positioning_guide": {
+    "incidental": {
+      "description": "Product is mentioned as a 'by the way' discovery",
+      "phrases": [
+        "By the way, what helped was...",
+        "I discovered this thing called...",
+        "That's when I found...",
+        "A friend recommended..."
+      ],
+      "slide_position": "Usually slide 4 of 5-6"
+    },
+    "authority": {
+      "description": "Product represents 'what actually works' after exposing problems",
+      "phrases": [
+        "The right way to do this is...",
+        "What actually works is...",
+        "The solution that changed everything..."
+      ],
+      "slide_position": "After myth/problem is busted"
+    },
+    "embedded": {
+      "description": "Product is woven into tips/list as one of the items",
+      "phrases": [
+        "One tool that helps with this...",
+        "Something I use daily for this...",
+        "My secret weapon for #3..."
+      ],
+      "slide_position": "As one of the list items"
+    },
+    "solution": {
+      "description": "Product is the answer to the established problem",
+      "phrases": [
+        "This is what actually solved it...",
+        "The game-changer was...",
+        "Finally found something that works..."
+      ],
+      "slide_position": "After problem is clearly established"
+    },
+    "direct": {
+      "description": "Product is front and center (use only with visual proof)",
+      "phrases": [
+        "This is [product name]",
+        "[Product] gave me these results",
+        "What [product] did for me..."
+      ],
+      "slide_position": "Throughout, but backed by proof"
+    }
+  },
+
+  "universal_principles": [
+    "First slide is everything - you have 3 seconds to stop the scroll",
+    "Entertainment value > promotional value. TikTok is not an ad platform.",
+    "Specificity creates credibility. 'I tried 15 routines' > 'I tried many routines'",
+    "Personal stories outperform teaching. 'I learned' > 'You should know'",
+    "Engagement-first CTAs (save/comment) outperform direct CTAs (download/buy)",
+    "Visual consistency across slides creates professional feel",
+    "3-7 slides is optimal. Under 3 feels thin, over 7 causes drop-off.",
+    "Use trending audio when it fits naturally. Don't force it.",
+    "Images can outperform video - 81% higher engagement in recent studies",
+    "Long captions (bio text) can get 3x more views - use them for context"
+  ]
+}

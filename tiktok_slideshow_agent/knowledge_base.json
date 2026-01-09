@@ -163,5 +163,140 @@
       }
     ],
     "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "8bdac2a1-e15f-4b1f-8ada-c953a97645d1",
+    "project_id": "09012026_1226_affirmations_as_key_to_your_healing",
+    "topic": "Affirmations as key to your healing",
+    "created_at": "2026-01-09T05:26:55.275366",
+    "slide_count": 6,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "Your healing is already inside you. Unlocked with a few simple words.",
+        "image_path": "/image_library/minimalist_bright/meditation_lotus_incense.jpg"
+      },
+      {
+        "slide": 2,
+        "text": "These words are called affirmations. Gentle whispers to your soul.",
+        "image_path": "/image_library/minimalist_bright/journaling_crystals_candle.jpg"
+      },
+      {
+        "slide": 3,
+        "text": "They quietly rewire your thoughts, reminding your mind what is true.",
+        "image_path": "/image_library/minimalist_bright/reading_book_green_juice.jpg"
+      },
+      {
+        "slide": 4,
+        "text": "Start with this one: 'I am whole, and I am worthy of peace.'",
+        "image_path": "/image_library/minimalist_bright/cozy_reading_knit_outfit.jpg"
+      },
+      {
+        "slide": 5,
+        "text": "Breathe in. Breathe out. Repeat it softly throughout your day.",
+        "image_path": "/image_library/minimalist_bright/spa_massage_oil_treatment.jpg"
+      },
+      {
+        "slide": 6,
+        "text": "What truth will you remind yourself of today? Share below.",
+        "image_path": "/image_library/minimalist_bright/meditation_lotus_incense.jpg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "29c56c9d-61b5-4b83-ac78-303186a57939",
+    "project_id": "affirmations_healing_01",
+    "topic": "Affirmations as key to your healing",
+    "created_at": "2026-01-09T05:38:25.574963",
+    "slide_count": 4,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "You can heal yourself. With your own words. It's simpler than you think.",
+        "image_path": "/image_library/minimalist_bright/journaling_crystals_candle.jpg"
+      },
+      {
+        "slide": 2,
+        "text": "This is the practice of gentle affirmations. Words that comfort and rebuild.",
+        "image_path": "/image_library/minimalist_bright/cozy_reading_knit_outfit.jpg"
+      },
+      {
+        "slide": 3,
+        "text": "Start with this: \"I am becoming stronger every day.\" Feel the shift.",
+        "image_path": "/image_library/minimalist_bright/meditation_lotus_incense.jpg"
+      },
+      {
+        "slide": 4,
+        "text": "Follow us to learn how to create your own healing words.",
+        "image_path": "/image_library/minimalist_bright/journaling_crystals_candle.jpg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "1a972818-1fbd-4ee7-9948-7d928afb93da",
+    "project_id": "09012026_1529_affirmations_as_key_to_your_healing",
+    "topic": "Affirmations as key to your healing",
+    "created_at": "2026-01-09T08:30:17.613567",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "What if healing was as simple as changing your thoughts?",
+        "image_path": "/image_library/minimalist_bright/journaling_crystals_candle.jpg"
+      },
+      {
+        "slide": 2,
+        "text": "Your mind is a powerful tool in your healing journey.",
+        "image_path": "/image_library/minimalist_bright/meditation_lotus_incense.jpg"
+      },
+      {
+        "slide": 3,
+        "text": "Positive affirmations can gently reshape your inner world.",
+        "image_path": "/image_library/minimalist_bright/spa_massage_oil_treatment.jpg"
+      },
+      {
+        "slide": 4,
+        "text": "By changing your thoughts, you change your feelings.",
+        "image_path": "/image_library/minimalist_bright/reading_book_green_juice.jpg"
+      },
+      {
+        "slide": 5,
+        "text": "Follow for daily affirmations to support your healing.",
+        "image_path": "/image_library/minimalist_bright/journaling_crystals_candle.jpg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "5c716b9d-4938-47c6-a935-9c0f93bf2a88",
+    "project_id": "1a25cjzKLYFMfhUmvn_EjoyHrIztzEQI6",
+    "topic": "Dangers of Coffee Overconsumption",
+    "created_at": "2026-01-09T12:40:00.584572",
+    "slide_count": 4,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "That coffee? It's not your friend. It's secretly wrecking your body.",
+        "image_path": "/image_library/minimalist_bright/cafe_table_purse_latte.jpg"
+      },
+      {
+        "slide": 2,
+        "text": "That third cup is spiking your anxiety, ruining your sleep, and messing with your digestion.",
+        "image_path": "/image_library/minimalist_bright/coffee_shop_laptop_work.jpg"
+      },
+      {
+        "slide": 3,
+        "text": "But you don't have to quit. You just need to be smarter about it. That's where Coffeemate comes in.",
+        "image_path": "/image_library/minimalist_bright/planner_calendar_coffee.jpg"
+      },
+      {
+        "slide": 4,
+        "text": "Track your intake and find your perfect balance. Download Coffeemate and take back control.",
+        "image_path": "/image_library/minimalist_bright/cozy_reading_knit_outfit.jpg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
   }
 ]
