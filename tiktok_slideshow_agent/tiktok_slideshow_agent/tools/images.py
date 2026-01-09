@@ -1,13 +1,16 @@
 import json
 import os
+import shutil
+from pathlib import Path
 from typing import List, Dict, Any
 
 class ImageLibraryTool:
-    def __init__(self, library_path: str = "image_library"):
-        # Assuming library_path is relative to the agent root or absolute
-        # For this setup, we'll make it absolute based on the known path
-        self.base_path = "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/image_library"
-        self.metadata_file = os.path.join(self.base_path, "images.json")
+    def __init__(self):
+        # Calculate Base Path: tools -> tiktok_slideshow_agent -> PROJECT_ROOT
+        current_file = Path(__file__).resolve()
+        self.base_path = current_file.parent.parent.parent
+        self.output_dir = self.base_path / "image_library"
+        self.metadata_file = self.output_dir / "images.json"
         self._images = None
 
     @property

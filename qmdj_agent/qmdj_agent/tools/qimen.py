@@ -34,12 +34,25 @@ def qmdj_chart_api(timestamp: str) -> str:
 # Energy Analysis Tools
 # ==============================================================================
 
+def _get_palace_data(palaces, palace_num: int) -> Optional[Dict]:
+    """Helper to handle palaces stored as either a dictionary or a list."""
+    if isinstance(palaces, list):
+        if 0 <= palace_num < len(palaces):
+            return palaces[palace_num]
+    elif isinstance(palaces, dict):
+        # Try string key first, then int key
+        res = palaces.get(str(palace_num))
+        if res is None:
+            res = palaces.get(palace_num)
+        return res
+    return None
+
 def find_palaces_with_stem(chart_data: dict, stem: str) -> List[int]:
     """Find which palaces contain the given heaven stem by searching the chart."""
     palaces = chart_data.get("palaces", {})
     found_palaces = []
     for palace_num in range(1, 10):
-        palace_data = palaces.get(str(palace_num), {})
+        palace_data = _get_palace_data(palaces, palace_num) or {}
         heaven_stem = palace_data.get("heaven_stem", "")
         if stem in heaven_stem:
             found_palaces.append(palace_num)
@@ -65,7 +78,7 @@ def find_palace_of_symbol(chart_data: dict, symbol: str) -> int:
     symbol = NORMALIZE_MAP.get(symbol, symbol)
     
     for palace_num in range(1, 10):
-        p = palaces.get(str(palace_num), {})
+        p = _get_palace_data(palaces, palace_num) or {}
         # Check all symbol fields
         if symbol == p.get("door") or \
            symbol == p.get("star") or \
@@ -93,7 +106,11 @@ def calculate_box_energy(chart_json: str) -> str:
     The input chart_json MUST follow this structure:
     {
         "gan_zhi": {"year": "乙巳"},  # Year Stem+Branch (2 chars)
-        "palaces": { ... },
+        "palaces": { 
+            "1": { "heaven_stem": "...", "door": "...", ... }, 
+            # OR as a list: [null, {palace1_data}, {palace2_data}, ...]
+            ... 
+        },
         "empty_death": "..."
     }
     
@@ -456,8 +473,10 @@ def calculate_score(palace_num: int, chart_json: str, energy_json: str) -> str:
 
     Args:
         palace_num: The palace number to evaluate (1-9).
-        chart_json: JSON string containing the full chart data.
+        chart_json: JSON string containing the full chart data. 
+            Expected 'palaces' schema: { "1": {...}, ... } OR [null, {p1}, {p2}, ...]
         energy_json: JSON string containing the energy analysis data.
+            Expected schema: { "1": {"energy": 100}, ... } OR [null, {"energy": 100}, ...]
     """
     try:
         chart = json.loads(chart_json)
@@ -466,7 +485,7 @@ def calculate_score(palace_num: int, chart_json: str, energy_json: str) -> str:
         return f"Error parsing data: {str(e)}"
 
     palaces = chart.get("palaces", {})
-    p = palaces.get(str(palace_num))
+    p = _get_palace_data(palaces, palace_num)
     if not p: return f"Palace {palace_num} not found in chart."
 
     palace_element = PALACE_ELEMENTS.get(palace_num, "Unknown")
@@ -512,12 +531,11 @@ def calculate_score(palace_num: int, chart_json: str, energy_json: str) -> str:
     
     # Energy Scaling
     energy_pct = 100
-    if isinstance(energy_data, dict):
-        p_energy_data = energy_data.get(str(palace_num), {})
-        if isinstance(p_energy_data, dict):
-            energy_pct = p_energy_data.get("energy", 100)
-        elif isinstance(p_energy_data, (int, float)):
-            energy_pct = p_energy_data
+    p_energy_data = _get_palace_data(energy_data, palace_num)
+    if isinstance(p_energy_data, dict):
+        energy_pct = p_energy_data.get("energy", 100)
+    elif isinstance(p_energy_data, (int, float)):
+        energy_pct = p_energy_data
     elif isinstance(energy_data, (int, float)):
         energy_pct = energy_data
 

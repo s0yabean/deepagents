@@ -4,20 +4,20 @@ version = "0.1.0"
 description = "AI Agent for generating TikTok slideshows"
 authors = [{name = "Mindreader", email = "mindreader@example.com"}]
 dependencies = [
-    "langgraph",
-    "langchain-google-genai",
-    "langchain-community",
-    "langchain-google-community",
-    "protobuf>=4.21.0,<6.0.0",
-    "playwright",
+    "langgraph==1.0.2",
+    "langchain-google-genai==4.1.3",
+    "langchain-community==0.4.1",
+    "langchain-google-community==3.0.3",
+    "protobuf==6.33.0",
+    "playwright==1.57.0",
     "pillow",
-    "google-api-python-client",
-    "google-auth-httplib2",
+    "google-api-python-client==2.187.0",
+    "google-auth-httplib2==0.3.0",
     "google-auth-oauthlib",
-    "deepagents>=0.2.6"
+    "deepagents==0.2.5"
 ]
 
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 
 [tool.setuptools.packages.find]
 where = ["."]

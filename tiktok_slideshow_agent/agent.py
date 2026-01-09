@@ -1,6 +1,7 @@
 """TikTok Slideshow Agent - Deep Agent Architecture."""
 
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.tools import tool
@@ -32,7 +33,14 @@ from tiktok_slideshow_agent.prompts.specialists import (
 )
 
 # Import Tools
-from tiktok_slideshow_agent.tools.agent_tools import render_slide, save_locally, get_sync_tool, setup_project_folder
+from tiktok_slideshow_agent.tools.agent_tools import (
+    render_slide, 
+    save_locally, 
+    get_sync_tool, 
+    setup_project_folder, 
+    upload_to_drive, 
+    send_email_notification
+)
 
 # ==============================================================================
 # Specialist 1: Hook Agent
@@ -69,64 +77,6 @@ def get_visual_designer():
         "tools": [get_sync_tool()], # render_slide moved to Publisher
     }
 
-# ==============================================================================
-# Custom Google Drive Upload Tool
-# ==============================================================================
-@tool
-def upload_to_google_drive(local_path: str, folder_id: str = "1HQv0qrW1AUlUs2PWM3cQ572NyqonpLks") -> str:
-    """Upload a file or an entire folder to Google Drive.
-
-    Args:
-        local_path: Absolute path to the file or folder to upload.
-        folder_id: Google Drive folder ID to upload to.
-
-    Returns:
-        Status message with folder link.
-    """
-    from googleapiclient.discovery import build
-    from googleapiclient.http import MediaFileUpload
-    import os
-
-    try:
-        creds = get_google_credentials(
-            scopes=["https://www.googleapis.com/auth/drive.file"],
-            token_file="token_drive.json"
-        )
-        service = build('drive', 'v3', credentials=creds)
-
-        def upload_file(path, parent_id, name=None):
-            file_metadata = {'name': name or os.path.basename(path), 'parents': [parent_id]}
-            media = MediaFileUpload(path, resumable=True)
-            return service.files().create(body=file_metadata, media_body=media, fields='id').execute()
-
-        def upload_folder_recursive(local_dir, parent_id):
-            folder_metadata = {
-                'name': os.path.basename(local_dir),
-                'mimeType': 'application/vnd.google-apps.folder',
-                'parents': [parent_id]
-            }
-            drive_folder = service.files().create(body=folder_metadata, fields='id').execute()
-            drive_folder_id = drive_folder.get('id')
-
-            for item in os.listdir(local_dir):
-                item_path = os.path.join(local_dir, item)
-                if os.path.isdir(item_path):
-                    upload_folder_recursive(item_path, drive_folder_id)
-                else:
-                    upload_file(item_path, drive_folder_id)
-            return drive_folder_id
-
-        if os.path.isdir(local_path):
-            final_id = upload_folder_recursive(local_path, folder_id)
-            # If we uploaded the root project folder, the link is for that new folder
-            link = f"https://drive.google.com/drive/folders/{final_id}"
-        else:
-            upload_file(local_path, folder_id)
-            link = f"https://drive.google.com/drive/folders/{folder_id}"
-
-        return f"Successfully uploaded to Google Drive. Access link: {link}"
-    except Exception as e:
-        return f"Error uploading to Google Drive: {str(e)}"
 
 # ==============================================================================
 # Specialist 4: Publisher
@@ -147,7 +97,7 @@ def get_publisher():
             "name": "publisher",
             "description": "Sets up project, renders slides, and uploads everything.",
             "system_prompt": PUBLISHER_INSTRUCTIONS,
-            "tools": [setup_project_folder, render_slide, save_locally, upload_to_google_drive] + gmail_tools,
+            "tools": [setup_project_folder, render_slide, save_locally, upload_to_drive, send_email_notification],
         }
     except Exception as e:
         # Fallback if credentials not configured
@@ -156,7 +106,7 @@ def get_publisher():
             "name": "publisher",
             "description": "Sets up project, renders slides, and uploads everything.",
             "system_prompt": PUBLISHER_INSTRUCTIONS,
-            "tools": [setup_project_folder, render_slide, save_locally, upload_to_google_drive],
+            "tools": [setup_project_folder, render_slide, save_locally, upload_to_drive, send_email_notification],
         }
 
 # ==============================================================================
@@ -205,11 +155,15 @@ from deepagents.backends import CompositeBackend, StateBackend, FilesystemBacken
 
 # Define the backend to route /image_library/ to the real disk
 def get_backend(rt):
+    # Calculate path relative to this file: .../tiktok_slideshow_agent/agent.py
+    current_file = Path(__file__).resolve()
+    image_library_path = current_file.parent / "image_library"
+    
     return CompositeBackend(
         default=StateBackend(rt),
         routes={
             "/image_library/": FilesystemBackend(
-                root_dir="/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/image_library",
+                root_dir=str(image_library_path),
                 virtual_mode=True
             ),
         }

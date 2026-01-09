@@ -1,17 +1,21 @@
 import os
 import asyncio
+from pathlib import Path
 import json
 import sys
+from pathlib import Path
 
 class PlaywrightRendererTool:
     _lock = asyncio.Lock()
 
-    def __init__(self, output_dir: str = "output"):
-        self.base_path = "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent"
-        self.output_dir = os.path.join(self.base_path, output_dir)
-        self.image_library_path = os.path.join(self.base_path, "image_library")
-        self.fonts_dir = os.path.join(self.base_path, "fonts")
-        self.worker_script = os.path.join(self.base_path, "tiktok_slideshow_agent/tools/render_worker.py")
+    def __init__(self):
+        # Calculate Base Path: tools -> tiktok_slideshow_agent -> PROJECT_ROOT
+        current_file = Path(__file__).resolve()
+        self.base_path = current_file.parent.parent.parent
+        self.output_dir = self.base_path / "output"
+        self.image_library_path = self.base_path / "image_library"
+        self.fonts_dir = self.base_path / "fonts"
+        self.worker_script = self.base_path / "tiktok_slideshow_agent/tools/render_worker.py"
 
     async def _ensure_dir(self):
         exists = await asyncio.to_thread(os.path.exists, self.output_dir)
@@ -21,10 +25,10 @@ class PlaywrightRendererTool:
     def _resolve_path(self, path: str) -> str:
         """Resolves virtual paths to real absolute paths."""
         if path.startswith("/image_library/"):
-            resolved = path.replace("/image_library/", self.image_library_path + "/")
+            resolved = path.replace("/image_library/", str(self.image_library_path) + "/")
             return resolved
         elif path.startswith("image_library/"):
-            resolved = path.replace("image_library/", self.image_library_path + "/")
+            resolved = path.replace("image_library/", str(self.image_library_path) + "/")
             return resolved
         return path
 

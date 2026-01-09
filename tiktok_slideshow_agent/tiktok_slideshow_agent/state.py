@@ -1,5 +1,6 @@
 import operator
-from typing import Annotated, List, TypedDict, Optional, Dict, Any, NotRequired
+from typing import Annotated, List, Optional, Dict, Any
+from typing_extensions import TypedDict, NotRequired
 
 from langchain.agents.middleware.types import AgentMiddleware
 

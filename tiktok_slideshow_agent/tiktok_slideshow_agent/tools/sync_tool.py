@@ -1,6 +1,7 @@
 import os
 import json
 import glob
+from pathlib import Path
 from langchain_core.tools import tool
 
 @tool
@@ -14,11 +15,16 @@ def sync_image_library() -> str:
     Returns:
         A summary string of what was updated (e.g. "Added 2 images, Removed 1").
     """
-    library_path = "/Users/mindreader/Desktop/deepagents-quickstarts/tiktok_slideshow_agent/image_library" # Hardcoded for this env
-    json_path = os.path.join(library_path, "images.json")
+    # Calculate path relative to this file: .../tiktok_slideshow_agent/tools/sync_tool.py
+    # We want to access the root relative to this file
+    current_file = Path(__file__).resolve()
+    # Go up 2 levels: tools -> tiktok_slideshow_agent -> PROJECT_ROOT
+    project_root = current_file.parent.parent.parent
+    library_path = project_root / "image_library"
+    json_path = library_path / "images.json"
     
     # 1. Load existing JSON
-    if os.path.exists(json_path):
+    if json_path.exists():
         try:
             with open(json_path, 'r') as f:
                 data = json.load(f)
@@ -38,7 +44,7 @@ def sync_image_library() -> str:
     
     for ext in extensions:
         # Recursive glob
-        found_files.extend(glob.glob(os.path.join(library_path, "**", ext), recursive=True))
+        found_files.extend(library_path.rglob(ext))
         
     # Map absolute paths to something we store.
     # From previous context, existing json has "filename": "slide_1.jpeg". 
@@ -54,15 +60,13 @@ def sync_image_library() -> str:
     
     files_on_disk = {} # basename -> absolute_path
     for fpath in found_files:
-        basename = os.path.basename(fpath)
+        basename = fpath.name
         files_on_disk[basename] = fpath
         
     added_count = 0
     removed_count = 0
     
     new_data = []
-    
-    # 3. Process Disk vs JSON
     
     # 3. Process Disk vs JSON
     
@@ -74,7 +78,7 @@ def sync_image_library() -> str:
             
             # Determine path relative to project root
             # parent_dir is 'minimalist_bright', 'cinematic_moody' etc.
-            parent_dir = os.path.basename(os.path.dirname(abs_path))
+            parent_dir = abs_path.parent.name
             
             if parent_dir == "image_library":
                  rel_path = f"/image_library/{fname}"
@@ -98,7 +102,7 @@ def sync_image_library() -> str:
     # Second, add remaining new files
     for basename, abs_path in files_on_disk.items():
         # Infer category from parent folder name
-        parent_dir = os.path.basename(os.path.dirname(abs_path))
+        parent_dir = abs_path.parent.name
         if parent_dir == "image_library":
             category = "uncategorized"
             visual_theme = "uncategorized"
