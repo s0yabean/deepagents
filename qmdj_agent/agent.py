@@ -51,6 +51,7 @@ from qmdj_agent.tools.qimen import (
     calculate_score,
     compare_palaces,
     get_elemental_remedy,
+    verify_palace_attributes,
 )
 from qmdj_agent.tools.simulation import run_monte_carlo_simulation
 
@@ -158,7 +159,7 @@ fast_track_analyst = {
     "name": "fast-track-analyst",
     "description": "Consolidated specialist for rapid Tier 1 readings. Combines symbol analysis, patterns, and plain speaking.",
     "system_prompt": FAST_TRACK_ANALYST_INSTRUCTIONS,
-    "tools": [get_current_time, reflect_on_reading, read_from_file],
+    "tools": [get_current_time, reflect_on_reading, read_from_file, verify_palace_attributes],
 }
 
 # ==============================================================================

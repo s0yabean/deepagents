@@ -1,4 +1,5 @@
-from typing import Annotated, List, TypedDict, Optional, Any, NotRequired, Dict
+from typing import Annotated, List, Optional, Any, NotRequired, Dict
+from typing_extensions import TypedDict
 import operator
 
 class AgentState(TypedDict):

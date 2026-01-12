@@ -473,10 +473,8 @@ def calculate_score(palace_num: int, chart_json: str, energy_json: str) -> str:
 
     Args:
         palace_num: The palace number to evaluate (1-9).
-        chart_json: JSON string containing the full chart data. 
-            Expected 'palaces' schema: { "1": {...}, ... } OR [null, {p1}, {p2}, ...]
+        chart_json: JSON string containing the full chart data.
         energy_json: JSON string containing the energy analysis data.
-            Expected schema: { "1": {"energy": 100}, ... } OR [null, {"energy": 100}, ...]
     """
     try:
         chart = json.loads(chart_json)
@@ -624,4 +622,81 @@ def get_elemental_remedy(source_element: str, target_element: str) -> str:
         return f"To resolve the conflict between {source_element} and {target_element}, use the **{remedy}** element as a bridge. {source_element} generates {remedy}, and {remedy} generates {target_element}."
     
     return f"No specific bridge element needed for the relationship between {source_element} and {target_element}."
+
+
+@tool(parse_docstring=True)
+def verify_palace_attributes(palace_num: int, chart_json: str) -> str:
+    """Verify exactly what is present in a specific palace to prevent hallucination.
+    
+    Args:
+        palace_num: The palace number to check (1-9).
+        chart_json: JSON string containing the full chart data.
+    """
+    try:
+        chart = json.loads(chart_json)
+        palaces = chart.get("palaces", {})
+        p_data = _get_palace_data(palaces, palace_num)
+        
+        if not p_data:
+            return f"❌ Palace {palace_num} data NOT FOUND."
+            
+        # Extract Markers (DE/Horse)
+        markers = p_data.get("markers", [])
+        is_empty = "空" in markers
+        is_horse = "馬" in markers
+        
+        # Extract Symbols
+        door = p_data.get("door", "None")
+        star = p_data.get("star", "None")
+        deity = p_data.get("deity", "None")
+        stem_heaven = p_data.get("heaven_stem", "None")
+        stem_earth = p_data.get("earth_stem", "None")
+        
+        # Get English Meanings
+        # Helper to safely call symbol_lookup (which is a tool, so we call it directly as function here or handle str)
+        # Since we are inside the same module, we can access SYMBOL_DATA directly for efficiency 
+        # instead of invoking the tool wrapper which might add overhead.
+        
+        def get_meaning(sym):
+            if sym == "None": return "None"
+            # Normalize
+            key = sym.strip()
+            key = NORMALIZE_MAP.get(key, key)
+            data = SYMBOL_DATA.get(key)
+            if not data:
+                # Try suffixes
+                if key + "门" in SYMBOL_DATA: data = SYMBOL_DATA[key + "门"]
+                elif key + "星" in SYMBOL_DATA: data = SYMBOL_DATA[key + "星"]
+            
+            if data:
+                return f"{data.get('name_en', 'Unknown')} - {data.get('general', '')}"
+            return "Unknown Symbol"
+
+        door_info = get_meaning(door)
+        star_info = get_meaning(star)
+        deity_info = get_meaning(deity)
+        
+        # Format Verification Report
+        report = [
+            f"🔍 VERIFICATION REPORT FOR PALACE {palace_num}:",
+            f"----------------------------------------",
+            f"► ATTRIBUTES:",
+            f"  • Door: {door} ({door_info})",
+            f"  • Star: {star} ({star_info})",
+            f"  • Deity: {deity} ({deity_info})",
+            f"  • Stems: {stem_heaven} (Heaven) / {stem_earth} (Earth)",
+            f"",
+            f"► STATUS FLAGS (CRITICAL):",
+            f"  • Is Empty/Void (空)? {'✅ YES' if is_empty else '❌ NO'}",
+            f"  • Is Travelling Horse (馬)? {'✅ YES' if is_horse else '❌ NO'}",
+            f"",
+            f"► CONCLUSION:",
+            f"  This palace is {'EMPTY/HOLLOW' if is_empty else 'SOLID (Not Empty)'}.",
+            f"  It contains the {door} and {star}."
+        ]
+        
+        return "\n".join(report)
+        
+    except Exception as e:
+        return f"Error verifying palace: {str(e)}"
 
