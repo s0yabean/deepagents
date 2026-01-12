@@ -498,5 +498,85 @@
       }
     ],
     "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "012ee5c0-4299-43cc-9ce7-97a24f494401",
+    "project_id": "aggressive-investing-slideshow-123",
+    "topic": "Aggressive Investing",
+    "created_at": "2026-01-12T08:30:47.852268",
+    "slide_count": 6,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "The biggest lie in aggressive investing.",
+        "image_path": "https://images.pexels.com/photos/5332283/pexels-photo-5332283.jpeg"
+      },
+      {
+        "slide": 2,
+        "text": "I thought it meant being glued to a screen 10 hours a day. It was stressful, exhausting, and I was always reacting instead of predicting.",
+        "image_path": "https://images.pexels.com/photos/17717728/pexels-photo-17717728.jpeg"
+      },
+      {
+        "slide": 3,
+        "text": "Then I learned that pros don't watch the market all day. They watch for signals.",
+        "image_path": "https://images.pexels.com/photos/35501997/pexels-photo-35501997.jpeg"
+      },
+      {
+        "slide": 4,
+        "text": "I found an app called signaltracker that does it for me. It\u2019s like having a full-time analyst in my pocket.",
+        "image_path": "https://images.pexels.com/photos/7338880/pexels-photo-7338880.jpeg"
+      },
+      {
+        "slide": 5,
+        "text": "Now I make split-second decisions in just minutes a day. Which gives me more time for... well, life.",
+        "image_path": "https://images.pexels.com/photos/7732111/pexels-photo-7732111.jpeg"
+      },
+      {
+        "slide": 6,
+        "text": "Is anyone else done with the old way of trading? #investing #fintech",
+        "image_path": "https://images.pexels.com/photos/3358603/pexels-photo-3358603.jpeg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "fccec8e9-1195-4d98-8376-1301cbc473ca",
+    "project_id": "safe-investing-tiktok-20231027",
+    "topic": "Safe Investing",
+    "created_at": "2026-01-12T09:13:06.134133",
+    "slide_count": 6,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "I thought stress was just part of being a 'serious' investor.",
+        "image_path": "https://images.pexels.com/photos/8060220/pexels-photo-8060220.jpeg"
+      },
+      {
+        "slide": 2,
+        "text": "It felt like a second full-time job I didn't ask for. I was checking charts at my kid's soccer game, stressing about headlines at 11 PM. It was exhausting.",
+        "image_path": "https://images.pexels.com/photos/5417670/pexels-photo-5417670.jpeg"
+      },
+      {
+        "slide": 3,
+        "text": "Then I was talking to a buddy of mine who actually works in finance. He just laughed and told me that's not how the pros do it at all.",
+        "image_path": "https://images.pexels.com/photos/8512451/pexels-photo-8512451.jpeg"
+      },
+      {
+        "slide": 4,
+        "text": "He said they focus on a few key data signals, not constant screen time. He showed me the tool he uses - it's a thing called 'consltacny signaltracker' by John Smith.",
+        "image_path": "/image_library/minimalist_bright/planner_calendar_coffee.jpg"
+      },
+      {
+        "slide": 5,
+        "text": "Now I spend maybe 15 minutes a week on it, not hours a day. Honestly, the peace of mind is the biggest win. I'm actually present with my family again.",
+        "image_path": "/image_library/minimalist_bright/reading_book_green_juice.jpg"
+      },
+      {
+        "slide": 6,
+        "text": "Anyway, just a thought I had to share. Save this if you're done with the constant stress.",
+        "image_path": "https://images.pexels.com/photos/6800942/pexels-photo-6800942.jpeg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
   }
 ]

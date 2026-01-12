@@ -236,7 +236,10 @@ Given image_arc: `["moody", "moody", "transitional", "bright", "bright"]`
 4.  **Self-Correction (MANDATORY)**:
     - Once you have a candidate list of images, call `verify_visual_consistency(image_paths=[...], style_description="...", creative_context="Topic + intended creative direction")`.
     - If the tool reports low consistency (< 7/10) or outliers, YOU MUST REPLACE THEM using the **"Smart Selection"** process:
-      1. Search for 3 candidates: `search_pexels(query="...", per_page=3)`
+      1. Search for candidates: `search_pexels(query="...", per_page=N)`
+         - **Start with N=5**. 
+         - If you don't find a compatible image, **increase N to 10, then 15** (Max 15).
+         - Don't just retry with the same low number.
       2. Identify reference images: Collect the paths of your other selected images (the ones that are NOT outliers).
       3. Select the best one: `select_best_fitting_image(candidate_urls=[...], creative_context="...", slide_need="...", context_image_paths=[...])`
       4. Use the `best_url` returned.
