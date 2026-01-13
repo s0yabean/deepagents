@@ -11,7 +11,9 @@ RUN for dep in /deps/*; do             echo "Installing $dep";             if [ 
 # -- End of local dependencies install --
 ENV LANGSERVE_GRAPHS='{"tiktok_ss_agent": "/deps/tiktok_slideshow_agent/agent.py:agent"}'
 
-
+# -- Install Playwright browsers for slide rendering --
+RUN pip install playwright==1.57.0 && playwright install --with-deps chromium
+# -- End of Playwright installation --
 
 # -- Ensure user deps didn't inadvertently overwrite langgraph-api
 RUN mkdir -p /api/langgraph_api /api/langgraph_runtime /api/langgraph_license && touch /api/langgraph_api/__init__.py /api/langgraph_runtime/__init__.py /api/langgraph_license/__init__.py
