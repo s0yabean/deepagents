@@ -578,5 +578,75 @@
       }
     ],
     "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "344c0acd-878e-4da1-a6e0-4748e83484ff",
+    "project_id": "13012026_0459_sayura_voice_affirmations_app",
+    "topic": "Sayura Voice Affirmations App",
+    "created_at": "2026-01-12T22:00:26.407812",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "Being gentle with myself started to feel like a chore.",
+        "image_path": "https://images.pexels.com/photos/6559074/pexels-photo-6559074.jpeg"
+      },
+      {
+        "slide": 2,
+        "text": "The harder I tried, the louder the thoughts became.",
+        "image_path": "https://images.pexels.com/photos/4581493/pexels-photo-4581493.jpeg"
+      },
+      {
+        "slide": 3,
+        "text": "Then I stumbled upon this app called Sayura.",
+        "image_path": "https://images.pexels.com/photos/25685899/pexels-photo-25685899.jpeg"
+      },
+      {
+        "slide": 4,
+        "text": "And slowly, I started to hear a softer voice. My own.",
+        "image_path": "https://images.pexels.com/photos/9642302/pexels-photo-9642302.jpeg"
+      },
+      {
+        "slide": 5,
+        "text": "Sharing in case this resonates.",
+        "image_path": "https://images.pexels.com/photos/22481814/pexels-photo-22481814.jpeg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "54d1638b-347f-4141-8cd1-0dc23ec9a18e",
+    "project_id": "sayura-tiktok-2024-q3",
+    "topic": "Sayura App Slideshow",
+    "created_at": "2026-01-13T08:09:10.913616",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "My own voice started to sound unfamiliar.",
+        "image_path": "https://images.pexels.com/photos/10215030/pexels-photo-10215030.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800"
+      },
+      {
+        "slide": 2,
+        "text": "I was going through the motions, nodding in meetings and smiling on calls, but my internal world felt... muffled. The days blurred into a gentle hum of tasks and obligations. I was present, but I wasn't really there. My own thoughts felt distant, like echoes in an empty room. I was exhausted from just existing.",
+        "image_path": "https://images.pexels.com/photos/7605642/pexels-photo-7605642.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800"
+      },
+      {
+        "slide": 3,
+        "text": "The shift began when I realized the voice I missed most was my own. Not the one that performs, but the one that feels. I stumbled upon a gentle app called Sayura, designed to help you listen to your tone and reconnect with your true feelings. It wasn't about changing my voice, but about finally hearing it again.",
+        "image_path": "https://images.pexels.com/photos/5379070/pexels-photo-5379070.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800"
+      },
+      {
+        "slide": 4,
+        "text": "It wasn't a sudden fix, but a slow, quiet return. By listening to myself without judgment, I started to notice the strain, the softness, the real emotions hiding beneath the surface. A sense of calm began to settle in. The world didn't get quieter, but my mind did. I was finally coming home to myself.",
+        "image_path": "https://images.pexels.com/photos/25685899/pexels-photo-25685899.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800"
+      },
+      {
+        "slide": 5,
+        "text": "This was just something small that helped me find my way back to myself, and I wanted to share it. If you've also felt that quiet disconnect, perhaps this is a gentle sign for you, too. Consider this a soft reminder to honor your own voice. Save it if you need to come back to that thought. The app is called Sayura, and it's in my bio if you feel called to it.",
+        "image_path": "https://images.pexels.com/photos/4207776/pexels-photo-4207776.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=800"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
   }
 ]

@@ -12,12 +12,10 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../qmdj_agent/.venv/lib/python3.12/site-packages"))
 from deepagents import create_deep_agent
 
-# Import LangChain Community Tools
-from langchain_community.tools import TavilySearchResults
-from langchain_google_community import GmailToolkit
-from langchain_google_community.gmail.utils import build_resource_service, get_google_credentials
-# Note: Gmail/Google Drive tools require OAuth credentials (credentials.json and token.json)
-# Make sure you have proper Google Cloud project setup with Gmail API enabled
+# Import Tavily Search Tool
+from langchain_tavily import TavilySearch
+# Note: Email is handled via SMTP (see .env for SMTP settings)
+# Google Drive uses service account (service_account.json)
 
 # Import State
 from tiktok_slideshow_agent.state import AgentState
@@ -53,7 +51,7 @@ creative_director = {
     "name": "creative-director",
     "description": "Analyzes product/topic, selects optimal format from Format Library, creates Creative Brief that guides all downstream agents.",
     "system_prompt": CREATIVE_DIRECTOR_INSTRUCTIONS,
-    "tools": [read_format_library, TavilySearchResults(max_results=3)],
+    "tools": [read_format_library, TavilySearch(max_results=3)],
 }
 
 # ==============================================================================
@@ -63,7 +61,7 @@ hook_agent = {
     "name": "hook-agent",
     "description": "Generates and selects the best hook for the slideshow following the Creative Brief.",
     "system_prompt": HOOK_AGENT_INSTRUCTIONS,
-    "tools": [TavilySearchResults(max_results=3)], 
+    "tools": [TavilySearch(max_results=3)], 
 }
 
 # ==============================================================================
@@ -98,32 +96,13 @@ def get_visual_designer():
 # Specialist 4: Publisher
 # ==============================================================================
 def get_publisher():
-    """Initialize publisher with Gmail toolkit and Rendering tools."""
-    try:
-        # Initialize Gmail toolkit
-        gmail_creds = get_google_credentials(
-            scopes=["https://www.googleapis.com/auth/gmail.modify"],
-            token_file="token_gmail.json"
-        )
-        gmail_api_resource = build_resource_service(credentials=gmail_creds)
-        gmail_toolkit = GmailToolkit(api_resource=gmail_api_resource)
-        gmail_tools = gmail_toolkit.get_tools()
-
-        return {
-            "name": "publisher",
-            "description": "Sets up project, renders slides, and uploads everything.",
-            "system_prompt": PUBLISHER_INSTRUCTIONS,
-            "tools": [setup_project_folder, render_slide, save_locally, upload_to_drive, send_email_notification],
-        }
-    except Exception as e:
-        # Fallback if credentials not configured
-        print(f"Warning: Could not initialize Google tools: {e}")
-        return {
-            "name": "publisher",
-            "description": "Sets up project, renders slides, and uploads everything.",
-            "system_prompt": PUBLISHER_INSTRUCTIONS,
-            "tools": [setup_project_folder, render_slide, save_locally, upload_to_drive, send_email_notification],
-        }
+    """Initialize publisher with Drive (service account) and SMTP email tools."""
+    return {
+        "name": "publisher",
+        "description": "Sets up project, renders slides, uploads to Drive, and sends email notification.",
+        "system_prompt": PUBLISHER_INSTRUCTIONS,
+        "tools": [setup_project_folder, render_slide, save_locally, upload_to_drive, send_email_notification],
+    }
 
 # ==============================================================================
 # Specialist 5: QA Specialist
@@ -160,7 +139,6 @@ model = RotatingGeminiModel(
     api_keys=api_keys,
     model="gemini-2.5-pro",
     temperature=0.7,
-    max_function_calls=25  # Increased from default 10 to allow comprehensive search & checking loops
 )
 
 

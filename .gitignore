@@ -186,7 +186,9 @@ credentials.json
 token.json
 token_drive.json
 token_gmail.json
+service_account.json
 tiktok_slideshow_agent/credentials.json
 tiktok_slideshow_agent/token.json
 tiktok_slideshow_agent/token_drive.json
 tiktok_slideshow_agent/token_gmail.json
+tiktok_slideshow_agent/service_account.json

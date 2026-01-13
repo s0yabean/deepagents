@@ -5,7 +5,6 @@ from pathlib import Path
 from tiktok_slideshow_agent.tools.images import ImageLibraryTool
 from tiktok_slideshow_agent.tools.renderer import PlaywrightRendererTool
 from tiktok_slideshow_agent.tools.drive import GoogleDriveTool
-from tiktok_slideshow_agent.tools.drive import GoogleDriveTool
 from tiktok_slideshow_agent.tools.knowledge import KnowledgeBaseTool
 from tiktok_slideshow_agent.tools.sync_tool import sync_image_library
 from tiktok_slideshow_agent.tools.pexels_tool import search_pexels
@@ -122,7 +121,8 @@ async def setup_project_folder(topic: str) -> dict:
     TARGET_DRIVE_PARENT_ID = os.getenv("GOOGLE_DRIVE_PARENT_ID")
     if not TARGET_DRIVE_PARENT_ID:
         return {"error": "GOOGLE_DRIVE_PARENT_ID not set in .env"}
-    
+
+    # Create subfolder using personal OAuth account
     root_folder_id = await get_drive().create_folder(root_folder_name, parent_id=TARGET_DRIVE_PARENT_ID)
     
     # We don't strictly need to create subfolders on Drive if we just upload files to root_folder_id,
@@ -183,17 +183,17 @@ async def upload_to_drive(file_paths: list[str], folder_id: str) -> str:
 
 @tool
 async def send_email_notification(subject: str, content: str, to_email: str = None) -> str:
-    """Sends an email notification via Gmail.
+    """Sends an email notification via SMTP.
     
     Args:
         subject: The email subject line.
         content: The body text of the email.
-        to_email: Optional additional recipient. The system ALWAYS sends to RECIPIENT_NOTIFICATION in .env.
+        to_email: Optional additional recipient. The system ALWAYS sends to EMAIL_TO in .env.
     """
     recipients = []
     
     # 1. Always include the admin email from .env
-    env_email = os.getenv("RECIPIENT_NOTIFICATION")
+    env_email = os.getenv("EMAIL_TO")
     if env_email:
         recipients.append(env_email)
         
@@ -222,10 +222,18 @@ def request_human_approval(summary: str) -> str:
     """Request human approval for the current plan or content.
     
     This tool triggers a system interrupt. Execution will pause until the human approves.
+    If ENABLE_HUMAN_REVIEW=false in .env, this tool auto-approves without pausing.
     
     Args:
         summary: A brief summary of what is being approved (e.g., "QA Approved: Script and Images look good").
     """
+    # Check if human review is enabled
+    enable_human_review = os.getenv("ENABLE_HUMAN_REVIEW", "True").lower() == "true"
+    
+    if not enable_human_review:
+        # Auto-approve without interrupting
+        return f"Auto-approved (ENABLE_HUMAN_REVIEW=false): {summary}"
+    
     from langgraph.types import interrupt
     
     # This pauses execution. The value passed to interrupt() is shown to the user/client.

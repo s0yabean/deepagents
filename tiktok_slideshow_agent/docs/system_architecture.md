@@ -42,8 +42,8 @@ graph TD
     
     subgraph Delivery Phase
         Pub -->|Render| Renderer(Playwright)
-        Pub -->|Upload| Drive[(Google Drive)]
-        Pub -->|Notify| Email(Gmail)
+        Pub -->|Upload| Drive[(Google Drive via Service Account)]
+        Pub -->|Notify| Email(SMTP)
     end
 ```
 

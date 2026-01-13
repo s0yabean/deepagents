@@ -94,18 +94,149 @@ The system will use a multi-agent architecture orchestrated by a main supervisor
 To run this agent, you need to set up the following in your `.env` file:
 
 ```bash
-# Required
-GOOGLE_API_KEY=...
-ANTHROPIC_API_KEY=... # If using Claude
-TAVILY_API_KEY=...    # For Hook Agent research
+# Required - LLM
+GOOGLE_API_KEY=...          # Gemini API key
+TAVILY_API_KEY=...          # For Hook Agent research
 
-# Google Drive & Gmail (Optional but recommended)
-# Follow LangChain Google Community setup instructions
-GOOGLE_APPLICATION_CREDENTIALS=credentials.json 
+# Google Drive (OAuth - Personal Account)
+# 1. Create OAuth credentials in Google Cloud Console
+# 2. Download credentials.json and save in project root
+# 3. Run agent locally once to authenticate (creates token.json)
+# 4. Create a folder in your Drive and get its ID
+GOOGLE_DRIVE_PARENT_ID=...  # ID of your Drive folder (from URL)
+
+# Email (SMTP with App Password)
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=your-email@gmail.com
+SMTP_PASSWORD=your-app-password  # Generate at myaccount.google.com/apppasswords
+SMTP_FROM=your-email@gmail.com
+EMAIL_TO=recipient@gmail.com     # Default notification recipient
 ```
+
+### Google Drive Setup (OAuth - Personal Account)
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing
+3. Enable the **Google Drive API** in your project
+4. Go to **APIs & Services → Credentials**
+5. Click **Create Credentials → OAuth 2.0 Client ID**
+6. Choose **Desktop app** as application type
+7. Download the credentials JSON file
+8. Rename to `credentials.json` and place in project root
+9. Run the agent locally - browser will open for authentication
+10. After authentication, `token.json` will be created automatically
+11. Create a folder in your Google Drive and copy its ID from the URL
+
+### Email Setup (SMTP)
+1. Enable 2-Step Verification on your Google account
+2. Go to [App Passwords](https://myaccount.google.com/apppasswords)
+3. Create a new app password for "Mail"
+4. Use this password as `SMTP_PASSWORD`
 
 ### Human-in-the-Loop
 To enable manual review before publishing, add this to your `.env` file:
-`ENABLE_HUMAN_REVIEW=True` 
+`ENABLE_HUMAN_REVIEW=True`
 
 If set to `True`, the agent will pause before the `publisher` step to allow you to review the generated artifacts.
+
+## 8. VPS/Docker Deployment
+
+### Required Files NOT in Git
+The following files contain secrets and are **NOT** committed to git. You must transfer them to your VPS manually:
+
+#### **1. Credential Files (3 files):**
+- `credentials.json` - OAuth client credentials for Google APIs
+- `token.json` - Google Drive API token (auto-refreshes)
+- `token_gmail.json` - Gmail API token (if using email features)
+
+#### **2. Environment File:**
+- `.env` - Contains all API keys and configuration
+
+### Deployment Steps
+
+1. **Clone repository on VPS:**
+   ```bash
+   git clone <your-repo-url>
+   cd tiktok_slideshow_agent
+   ```
+
+2. **Transfer credential files from local machine:**
+   ```bash
+   # From your local machine (not on VPS)
+   scp tiktok_slideshow_agent/credentials.json user@your-vps:/path/to/tiktok_slideshow_agent/
+   scp tiktok_slideshow_agent/token.json user@your-vps:/path/to/tiktok_slideshow_agent/
+   scp tiktok_slideshow_agent/token_gmail.json user@your-vps:/path/to/tiktok_slideshow_agent/
+   scp tiktok_slideshow_agent/.env user@your-vps:/path/to/tiktok_slideshow_agent/
+   ```
+
+3. **Secure file permissions on VPS:**
+   ```bash
+   # SSH into your VPS
+   ssh user@your-vps
+
+   # Set secure permissions (only your user can read)
+   cd /path/to/tiktok_slideshow_agent
+   chmod 600 credentials.json token.json token_gmail.json .env
+   ```
+
+4. **Build and run Docker container:**
+   ```bash
+   docker build -t tiktok-slideshow-agent .
+   docker run -d \
+     --name tiktok-agent \
+     -v $(pwd)/credentials.json:/app/credentials.json:ro \
+     -v $(pwd)/token.json:/app/token.json:ro \
+     -v $(pwd)/token_gmail.json:/app/token_gmail.json:ro \
+     -v $(pwd)/.env:/app/.env:ro \
+     tiktok-slideshow-agent
+   ```
+
+### Initial Authentication (Run Locally Before Deploying)
+
+Before deploying to VPS, you **MUST** authenticate locally to generate token files. This opens a browser for you to log in with your Google account.
+
+#### **Authenticate for Google Drive (`token.json`):**
+
+Create and run this test script:
+```python
+# test_drive_auth.py
+import asyncio
+from tiktok_slideshow_agent.tools.drive import GoogleDriveTool
+
+async def test_auth():
+    print("Testing Google Drive authentication...")
+    print("A browser window will open - please log in and grant permissions.")
+
+    drive = GoogleDriveTool()
+    await drive._ensure_service()
+
+    print("\n✅ Authentication successful!")
+    print("token.json has been created.")
+
+if __name__ == "__main__":
+    asyncio.run(test_auth())
+```
+
+Run it:
+```bash
+python test_drive_auth.py
+```
+
+#### **Authenticate for Gmail (`token_gmail.json`):**
+
+If you're using Gmail/email features, you need to authenticate for Gmail separately. Check your existing email/Gmail integration code and run it once locally to trigger OAuth and create `token_gmail.json`.
+
+Alternatively, just run your full agent locally once:
+```bash
+langgraph dev
+# Then trigger a workflow that uses Google Drive or Gmail
+```
+
+The browser will open automatically during first use, and the token files will be saved.
+
+### Important Notes
+
+- **Token Refresh**: `token.json` will auto-refresh programmatically on VPS (no browser needed)
+- **Initial Auth**: You MUST authenticate locally first to generate token files before deploying
+- **Security**: Never commit credential files to git
+- **Backup**: Keep local copies of all credential files in a secure location
