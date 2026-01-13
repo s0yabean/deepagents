@@ -30,8 +30,7 @@ services:
             start_period: 10s
             timeout: 1s
             retries: 5
-            interval: 60s
-            start_interval: 1s
+            interval: 5s
 
     langgraph-api:
         image: tonytonggg/tiktok-slideshow-agent:latest  # Use pre-built image from Docker Hub
@@ -47,8 +46,7 @@ services:
             POSTGRES_URI: postgres://postgres:postgres@langgraph-postgres:5432/postgres?sslmode=disable
         healthcheck:
             test: python /api/healthcheck.py
-            interval: 60s
-            start_interval: 1s
+            interval: 5s
             start_period: 10s
         env_file:
             - .env
