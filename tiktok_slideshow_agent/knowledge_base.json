@@ -823,5 +823,40 @@
       }
     ],
     "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "b78af16b-1d26-4218-86fe-d41203f419b6",
+    "project_id": "17012026_0918_UTC_sayura_sayura_tiktok",
+    "topic": "Sayura TikTok",
+    "created_at": "2026-01-17T09:20:43.609376",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "I forgot what it felt like to be truly present.",
+        "image_description": "A soft-focus, blurry shot of city lights through a rain-streaked window at dusk. Muted pastel colors."
+      },
+      {
+        "slide": 2,
+        "text": "My mind was a constant storm of thoughts.\n\nA never ending to do list looping in my head.\n\nI felt disconnected from everything.",
+        "image_description": "An abstract, slightly out-of-focus image of overlapping, tangled threads in gentle, muted colors, representing a cluttered mind."
+      },
+      {
+        "slide": 3,
+        "text": "Then I tried this app, Sayura, and started a simple daily ritual.\n\nJust speaking my own affirmations out loud.\n\nIt felt strange at first.",
+        "image_description": "Gentle morning light streaming through a sheer curtain, casting soft shadows and illuminating dust motes in the air. A feeling of dawn."
+      },
+      {
+        "slide": 4,
+        "text": "Slowly, the noise quieted.\n\nHearing my own voice guide me back to the now has become my anchor.\n\nI feel grounded and clear.",
+        "image_description": "A serene and still surface of a calm lake at dawn, perfectly reflecting the pastel pink and blue hues of the sky. Minimal and tranquil."
+      },
+      {
+        "slide": 5,
+        "text": "If this feeling is familiar to you, maybe this is a sign.\n\nShare this with anyone who might need to find their anchor too.",
+        "image_description": "An open and airy expanse of a clear sky with soft, wispy clouds painted in pastel shades. Hopeful and expansive."
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
   }
 ]

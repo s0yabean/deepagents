@@ -283,23 +283,32 @@ def designer_node(state: AgentState):
         if '"' in image_id:
             image_id = image_id.replace('"', "")
 
-        selected_image = image_tool.get_image_by_id(image_id)
+        # Check if the response is a Pexels URL or local image ID
+        is_pexels_url = image_id.startswith("http://") or image_id.startswith(
+            "https://"
+        )
 
-        # 2. Resolve image path
-        if not selected_image:
-            raise ValueError(
-                f"VISUAL_DESIGNER_ERROR: Could not find image with ID '{image_id}' in the image library. "
-                f"Please check the image selection. Available images have IDs: {[img.get('id') for img in image_tool.images]}"
-            )
+        if is_pexels_url:
+            # Pexels image - will be downloaded by renderer
+            resolved_image_path = image_id
+            slide["image_path"] = resolved_image_path
+            slide["visual_notes"] = f"Pexels image: {image_id}"
+        else:
+            # Local image - look up in image library
+            selected_image = image_tool.get_image_by_id(image_id)
 
-        # Resolve virtual path to absolute path
-        raw_image_path = selected_image.get("absolute_path", "")
-        resolved_image_path = _resolve_image_path(raw_image_path, image_tool)
+            # 2. Resolve image path
+            if not selected_image:
+                raise ValueError(
+                    f"VISUAL_DESIGNER_ERROR: Could not find image with ID '{image_id}' in the image library. "
+                    f"Please check the image selection. Available images have IDs: {[img.get('id') for img in image_tool.images]}"
+                )
 
-        # 3. Validate image exists on disk (not URL)
-        if not resolved_image_path.startswith(
-            "http://"
-        ) and not resolved_image_path.startswith("https://"):
+            # Resolve virtual path to absolute path
+            raw_image_path = selected_image.get("absolute_path", "")
+            resolved_image_path = _resolve_image_path(raw_image_path, image_tool)
+
+            # 3. Validate image exists on disk (local images only)
             is_valid, error_msg = _validate_image_exists(resolved_image_path)
             if not is_valid:
                 raise ValueError(
@@ -308,8 +317,8 @@ def designer_node(state: AgentState):
                     f"Please verify the image library directory structure and ensure images exist at the expected paths."
                 )
 
-        slide["image_path"] = resolved_image_path
-        slide["visual_notes"] = selected_image.get("description", "")
+            slide["image_path"] = resolved_image_path
+            slide["visual_notes"] = selected_image.get("description", "")
 
         # 4. Render Slide
         output_path = renderer_tool.render_slide(slide, state)
