@@ -98,12 +98,23 @@ To run this agent, you need to set up the following in your `.env` file:
 GOOGLE_API_KEY=...          # Gemini API key
 TAVILY_API_KEY=...          # For Hook Agent research
 
-# Google Drive (OAuth - Personal Account)
-# 1. Create OAuth credentials in Google Cloud Console
-# 2. Download credentials.json and save in project root
-# 3. Run agent locally once to authenticate (creates token.json)
-# 4. Create a folder in your Drive and get its ID
+# Google Drive (OAuth - Automated Token Management)
+# Token is fetched from private GitHub repository and auto-refreshed
 GOOGLE_DRIVE_PARENT_ID=...  # ID of your Drive folder (from URL)
+
+# GitHub Token Access (for fetching OAuth tokens from private repo)
+GITHUB_TOKEN=ghp_your_personal_access_token_here  # Needs 'repo' + 'workflow' scopes
+GOOGLE_OAUTH_TOKEN_REPO_URL=https://raw.githubusercontent.com/s0yabean/lambda_jobs/secrets/token.json
+
+# GitHub Actions Workflow Trigger (for automatic token refresh)
+GITHUB_REPO_OWNER=s0yabean
+GITHUB_REPO_NAME=lambda_jobs
+GITHUB_WORKFLOW_FILE=refresh_google_token.yml
+GITHUB_DEFAULT_BRANCH=master  # or "main"
+
+# Token Refresh Settings (optional - defaults shown)
+TOKEN_EXPIRY_THRESHOLD_MINUTES=40  # Refresh if expiring within 40 mins
+TOKEN_REFRESH_POLL_TIMEOUT=30  # Max seconds to wait for workflow
 
 # Email (SMTP with App Password)
 SMTP_SERVER=smtp.gmail.com
@@ -114,18 +125,43 @@ SMTP_FROM=your-email@gmail.com
 EMAIL_TO=recipient@gmail.com     # Default notification recipient
 ```
 
-### Google Drive Setup (OAuth - Personal Account)
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing
-3. Enable the **Google Drive API** in your project
-4. Go to **APIs & Services → Credentials**
-5. Click **Create Credentials → OAuth 2.0 Client ID**
-6. Choose **Desktop app** as application type
-7. Download the credentials JSON file
-8. Rename to `credentials.json` and place in project root
-9. Run the agent locally - browser will open for authentication
-10. After authentication, `token.json` will be created automatically
-11. Create a folder in your Google Drive and copy its ID from the URL
+### Google Drive Setup (Automated Token Management)
+
+**New Approach:** OAuth tokens are managed automatically via GitHub repository and GitHub Actions workflows. No manual browser authentication required!
+
+#### Prerequisites
+1. A GitHub Personal Access Token with `repo` + `workflow` scopes
+   - Go to https://github.com/settings/tokens/new
+   - Name: "TikTok Agent Drive Access"
+   - Scopes: Select `repo` (full) and `workflow`
+   - Click "Generate token" and save it securely
+
+2. A private GitHub repository storing your OAuth token (e.g., `lambda_jobs`)
+   - The token should be stored at a path like `/secrets/token.json`
+   - A GitHub Actions workflow (`refresh_google_token.yml`) should handle token refresh
+
+3. A Google Drive folder for output
+   - Create a folder in your Google Drive
+   - Copy its ID from the URL (e.g., `1A2B3C4D5E6F7G8H9I0J`)
+
+#### Configuration
+1. Add all required variables to `.env` (see Configuration section above)
+2. The agent will automatically:
+   - Fetch the token from your private GitHub repo on startup
+   - Check if the token expires within 40 minutes
+   - Trigger a GitHub Actions workflow to refresh if needed
+   - Poll and wait for the refresh to complete
+   - Proceed only when a valid token is confirmed
+
+#### Usage in Code
+```python
+from tiktok_slideshow_agent.tools.agent_tools import initialize_google_drive
+
+# Call this BEFORE starting the agent
+await initialize_google_drive()
+```
+
+This prevents authentication failures mid-workflow!
 
 ### Email Setup (SMTP)
 1. Enable 2-Step Verification on your Google account
@@ -144,13 +180,8 @@ If set to `True`, the agent will pause before the `publisher` step to allow you 
 ### Required Files NOT in Git
 The following files contain secrets and are **NOT** committed to git. You must transfer them to your VPS manually:
 
-#### **1. Credential Files (3 files):**
-- `credentials.json` - OAuth client credentials for Google APIs
-- `token.json` - Google Drive API token (auto-refreshes)
-- `token_gmail.json` - Gmail API token (if using email features)
-
-#### **2. Environment File:**
-- `.env` - Contains all API keys and configuration
+#### **Environment File:**
+- `.env` - Contains all API keys and configuration (including `GITHUB_TOKEN`)
 
 ### Deployment Steps
 
@@ -160,12 +191,9 @@ The following files contain secrets and are **NOT** committed to git. You must t
    cd tiktok_slideshow_agent
    ```
 
-2. **Transfer credential files from local machine:**
+2. **Transfer environment file from local machine:**
    ```bash
    # From your local machine (not on VPS)
-   scp tiktok_slideshow_agent/credentials.json user@your-vps:/path/to/tiktok_slideshow_agent/
-   scp tiktok_slideshow_agent/token.json user@your-vps:/path/to/tiktok_slideshow_agent/
-   scp tiktok_slideshow_agent/token_gmail.json user@your-vps:/path/to/tiktok_slideshow_agent/
    scp tiktok_slideshow_agent/.env user@your-vps:/path/to/tiktok_slideshow_agent/
    ```
 
@@ -176,7 +204,7 @@ The following files contain secrets and are **NOT** committed to git. You must t
 
    # Set secure permissions (only your user can read)
    cd /path/to/tiktok_slideshow_agent
-   chmod 600 credentials.json token.json token_gmail.json .env
+   chmod 600 .env
    ```
 
 4. **Build and run Docker container:**
@@ -184,59 +212,42 @@ The following files contain secrets and are **NOT** committed to git. You must t
    docker build -t tiktok-slideshow-agent .
    docker run -d \
      --name tiktok-agent \
-     -v $(pwd)/credentials.json:/app/credentials.json:ro \
-     -v $(pwd)/token.json:/app/token.json:ro \
-     -v $(pwd)/token_gmail.json:/app/token_gmail.json:ro \
      -v $(pwd)/.env:/app/.env:ro \
      tiktok-slideshow-agent
    ```
 
-### Initial Authentication (Run Locally Before Deploying)
+**Note:** OAuth tokens are now fetched automatically from your private GitHub repository - no need to transfer credential files!
 
-Before deploying to VPS, you **MUST** authenticate locally to generate token files. This opens a browser for you to log in with your Google account.
+### Token Validation on Startup
 
-#### **Authenticate for Google Drive (`token.json`):**
+The agent automatically validates and refreshes tokens on startup. To test this locally:
 
-Create and run this test script:
 ```python
-# test_drive_auth.py
+# test_token_validation.py
 import asyncio
-from tiktok_slideshow_agent.tools.drive import GoogleDriveTool
+from tiktok_slideshow_agent.tools.agent_tools import initialize_google_drive
 
-async def test_auth():
-    print("Testing Google Drive authentication...")
-    print("A browser window will open - please log in and grant permissions.")
+async def test_validation():
+    print("Testing token validation and refresh...")
 
-    drive = GoogleDriveTool()
-    await drive._ensure_service()
+    token_data = await initialize_google_drive()
 
-    print("\n✅ Authentication successful!")
-    print("token.json has been created.")
+    print("\n✅ Token validation successful!")
+    print(f"Token expires at: {token_data.get('expiry')}")
 
 if __name__ == "__main__":
-    asyncio.run(test_auth())
+    asyncio.run(test_validation())
 ```
 
 Run it:
 ```bash
-python test_drive_auth.py
+python test_token_validation.py
 ```
-
-#### **Authenticate for Gmail (`token_gmail.json`):**
-
-If you're using Gmail/email features, you need to authenticate for Gmail separately. Check your existing email/Gmail integration code and run it once locally to trigger OAuth and create `token_gmail.json`.
-
-Alternatively, just run your full agent locally once:
-```bash
-langgraph dev
-# Then trigger a workflow that uses Google Drive or Gmail
-```
-
-The browser will open automatically during first use, and the token files will be saved.
 
 ### Important Notes
 
-- **Token Refresh**: `token.json` will auto-refresh programmatically on VPS (no browser needed)
-- **Initial Auth**: You MUST authenticate locally first to generate token files before deploying
-- **Security**: Never commit credential files to git
-- **Backup**: Keep local copies of all credential files in a secure location
+- **Automated Refresh**: Tokens are automatically fetched from GitHub and refreshed via GitHub Actions
+- **No Browser Auth**: No browser authentication needed - everything is automated
+- **40-Min Threshold**: Token is refreshed automatically if expiring within 40 minutes
+- **GitHub Actions**: Your `refresh_google_token.yml` workflow must be properly configured
+- **Security**: Keep your `GITHUB_TOKEN` secure and never commit it to git

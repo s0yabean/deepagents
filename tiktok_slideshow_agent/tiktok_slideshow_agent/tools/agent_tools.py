@@ -41,6 +41,26 @@ def get_drive():
         _drive = GoogleDriveTool()
     return _drive
 
+async def initialize_google_drive():
+    """
+    Initialize and validate Google Drive token on startup.
+    This should be called BEFORE the agent starts processing tasks.
+
+    This will:
+    1. Fetch the token from GitHub private repo
+    2. Check if it expires within 40 minutes
+    3. If expiring, trigger GitHub Actions workflow to refresh
+    4. Wait for the refresh to complete (polls for up to 30 seconds)
+    5. Return the validated token data
+
+    Raises:
+        ValueError: If required environment variables are missing
+        TimeoutError: If token refresh doesn't complete in time
+        Exception: For other authentication/network errors
+    """
+    drive_tool = get_drive()
+    return await drive_tool.validate_and_refresh_token()
+
 def get_kb():
     global _kb
     if _kb is None:
@@ -97,15 +117,21 @@ async def setup_project_folder(topic: str) -> dict:
     base_path = current_file.parent.parent.parent
     output_base = base_path / "output"
     
-    now = datetime.datetime.now()
+    now = datetime.datetime.now(datetime.timezone.utc)
     timestamp = now.strftime("%d%m%Y_%H%M")
     
-    # Increase descriptiveness
-    clean_topic = re.sub(r'[^a-zA-Z0-0\s]', '', topic)
-    reel_name = clean_topic.replace(' ', '_').lower().strip()
-    reel_name = reel_name[:40] 
+    # Increase descriptiveness: Fix regex to allow all numbers, max 3 words, max 30 chars
+    # Remove special chars (keep letters, numbers, spaces)
+    clean_topic = re.sub(r'[^a-zA-Z0-9\s]', '', topic)
     
-    root_folder_name = f"{timestamp}_{reel_name}"
+    # Split into words, take max 3, join with underscore
+    words = clean_topic.split()
+    short_topic = "_".join(words[:3])
+    
+    reel_name = short_topic.lower().strip()
+    reel_name = reel_name[:30] 
+    
+    root_folder_name = f"{timestamp}_UTC_sayura_{reel_name}"
     
     # 1. Local Creation
     local_project_root = output_base / root_folder_name

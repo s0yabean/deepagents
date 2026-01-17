@@ -683,5 +683,40 @@
       }
     ],
     "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "f58520b9-b711-445c-a6fc-a0e933d742be",
+    "project_id": "sayura-tiktok-20231027",
+    "topic": "TikTok Slideshow for Sayura App",
+    "created_at": "2026-01-15T04:11:51.790426",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "My mind used to be such a loud place.",
+        "image_path": "https://images.pexels.com/photos/8516792/pexels-photo-8516792.jpeg"
+      },
+      {
+        "slide": 2,
+        "text": "An endless loop of thoughts.\\nAlways overthinking.\\nIt was exhausting and I felt\\nso disconnected from myself.",
+        "image_path": "https://images.pexels.com/photos/2029968/pexels-photo-2029968.jpeg"
+      },
+      {
+        "slide": 3,
+        "text": "I started this simple\\n3 minute daily ritual.\\n\\nA quiet moment\\nto just check in with myself.",
+        "image_path": "https://images.pexels.com/photos/7232660/pexels-photo-7232660.jpeg"
+      },
+      {
+        "slide": 4,
+        "text": "Slowly, the noise began to fade.\\n\\nI could finally hear my own voice again.\\nNot with judgment, but with kindness.",
+        "image_path": "https://images.pexels.com/photos/7677970/pexels-photo-7677970.jpeg"
+      },
+      {
+        "slide": 5,
+        "text": "Just wanted to share this.\\n\\nFor anyone whose mind\\nis a little too loud right now.",
+        "image_path": "https://images.pexels.com/photos/2088205/pexels-photo-2088205.jpeg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
   }
 ]

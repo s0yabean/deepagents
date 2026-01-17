@@ -1,13 +1,16 @@
 import os
 import asyncio
 import smtplib
+import requests
+import json
+import time
+from datetime import datetime, timezone, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from pathlib import Path
-from typing import List
+from typing import List, Dict, Optional
 
 from google.auth.transport.requests import Request
-from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
@@ -21,42 +24,158 @@ class GoogleDriveTool:
         current_file = Path(__file__).resolve()
         self.base_path = current_file.parent.parent.parent
 
-        # Path to OAuth credentials (personal account for everything)
-        self.oauth_credentials_file = self.base_path / "credentials.json"
+        # GitHub configuration for token fetching
+        self.github_token = os.getenv('GITHUB_TOKEN')
+        self.token_repo_url = os.getenv('GOOGLE_OAUTH_TOKEN_REPO_URL')
+
+        # GitHub Actions configuration for token refresh
+        self.github_repo_owner = os.getenv('GITHUB_REPO_OWNER', 's0yabean')
+        self.github_repo_name = os.getenv('GITHUB_REPO_NAME', 'lambda_jobs')
+        self.github_workflow_file = os.getenv('GITHUB_WORKFLOW_FILE', 'refresh_google_token.yml')
+        self.github_default_branch = os.getenv('GITHUB_DEFAULT_BRANCH', 'master')
+
+        # Token refresh settings
+        self.expiry_threshold_minutes = int(os.getenv('TOKEN_EXPIRY_THRESHOLD_MINUTES', '40'))
+        self.refresh_poll_timeout = int(os.getenv('TOKEN_REFRESH_POLL_TIMEOUT', '30'))
+
+        # Local cache file (optional)
         self.oauth_token_file = self.base_path / "token.json"
 
         self.drive_service = None
         self._initialized = False
+        self._current_token_data = None
+
+    async def _fetch_token_from_github(self) -> Dict:
+        """Fetches token.json from private GitHub repository."""
+        if not self.github_token or not self.token_repo_url:
+            raise ValueError(
+                "GITHUB_TOKEN and GOOGLE_OAUTH_TOKEN_REPO_URL must be set in environment variables"
+            )
+
+        def _fetch_sync():
+            headers = {"Authorization": f"token {self.github_token}"}
+            response = requests.get(self.token_repo_url, headers=headers)
+            response.raise_for_status()
+            return response.json()
+
+        return await asyncio.to_thread(_fetch_sync)
+
+    def _is_token_expiring_soon(self, token_data: Dict) -> bool:
+        """Check if token expires within threshold minutes."""
+        expiry_str = token_data.get('expiry')
+        if not expiry_str:
+            return True  # No expiry, assume needs refresh
+
+        # Parse ISO format: "2026-01-17T05:45:21.559020+00:00"
+        expiry = datetime.fromisoformat(expiry_str)
+        now = datetime.now(timezone.utc)
+        time_until_expiry = expiry - now
+
+        threshold = timedelta(minutes=self.expiry_threshold_minutes)
+        return time_until_expiry <= threshold
+
+    async def _trigger_token_refresh_workflow(self):
+        """Triggers GitHub Actions workflow to refresh the token."""
+        url = (
+            f"https://api.github.com/repos/{self.github_repo_owner}/"
+            f"{self.github_repo_name}/actions/workflows/{self.github_workflow_file}/dispatches"
+        )
+
+        headers = {
+            "Authorization": f"token {self.github_token}",
+            "Accept": "application/vnd.github.v3+json"
+        }
+
+        payload = {"ref": self.github_default_branch}
+
+        def _trigger_sync():
+            response = requests.post(url, headers=headers, json=payload)
+            if response.status_code == 204:
+                return True
+            else:
+                raise Exception(f"Failed to trigger workflow: {response.status_code} - {response.text}")
+
+        return await asyncio.to_thread(_trigger_sync)
+
+    async def _wait_for_token_refresh(self, old_token_value: str, timeout: int = 30) -> Dict:
+        """Poll GitHub repo until token value changes or timeout."""
+        print(f"⏳ Waiting for token refresh (timeout: {timeout}s)...")
+        start_time = time.time()
+
+        while time.time() - start_time < timeout:
+            await asyncio.sleep(2)  # Poll every 2 seconds
+
+            try:
+                new_token_data = await self._fetch_token_from_github()
+                new_token_value = new_token_data.get('token')
+
+                if new_token_value and new_token_value != old_token_value:
+                    print("✅ Token refreshed successfully!")
+                    return new_token_data
+            except Exception as e:
+                print(f"⚠️  Error polling token: {e}")
+
+        raise TimeoutError(f"Token refresh did not complete within {timeout} seconds")
+
+    async def validate_and_refresh_token(self):
+        """
+        Startup check: Fetch token, check expiry, trigger refresh if needed.
+        Call this BEFORE starting any agent operations.
+        """
+        print("🔍 Validating Google OAuth token...")
+
+        # Fetch current token
+        token_data = await self._fetch_token_from_github()
+        self._current_token_data = token_data
+
+        # Check if token is expiring soon
+        if self._is_token_expiring_soon(token_data):
+            old_token = token_data.get('token')
+            print(f"⚠️  Token expires within {self.expiry_threshold_minutes} minutes. Triggering refresh...")
+
+            # Trigger GitHub Actions workflow
+            await self._trigger_token_refresh_workflow()
+
+            # Wait for token to be refreshed
+            token_data = await self._wait_for_token_refresh(
+                old_token,
+                timeout=self.refresh_poll_timeout
+            )
+            self._current_token_data = token_data
+        else:
+            print("✅ Token is valid and not expiring soon")
+
+        return token_data
 
     async def _authenticate(self):
-        """Authenticates using OAuth 2.0 (personal account)."""
+        """Authenticates using OAuth 2.0 from GitHub-hosted token."""
         if self._initialized and self.drive_service:
             return
 
         def build_service():
-            creds = None
-            # Token file stores the user's access and refresh tokens
-            if os.path.exists(self.oauth_token_file):
-                creds = Credentials.from_authorized_user_file(str(self.oauth_token_file), SCOPES)
+            # Use already-fetched token data from validate_and_refresh_token()
+            if not self._current_token_data:
+                raise RuntimeError(
+                    "Token not loaded. Call validate_and_refresh_token() before using GoogleDriveTool"
+                )
 
-            # If no valid credentials, let user log in
-            if not creds or not creds.valid:
-                if creds and creds.expired and creds.refresh_token:
+            # Create credentials from token data
+            creds = Credentials(
+                token=self._current_token_data.get('token'),
+                refresh_token=self._current_token_data.get('refresh_token'),
+                token_uri=self._current_token_data.get('token_uri'),
+                client_id=self._current_token_data.get('client_id'),
+                client_secret=self._current_token_data.get('client_secret'),
+                scopes=self._current_token_data.get('scopes')
+            )
+
+            # If token expired, refresh it locally
+            if not creds.valid:
+                if creds.expired and creds.refresh_token:
+                    print("🔄 Token expired, refreshing locally...")
                     creds.refresh(Request())
                 else:
-                    if not os.path.exists(self.oauth_credentials_file):
-                        raise FileNotFoundError(
-                            f"OAuth credentials file not found at {self.oauth_credentials_file}. "
-                            "Please download it from Google Cloud Console."
-                        )
-                    flow = InstalledAppFlow.from_client_secrets_file(
-                        str(self.oauth_credentials_file), SCOPES
-                    )
-                    creds = flow.run_local_server(port=0)
-
-                # Save the credentials for the next run
-                with open(self.oauth_token_file, 'w') as token:
-                    token.write(creds.to_json())
+                    raise Exception("Token is invalid and cannot be refreshed")
 
             return build('drive', 'v3', credentials=creds)
 

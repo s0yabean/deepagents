@@ -16,6 +16,7 @@ dependencies = [
     "deepagents>=0.2.5,<0.3.0",
     "langchain-tavily==0.2.16",
     "httpx",
+    "requests",
 ]
 
 requires-python = ">=3.11"
