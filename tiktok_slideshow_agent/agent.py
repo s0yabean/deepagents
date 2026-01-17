@@ -15,7 +15,7 @@ from deepagents import create_deep_agent
 # Import Tavily Search Tool
 from langchain_tavily import TavilySearch
 # Note: Email is handled via SMTP (see .env for SMTP settings)
-# Google Drive uses service account (service_account.json)
+# Google Drive uses OAuth tokens fetched from private GitHub repository
 
 # Import State
 from tiktok_slideshow_agent.state import AgentState
@@ -45,6 +45,40 @@ from tiktok_slideshow_agent.tools.agent_tools import (
 )
 
 # ==============================================================================
+# Model Configuration (must be before subagent definitions)
+# ==============================================================================
+from tiktok_slideshow_agent.rotating_model import RotatingGeminiModel
+
+def get_google_api_keys() -> list:
+    """Get all available Google API keys from environment."""
+    keys = []
+    primary_key = os.getenv("GOOGLE_API_KEY")
+    if primary_key:
+        keys.append(primary_key)
+
+    for i in range(2, 11):
+        key = os.getenv(f"GOOGLE_API_KEY_{i}")
+        if key:
+            keys.append(key)
+    return keys
+
+api_keys = get_google_api_keys()
+
+# Orchestrator Model - Gemini 3 Pro
+orchestrator_model = RotatingGeminiModel(
+    api_keys=api_keys,
+    model="gemini-3-pro-preview",
+    temperature=0.7,
+)
+
+# Specialist Model - Gemini 2.5 Pro (for all subagents)
+specialist_model = RotatingGeminiModel(
+    api_keys=api_keys,
+    model="gemini-2.5-pro",
+    temperature=0.7,
+)
+
+# ==============================================================================
 # Specialist 0: Creative Director (NEW - runs first)
 # ==============================================================================
 creative_director = {
@@ -52,6 +86,7 @@ creative_director = {
     "description": "Analyzes product/topic, selects optimal format from Format Library, creates Creative Brief that guides all downstream agents.",
     "system_prompt": CREATIVE_DIRECTOR_INSTRUCTIONS,
     "tools": [read_format_library, TavilySearch(max_results=3)],
+    "model": specialist_model,
 }
 
 # ==============================================================================
@@ -61,7 +96,8 @@ hook_agent = {
     "name": "hook-agent",
     "description": "Generates and selects the best hook for the slideshow following the Creative Brief.",
     "system_prompt": HOOK_AGENT_INSTRUCTIONS,
-    "tools": [TavilySearch(max_results=3)], 
+    "tools": [TavilySearch(max_results=3)],
+    "model": specialist_model,
 }
 
 # ==============================================================================
@@ -72,6 +108,7 @@ content_strategist = {
     "description": "Writes the full script for the slideshow.",
     "system_prompt": STRATEGIST_INSTRUCTIONS,
     "tools": [], # Pure LLM task
+    "model": specialist_model,
 }
 
 from tiktok_slideshow_agent.tools.vision_tool import verify_visual_consistency, select_best_fitting_image
@@ -83,12 +120,13 @@ def get_visual_designer():
     # We'll use a placeholder and have the orchestrator or a middleware inject it,
     # or just accept that it's loaded when the subagent is initialized.
     # To avoid blocking at IMPORT time, we keep this as a function.
-    
+
     return {
         "name": "visual-designer",
         "description": "Selects images suitables for the reel from content library.",
         "system_prompt": DESIGNER_INSTRUCTIONS, # Use raw instructions
         "tools": [get_sync_tool(), search_pexels, verify_visual_consistency, select_best_fitting_image], # render_slide moved to Publisher
+        "model": specialist_model,
     }
 
 
@@ -96,12 +134,13 @@ def get_visual_designer():
 # Specialist 4: Publisher
 # ==============================================================================
 def get_publisher():
-    """Initialize publisher with Drive (service account) and SMTP email tools."""
+    """Initialize publisher with Drive (OAuth) and SMTP email tools."""
     return {
         "name": "publisher",
         "description": "Sets up project, renders slides, uploads to Drive, and sends email notification.",
         "system_prompt": PUBLISHER_INSTRUCTIONS,
         "tools": [setup_project_folder, render_slide, save_locally, upload_to_drive, send_email_notification],
+        "model": specialist_model,
     }
 
 # ==============================================================================
@@ -111,36 +150,9 @@ qa_specialist = {
     "name": "qa-specialist",
     "description": "Final quality control check.",
     "system_prompt": QA_INSTRUCTIONS,
-    "tools": [request_human_approval], 
+    "tools": [request_human_approval],
+    "model": specialist_model,
 }
-
-# ==============================================================================
-# Model Configuration
-# ==============================================================================
-from tiktok_slideshow_agent.rotating_model import RotatingGeminiModel
-
-def get_google_api_keys() -> list:
-    """Get all available Google API keys from environment."""
-    keys = []
-    primary_key = os.getenv("GOOGLE_API_KEY")
-    if primary_key:
-        keys.append(primary_key)
-    
-    for i in range(2, 11): 
-        key = os.getenv(f"GOOGLE_API_KEY_{i}")
-        if key:
-            keys.append(key)
-    return keys
-
-api_keys = get_google_api_keys()
-
-# Use Gemini 2.5 Pro with Rotation support
-model = RotatingGeminiModel(
-    api_keys=api_keys,
-    model="gemini-2.5-pro",
-    temperature=0.7,
-)
-
 
 # ==============================================================================
 # Create the Deep Agent
@@ -173,7 +185,7 @@ enable_human_review = os.getenv("ENABLE_HUMAN_REVIEW", "True").lower() == "true"
 interrupt_points = {}
 
 agent = create_deep_agent(
-    model=model,
+    model=orchestrator_model,  # Gemini 3 Pro for orchestrator
     tools=[], # Orchestrator tools (if any)
     system_prompt=ORCHESTRATOR_INSTRUCTIONS,
     backend=get_backend,

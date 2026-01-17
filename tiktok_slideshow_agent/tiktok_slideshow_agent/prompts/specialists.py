@@ -274,11 +274,12 @@ Your job is to:
 
 4.  **Record Metadata**: Call `save_locally` with your updated JSON and `metadata_dir`.
 
-5.  **Email Notification**: 
-    - Construct the Drive Link.
-    - Call `send_email_notification(subject="...", content="...")`. 
-    - **Note**: The system AUTOMATICALLY emails the admin (from .env). 
-    - Only provide `to_email` if the user *specifically* requested an extra recipient.
+5.  **Email Notification**:
+    - Construct the Drive Link from the previous step.
+    - Call `send_email_notification(subject="TikTok Slideshow Ready", content="Your slideshow is ready: [Drive Link]")`.
+    - **CRITICAL**: DO NOT provide the `to_email` parameter - leave it empty.
+    - The email will automatically be sent to the admin address configured in EMAIL_TO (.env).
+    - Only provide `to_email` if the user explicitly requested an additional recipient in their requirements.
 
 6.  **Final Summary**: Provide the Drive link and confirm email sent.
 """

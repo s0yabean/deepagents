@@ -2,12 +2,16 @@ from langchain_core.tools import tool
 import json
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 from tiktok_slideshow_agent.tools.images import ImageLibraryTool
 from tiktok_slideshow_agent.tools.renderer import PlaywrightRendererTool
 from tiktok_slideshow_agent.tools.drive import GoogleDriveTool
 from tiktok_slideshow_agent.tools.knowledge import KnowledgeBaseTool
 from tiktok_slideshow_agent.tools.sync_tool import sync_image_library
 from tiktok_slideshow_agent.tools.pexels_tool import search_pexels
+
+# Ensure .env is loaded before any tools run
+load_dotenv()
 
 # Format Library path - relative to project root
 def _get_format_library_path():
@@ -43,23 +47,27 @@ def get_drive():
 
 async def initialize_google_drive():
     """
-    Initialize and validate Google Drive token on startup.
+    Initialize and validate Google Drive token on startup (NON-BLOCKING).
     This should be called BEFORE the agent starts processing tasks.
 
     This will:
     1. Fetch the token from GitHub private repo
     2. Check if it expires within 40 minutes
-    3. If expiring, trigger GitHub Actions workflow to refresh
-    4. Wait for the refresh to complete (polls for up to 30 seconds)
-    5. Return the validated token data
+    3. If expiring, trigger GitHub Actions workflow to refresh (in background)
+    4. Return IMMEDIATELY without waiting (agent can start working)
+    5. Refresh verification happens later when Drive is actually needed (~10 min)
+
+    Benefits:
+    - Agent starts instantly (no 30-60s startup delay)
+    - Refresh happens in background during agent work
+    - By the time publisher runs, token is usually already refreshed
 
     Raises:
         ValueError: If required environment variables are missing
-        TimeoutError: If token refresh doesn't complete in time
-        Exception: For other authentication/network errors
+        Exception: For network/authentication errors during token fetch
     """
     drive_tool = get_drive()
-    return await drive_tool.validate_and_refresh_token()
+    return await drive_tool.validate_token_async()
 
 def get_kb():
     global _kb
@@ -210,18 +218,33 @@ async def upload_to_drive(file_paths: list[str], folder_id: str) -> str:
 @tool
 async def send_email_notification(subject: str, content: str, to_email: str = None) -> str:
     """Sends an email notification via SMTP.
-    
+
+    **IMPORTANT**: You do NOT need to provide a recipient email.
+    The system automatically sends to the admin email (EMAIL_TO from .env).
+
     Args:
         subject: The email subject line.
-        content: The body text of the email.
-        to_email: Optional additional recipient. The system ALWAYS sends to EMAIL_TO in .env.
+        content: The body text of the email (include Drive link here).
+        to_email: ONLY provide this if user explicitly requested an additional recipient.
+                  Leave empty for normal operations - admin will receive it automatically.
+
+    Example usage:
+        send_email_notification(
+            subject="New Slideshow Generated",
+            content="Your slideshow is ready: https://drive.google.com/..."
+        )
+
+    Returns:
+        Success message with recipient info, or error message if EMAIL_TO not configured.
     """
     recipients = []
-    
+
     # 1. Always include the admin email from .env
     env_email = os.getenv("EMAIL_TO")
-    if env_email:
-        recipients.append(env_email)
+    if not env_email:
+        return "❌ ERROR: EMAIL_TO not configured in .env file. Cannot send notification. Please add EMAIL_TO=your-email@gmail.com to your .env file."
+
+    recipients.append(env_email)
         
     # 2. Include agent-specified email if provided and different
     if to_email and to_email.strip() and to_email != env_email:

@@ -114,7 +114,7 @@ GITHUB_DEFAULT_BRANCH=master  # or "main"
 
 # Token Refresh Settings (optional - defaults shown)
 TOKEN_EXPIRY_THRESHOLD_MINUTES=40  # Refresh if expiring within 40 mins
-TOKEN_REFRESH_POLL_TIMEOUT=30  # Max seconds to wait for workflow
+TOKEN_REFRESH_POLL_TIMEOUT=60  # Max seconds to wait for workflow (increased to 60s)
 
 # Email (SMTP with App Password)
 SMTP_SERVER=smtp.gmail.com
@@ -146,22 +146,27 @@ EMAIL_TO=recipient@gmail.com     # Default notification recipient
 
 #### Configuration
 1. Add all required variables to `.env` (see Configuration section above)
-2. The agent will automatically:
+2. The agent will automatically (NON-BLOCKING):
    - Fetch the token from your private GitHub repo on startup
    - Check if the token expires within 40 minutes
-   - Trigger a GitHub Actions workflow to refresh if needed
-   - Poll and wait for the refresh to complete
-   - Proceed only when a valid token is confirmed
+   - Trigger a GitHub Actions workflow to refresh if needed (in background)
+   - **Continue immediately** without waiting (no startup delay!)
+   - Verify refresh completion only when Drive is needed (~10 minutes later)
 
 #### Usage in Code
 ```python
 from tiktok_slideshow_agent.tools.agent_tools import initialize_google_drive
 
-# Call this BEFORE starting the agent
+# Call this BEFORE starting the agent (optional but recommended)
 await initialize_google_drive()
+
+# Agent starts immediately - no waiting!
+# Token refresh happens in background during agent work
 ```
 
-This prevents authentication failures mid-workflow!
+**Note**: If you don't call this, the agent will auto-initialize on first Drive operation.
+However, calling it at startup allows the token refresh to happen in parallel with agent work,
+ensuring the token is ready when the publisher needs it (~10 minutes later).
 
 ### Email Setup (SMTP)
 1. Enable 2-Step Verification on your Google account
@@ -220,20 +225,25 @@ The following files contain secrets and are **NOT** committed to git. You must t
 
 ### Token Validation on Startup
 
-The agent automatically validates and refreshes tokens on startup. To test this locally:
+The agent automatically validates and refreshes tokens (non-blocking). To test this locally:
 
 ```python
 # test_token_validation.py
 import asyncio
+import time
 from tiktok_slideshow_agent.tools.agent_tools import initialize_google_drive
 
 async def test_validation():
-    print("Testing token validation and refresh...")
+    print("Testing token validation (non-blocking)...\n")
 
+    start = time.time()
     token_data = await initialize_google_drive()
+    elapsed = time.time() - start
 
-    print("\n✅ Token validation successful!")
+    print(f"\n✅ Returned in {elapsed:.2f}s (instant if refresh triggered!)")
     print(f"Token expires at: {token_data.get('expiry')}")
+    print("\nIf refresh was triggered, it's happening in background.")
+    print("Verification will occur when Drive is actually needed.")
 
 if __name__ == "__main__":
     asyncio.run(test_validation())
@@ -246,8 +256,11 @@ python test_token_validation.py
 
 ### Important Notes
 
-- **Automated Refresh**: Tokens are automatically fetched from GitHub and refreshed via GitHub Actions
+- **Non-Blocking Refresh**: Token refresh happens in background - agent starts instantly!
+- **Intelligent Timing**: Refresh is triggered at startup but verified only when Drive is needed
 - **No Browser Auth**: No browser authentication needed - everything is automated
 - **40-Min Threshold**: Token is refreshed automatically if expiring within 40 minutes
+- **60s Timeout**: Workflow has 60 seconds to complete (usually takes 20-40s)
+- **Smart Fallback**: If refresh times out but token still valid for >5 mins, agent proceeds
 - **GitHub Actions**: Your `refresh_google_token.yml` workflow must be properly configured
 - **Security**: Keep your `GITHUB_TOKEN` secure and never commit it to git
