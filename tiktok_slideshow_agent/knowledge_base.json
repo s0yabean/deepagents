@@ -858,5 +858,45 @@
       }
     ],
     "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "96b206ae-1fdb-4dbe-9d64-9616218a45d2",
+    "project_id": "17012026_1209_UTC_sayura_sayura_tiktok_slideshow",
+    "topic": "Sayura TikTok Slideshow",
+    "created_at": "2026-01-17T12:10:21.077242",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "I used to hate the sound of my own voice.",
+        "image_path": "https://images.pexels.com/photos/4175070/pexels-photo-4175070.jpeg",
+        "rendered_image_path": "/Users/tonytongm4air/Desktop/deepagents/tiktok_slideshow_agent/output/17012026_1209_UTC_sayura_sayura_tiktok_slideshow/slideshows/slide_1.png"
+      },
+      {
+        "slide": 2,
+        "text": "It felt weak and shaky. I stayed quiet in meetings and avoided speaking up, feeling like my ideas didn't matter. I just wanted to disappear.",
+        "image_path": "https://images.pexels.com/photos/2821756/pexels-photo-2821756.jpeg",
+        "rendered_image_path": "/Users/tonytongm4air/Desktop/deepagents/tiktok_slideshow_agent/output/17012026_1209_UTC_sayura_sayura_tiktok_slideshow/slideshows/slide_2.png"
+      },
+      {
+        "slide": 3,
+        "text": "Then I found a simple voice ritual from Sayura. It felt silly at first, just a few minutes each morning. But I started noticing a shift.",
+        "image_path": "https://images.pexels.com/photos/4749898/pexels-photo-4749898.jpeg",
+        "rendered_image_path": "/Users/tonytongm4air/Desktop/deepagents/tiktok_slideshow_agent/output/17012026_1209_UTC_sayura_sayura_tiktok_slideshow/slideshows/slide_3.png"
+      },
+      {
+        "slide": 4,
+        "text": "My voice started to feel like my own. Clearer. Warmer. I began speaking with a quiet confidence I never knew I had. People started listening.",
+        "image_path": "https://images.pexels.com/photos/6412472/pexels-photo-6412472.jpeg",
+        "rendered_image_path": "/Users/tonytongm4air/Desktop/deepagents/tiktok_slideshow_agent/output/17012026_1209_UTC_sayura_sayura_tiktok_slideshow/slideshows/slide_4.png"
+      },
+      {
+        "slide": 5,
+        "text": "I never thought I would share this, but I know I'm not the only one. If you feel this way too, you should try it. The link is in my bio.",
+        "image_path": "https://images.pexels.com/photos/10799270/pexels-photo-10799270.jpeg",
+        "rendered_image_path": "/Users/tonytongm4air/Desktop/deepagents/tiktok_slideshow_agent/output/17012026_1209_UTC_sayura_sayura_tiktok_slideshow/slideshows/slide_5.png"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
   }
 ]
