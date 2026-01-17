@@ -5,6 +5,14 @@ volumes:
 services:
     langgraph-redis:
         image: redis:6
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: 512M
+                reservations:
+                    cpus: '0.1'
+                    memory: 64M
         healthcheck:
             test: redis-cli ping
             interval: 5s
@@ -25,6 +33,14 @@ services:
             - max_connections=200
         volumes:
             - langgraph-data:/var/lib/postgresql/data
+        deploy:
+            resources:
+                limits:
+                    cpus: '2.0'
+                    memory: 2G
+                reservations:
+                    cpus: '0.5'
+                    memory: 256M
         healthcheck:
             test: pg_isready -U postgres
             start_period: 10s
@@ -44,6 +60,14 @@ services:
         environment:
             REDIS_URI: redis://langgraph-redis:6379
             POSTGRES_URI: postgres://postgres@langgraph-postgres:5432/postgres?sslmode=disable
+        deploy:
+            resources:
+                limits:
+                    cpus: '3.0'
+                    memory: 3G
+                reservations:
+                    cpus: '0.5'
+                    memory: 256M
         healthcheck:
             test: python /api/healthcheck.py
             interval: 5s
