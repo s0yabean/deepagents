@@ -140,7 +140,8 @@ class GoogleDriveTool:
     async def validate_and_refresh_token(self):
         """
         Startup check: Fetch token, check expiry, trigger refresh if needed.
-        Call this BEFORE starting any agent operations.
+        Smart waiting: Only blocks if token is critically close to expiry (<5 mins).
+        Otherwise triggers refresh and proceeds immediately.
         """
         print("🔍 Validating Google OAuth token...")
 
@@ -159,22 +160,21 @@ class GoogleDriveTool:
             # Trigger GitHub Actions workflow
             await self._trigger_token_refresh_workflow()
 
-            # Wait for token to be refreshed
-            try:
-                token_data = await self._wait_for_token_refresh(
-                    old_token,
-                    timeout=self.refresh_poll_timeout
-                )
-                self._current_token_data = token_data
-            except TimeoutError as e:
-                # Fallback: If refresh timed out but token still has >5 mins left, proceed anyway
-                if minutes_left > 5:
-                    print(f"⚠️  {e}")
-                    print(f"⚠️  FALLBACK: Proceeding with current token (still valid for {minutes_left} minutes)")
-                    print(f"⚠️  The refresh workflow may complete in the background.")
-                    # Keep using the current token
-                else:
-                    # Token is critically close to expiry, must fail
+            # Only wait if token is critically close to expiry
+            if minutes_left > 5:
+                print(f"✅ Refresh triggered. Token still valid for {minutes_left} minutes - proceeding immediately.")
+                print(f"   Refresh will complete in background.")
+            else:
+                # Token critically close to expiry - must wait
+                print(f"⚠️  Token critically close to expiry ({minutes_left} mins). Waiting for refresh...")
+                try:
+                    token_data = await self._wait_for_token_refresh(
+                        old_token,
+                        timeout=self.refresh_poll_timeout
+                    )
+                    self._current_token_data = token_data
+                    print(f"✅ Token refreshed successfully")
+                except TimeoutError as e:
                     raise Exception(f"Token refresh timed out and token expires in {minutes_left} minutes. Cannot proceed safely.")
         else:
             print("✅ Token is valid and not expiring soon")
@@ -213,16 +213,29 @@ class GoogleDriveTool:
 
     async def _wait_for_refresh_completion(self):
         """
-        Wait for a previously-triggered refresh to complete.
-        Called only when Drive service is actually needed.
+        Smart refresh verification: Only wait if token is critically close to expiry.
+        If token still has time left, proceed immediately and let refresh complete in background.
         """
         if not self._refresh_triggered_at or not self._old_token_for_refresh:
             return  # No refresh in progress
 
         elapsed = int(time.time() - self._refresh_triggered_at)
-        remaining_timeout = max(5, self.refresh_poll_timeout - elapsed)
 
-        print(f"🔄 Verifying token refresh completion (triggered {elapsed}s ago)...")
+        # Check current token validity FIRST before waiting
+        current_token_data = await self._fetch_token_from_github()
+        minutes_left = self._get_minutes_until_expiry(current_token_data)
+
+        # If token still has >5 mins, proceed immediately without waiting
+        if minutes_left > 5:
+            print(f"🔄 Token refresh in progress ({elapsed}s ago), but current token still valid for {minutes_left} minutes")
+            print(f"✅ Proceeding immediately. Refresh will complete in background.")
+            self._current_token_data = current_token_data
+            # Keep refresh tracking in case we need it later
+            return
+
+        # Token is critically close to expiry - must wait for refresh
+        print(f"⚠️  Token only valid for {minutes_left} minutes. Waiting for refresh to complete...")
+        remaining_timeout = max(5, self.refresh_poll_timeout - elapsed)
 
         try:
             token_data = await self._wait_for_token_refresh(
@@ -230,25 +243,15 @@ class GoogleDriveTool:
                 timeout=remaining_timeout
             )
             self._current_token_data = token_data
+            print(f"✅ Token refreshed successfully")
 
             # Clear refresh tracking
             self._refresh_triggered_at = None
             self._old_token_for_refresh = None
 
         except TimeoutError as e:
-            # Fallback: Check if current token is still usable
-            current_token_data = await self._fetch_token_from_github()
-            minutes_left = self._get_minutes_until_expiry(current_token_data)
-
-            if minutes_left > 5:
-                print(f"⚠️  Refresh not complete yet, but current token still valid for {minutes_left} minutes")
-                print(f"⚠️  Proceeding with current token. Refresh may complete later.")
-                self._current_token_data = current_token_data
-                # Clear refresh tracking
-                self._refresh_triggered_at = None
-                self._old_token_for_refresh = None
-            else:
-                raise Exception(f"Token refresh incomplete and token expires in {minutes_left} minutes. Cannot proceed safely.")
+            # Refresh timed out and token is critically close to expiry
+            raise Exception(f"Token refresh incomplete and token expires in {minutes_left} minutes. Cannot proceed safely.")
 
     async def _authenticate(self):
         """Authenticates using OAuth 2.0 from GitHub-hosted token."""

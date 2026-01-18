@@ -898,5 +898,110 @@
       }
     ],
     "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "2a738f05-f6d7-40f5-b8fd-5d28da009ffa",
+    "project_id": "sayura-tiktok-2023-10-27",
+    "topic": "Sayura TikTok Slideshow",
+    "created_at": "2026-01-18T14:03:58.479649",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "My own voice was the one I couldn't hear.",
+        "visual_description": "An abstract, soft-focus image of floral shapes in muted pastel pinks and purples, creating a blurry, dreamlike or underwater feeling."
+      },
+      {
+        "slide": 2,
+        "text": "The noise from the outside was so loud.\n\nMy own thoughts felt distant, like an echo of what everyone else wanted.",
+        "visual_description": "A photographic abstract of soft pink flowers seen through a glass pane with water droplets, representing chaotic thoughts in a gentle, muted way."
+      },
+      {
+        "slide": 3,
+        "text": "Then I found Sayura.\n\nIt was like a soft mirror, letting me speak my affirmations and hear them back. Just for me.",
+        "visual_description": "A clean, minimal image of a glass prism refracting a gentle rainbow of light onto a bright, simple background, symbolizing a transition to clarity."
+      },
+      {
+        "slide": 4,
+        "text": "Hearing my own words, in my own voice, changed everything.\n\nThe noise faded.\n\nI started to feel grounded, clear.",
+        "visual_description": "A clear, warm pastel background showing a dreamy sky with soft, cotton-candy-like clouds, representing a newfound sense of calm."
+      },
+      {
+        "slide": 5,
+        "text": "Maybe it's time to listen to yourself again.\n\nYou can find the app in my bio.",
+        "visual_description": "A serene and minimal landscape of rolling hills under a vast, soft pastel sky, providing ample negative space and a sense of peace."
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "9af96ca4-248b-4201-836a-2cc8137467d4",
+    "project_id": "sayura-tiktok-1",
+    "topic": "Sayura App Story",
+    "created_at": "2026-01-18T14:40:16.216629",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "For years I confused being busy with being okay",
+        "image_path": "/images/muted_pastel_blurry_abstract.jpg"
+      },
+      {
+        "slide": 2,
+        "text": "My mind was a constant hum of worries and to do lists. I felt so disconnected from what I was actually feeling inside.",
+        "image_path": "/images/muted_pastel_tense_ripples.jpg"
+      },
+      {
+        "slide": 3,
+        "text": "So I started a small ritual of just speaking my thoughts out loud. I happened to use the Sayura app to keep them private and listen back.",
+        "image_path": "/images/transitional_light_soft_focus.jpg"
+      },
+      {
+        "slide": 4,
+        "text": "Slowly, the noise began to settle. Hearing myself think brought a gentle clarity and a sense of calm I hadn't felt in a long time.",
+        "image_path": "/images/warm_pastel_calm_landscape.jpg"
+      },
+      {
+        "slide": 5,
+        "text": "If this resonates, you can save this post. Consider it a little reminder in your scroll to pause and listen to yourself today.",
+        "image_path": "/images/warm_pastel_grounded_still_life.jpg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "5caa74e7-4a6e-46d3-9648-da093f6d04b0",
+    "project_id": "sayura-app-q1-2024-v1",
+    "topic": "Sayura App - Overthinking",
+    "created_at": "2026-01-18T14:57:35.082965",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "I thought overthinking was just a part of me.",
+        "image_path": "https://images.pexels.com/photos/7899768/pexels-photo-7899768.jpeg"
+      },
+      {
+        "slide": 2,
+        "text": "My mind felt like a loud, crowded room. I was always searching for a quiet corner but could never seem to find the door.",
+        "image_path": "https://images.pexels.com/photos/8549414/pexels-photo-8549414.jpeg"
+      },
+      {
+        "slide": 3,
+        "text": "Then I started a simple ritual of noting one feeling a day. I used the Sayura app for this, which helped me gently release the thought.",
+        "image_path": "https://images.pexels.com/photos/10060373/pexels-photo-10060373.jpeg"
+      },
+      {
+        "slide": 4,
+        "text": "Slowly, the noise began to fade. I found my quiet corner. It feels like coming home to myself, a soft reflection in a still mirror.",
+        "image_path": "https://images.pexels.com/photos/34368018/pexels-photo-34368018.jpeg"
+      },
+      {
+        "slide": 5,
+        "text": "If you feel this too, perhaps this can be a quiet corner for you as well. The link is in my bio if you're curious to try.",
+        "image_path": "/image_library/minimalist_bright/infinity_pool_sunset.jpg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
   }
 ]

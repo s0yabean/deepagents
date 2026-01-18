@@ -33,11 +33,12 @@ from tiktok_slideshow_agent.prompts.specialists import (
 
 # Import Tools
 from tiktok_slideshow_agent.tools.agent_tools import (
-    render_slide, 
-    save_locally, 
-    get_sync_tool, 
-    setup_project_folder, 
-    upload_to_drive, 
+    render_slide,
+    save_locally,
+    read_metadata_file,
+    get_sync_tool,
+    setup_project_folder,
+    upload_to_drive,
     send_email_notification,
     request_human_approval,
     read_format_library,
@@ -137,9 +138,9 @@ def get_publisher():
     """Initialize publisher with Drive (OAuth) and SMTP email tools."""
     return {
         "name": "publisher",
-        "description": "Sets up project, renders slides, uploads to Drive, and sends email notification.",
+        "description": "Reads approved metadata, renders slides, uploads to Drive, and sends email notification.",
         "system_prompt": PUBLISHER_INSTRUCTIONS,
-        "tools": [setup_project_folder, render_slide, save_locally, upload_to_drive, send_email_notification],
+        "tools": [setup_project_folder, read_metadata_file, render_slide, upload_to_drive, send_email_notification],
         "model": specialist_model,
     }
 
@@ -148,9 +149,9 @@ def get_publisher():
 # ==============================================================================
 qa_specialist = {
     "name": "qa-specialist",
-    "description": "Final quality control check.",
+    "description": "Final quality control check and metadata recording.",
     "system_prompt": QA_INSTRUCTIONS,
-    "tools": [request_human_approval],
+    "tools": [request_human_approval, save_locally],
     "model": specialist_model,
 }
 

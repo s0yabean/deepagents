@@ -86,10 +86,11 @@ import asyncio
 @tool
 async def render_slide(text: str, image_path: str, slide_number: int, output_dir: str = None) -> str:
     """Render a slide with text and image, returning the output path.
-    
+
     Args:
         text: The overlay text for the slide.
-        image_path: The absolute path to the background image.
+        image_path: The background image path (local absolute path OR Pexels URL).
+                   URLs will be automatically downloaded during rendering.
         slide_number: The sequence number of the slide.
         output_dir: Optional absolute path to the directory where the slide should be saved.
     """
@@ -107,49 +108,52 @@ async def render_slide(text: str, image_path: str, slide_number: int, output_dir
 @tool
 async def setup_project_folder(topic: str) -> dict:
     """Creates a timestamped project folder locally AND on Google Drive.
-    
+
+    Called ONLY by Publisher at the start of rendering.
+
     Returns:
         A dictionary containing paths and IDs:
         - project_root_id: ID of the root folder on Drive.
         - local_project_root: Absolute local path to the project root.
         - local_slideshows_dir: Absolute local path for rendered images.
+        - local_metadata_dir: Absolute local path for metadata.
         - folder_name: The name of the root folder.
     """
     import datetime
     import re
     from pathlib import Path
-    
+
     # Base Path Calculation (same as other tools)
     current_file = Path(__file__).resolve()
     # tools -> tiktok_slideshow_agent -> PROJECT_ROOT -> output
     base_path = current_file.parent.parent.parent
     output_base = base_path / "output"
-    
+
     now = datetime.datetime.now(datetime.timezone.utc)
     timestamp = now.strftime("%d%m%Y_%H%M")
-    
+
     # Increase descriptiveness: Fix regex to allow all numbers, max 3 words, max 30 chars
     # Remove special chars (keep letters, numbers, spaces)
     clean_topic = re.sub(r'[^a-zA-Z0-9\s]', '', topic)
-    
+
     # Split into words, take max 3, join with underscore
     words = clean_topic.split()
     short_topic = "_".join(words[:3])
-    
+
     reel_name = short_topic.lower().strip()
-    reel_name = reel_name[:30] 
-    
+    reel_name = reel_name[:30]
+
     root_folder_name = f"{timestamp}_UTC_sayura_{reel_name}"
-    
-    # 1. Local Creation
+
+    # 1. Local Creation (will reuse if already created by save_locally)
     local_project_root = output_base / root_folder_name
     local_slideshows_dir = local_project_root / "slideshows"
     local_metadata_dir = local_project_root / "metadata"
-    
+
     await asyncio.to_thread(os.makedirs, local_project_root, exist_ok=True)
     await asyncio.to_thread(os.makedirs, local_slideshows_dir, exist_ok=True)
     await asyncio.to_thread(os.makedirs, local_metadata_dir, exist_ok=True)
-    
+
     # 2. Drive Creation (Target Folder ID specified by user)
     # Target ID: Configured in .env (GOOGLE_DRIVE_PARENT_ID)
     TARGET_DRIVE_PARENT_ID = os.getenv("GOOGLE_DRIVE_PARENT_ID")
@@ -158,11 +162,7 @@ async def setup_project_folder(topic: str) -> dict:
 
     # Create subfolder using personal OAuth account
     root_folder_id = await get_drive().create_folder(root_folder_name, parent_id=TARGET_DRIVE_PARENT_ID)
-    
-    # We don't strictly need to create subfolders on Drive if we just upload files to root_folder_id,
-    # but maintaining structure is good.
-    # Actually, to keep it simple for the agent, we can just upload all rendered slides to the root_folder_id.
-    
+
     return {
         "project_root_id": root_folder_id,
         "local_project_root": str(local_project_root),
@@ -172,15 +172,20 @@ async def setup_project_folder(topic: str) -> dict:
     }
 
 @tool
-async def save_locally(project_id: str, topic: str, slides: str, metadata_dir: str) -> str:
+async def save_locally(project_id: str, topic: str, slides: str) -> str:
     """Save metadata locally and record in the Knowledge Base.
-    
+
+    Auto-creates the project folder structure based on topic and timestamp.
+
     Args:
         project_id: Unique identifier for the project.
         topic: The main topic of the slideshow.
         slides: A JSON string representing a list of slide objects.
-        metadata_dir: The absolute path to the local metadata directory (or Drive ID, context dependent).
     """
+    import datetime
+    import re
+    from pathlib import Path
+
     try:
         if isinstance(slides, list):
             slides_data = slides
@@ -189,18 +194,64 @@ async def save_locally(project_id: str, topic: str, slides: str, metadata_dir: s
     except json.JSONDecodeError:
         return "Error: 'slides' argument must be a valid JSON string representing a list of slides."
 
-    # 1. Save locally if metadata_dir looks like a path
-    if os.path.exists(metadata_dir) or "/" in metadata_dir:
-         metadata_path = os.path.join(metadata_dir, "metadata.json")
-         def save_metadata_sync():
-             with open(metadata_path, "w", encoding="utf-8") as f:
-                 json.dump(slides_data, f, indent=4)
-         await asyncio.to_thread(save_metadata_sync)
+    # 1. Construct metadata directory path (same logic as setup_project_folder)
+    current_file = Path(__file__).resolve()
+    base_path = current_file.parent.parent.parent
+    output_base = base_path / "output"
+
+    now = datetime.datetime.now(datetime.timezone.utc)
+    timestamp = now.strftime("%d%m%Y_%H%M")
+
+    clean_topic = re.sub(r'[^a-zA-Z0-9\s]', '', topic)
+    words = clean_topic.split()
+    short_topic = "_".join(words[:3])
+    reel_name = short_topic.lower().strip()[:30]
+
+    root_folder_name = f"{timestamp}_UTC_sayura_{reel_name}"
+    local_project_root = output_base / root_folder_name
+    local_metadata_dir = local_project_root / "metadata"
+
+    # Create metadata directory
+    await asyncio.to_thread(os.makedirs, local_metadata_dir, exist_ok=True)
+
+    # Save metadata.json
+    metadata_path = local_metadata_dir / "metadata.json"
+    def save_metadata_sync():
+        with open(metadata_path, "w", encoding="utf-8") as f:
+            json.dump(slides_data, f, indent=4)
+    await asyncio.to_thread(save_metadata_sync)
 
     # 2. Save to KB (historical record)
     await asyncio.to_thread(get_kb().save_slideshow, project_id, topic, slides_data, "Drive Upload")
-    
-    return f"Metadata recorded in Knowledge Base and saved to {metadata_dir}"
+
+    return f"Metadata recorded in Knowledge Base and saved to {local_metadata_dir}"
+
+@tool
+async def read_metadata_file(metadata_dir: str) -> str:
+    """Read the approved metadata.json file from disk.
+
+    This is the source of truth for rendering - it contains the exact approved slides.
+
+    Args:
+        metadata_dir: The directory containing metadata.json (from setup_project_folder).
+
+    Returns:
+        A JSON string containing the approved slide list, or an error message.
+    """
+    metadata_path = os.path.join(metadata_dir, "metadata.json")
+
+    def read_file_sync():
+        if not os.path.exists(metadata_path):
+            return None
+        with open(metadata_path, "r", encoding="utf-8") as f:
+            return f.read()
+
+    content = await asyncio.to_thread(read_file_sync)
+
+    if content is None:
+        return f"Error: metadata.json not found at {metadata_path}. QA Specialist must approve and save metadata first."
+
+    return content
 
 @tool
 async def upload_to_drive(file_paths: list[str], folder_id: str) -> str:

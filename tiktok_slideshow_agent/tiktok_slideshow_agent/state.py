@@ -58,22 +58,22 @@ class AgentState(TypedDict):
     # Input
     topic: str
     project_id: str
-    
+
     # Config (Loaded from project_id)
     slide_count: int
     tone: str
     font_style: str
     require_human_review: bool
     user_requirements: List[str]
-    
+
     # Working Memory
     generated_hooks: List[str]
     selected_hook: str
     slides: List[Slide]
-    
+
     # Planning
     todos: Annotated[List[Dict[str, Any]], merge_todos]
-    
+
     # Output
     drive_folder_link: str
     logs: Annotated[List[str], operator.add]
