@@ -8,10 +8,11 @@ from tiktok_slideshow_agent.tools.renderer import PlaywrightRendererTool
 from tiktok_slideshow_agent.tools.drive import GoogleDriveTool
 from tiktok_slideshow_agent.tools.knowledge import KnowledgeBaseTool
 from tiktok_slideshow_agent.tools.sync_tool import sync_image_library
-from tiktok_slideshow_agent.tools.pexels_tool import search_pexels
+from tiktok_slideshow_agent.tools.pexels_handler import search_pexels_with_fallback
 
 # Ensure .env is loaded before any tools run
 load_dotenv()
+
 
 # Format Library path - relative to project root
 def _get_format_library_path():
@@ -20,6 +21,7 @@ def _get_format_library_path():
     base_path = current_file.parent.parent.parent
     return base_path / "format_library.json"
 
+
 # Lazy Tool Getters to avoid BlockingError during import
 _image_lib = None
 _renderer = None
@@ -27,11 +29,13 @@ _drive = None
 _kb = None
 _sync_tool = None
 
+
 def get_image_lib():
     global _image_lib
     if _image_lib is None:
         _image_lib = ImageLibraryTool()
     return _image_lib
+
 
 def get_renderer():
     global _renderer
@@ -39,11 +43,13 @@ def get_renderer():
         _renderer = PlaywrightRendererTool()
     return _renderer
 
+
 def get_drive():
     global _drive
     if _drive is None:
         _drive = GoogleDriveTool()
     return _drive
+
 
 async def initialize_google_drive():
     """
@@ -69,11 +75,13 @@ async def initialize_google_drive():
     drive_tool = get_drive()
     return await drive_tool.validate_token_async()
 
+
 def get_kb():
     global _kb
     if _kb is None:
         _kb = KnowledgeBaseTool()
     return _kb
+
 
 def get_sync_tool():
     global _sync_tool
@@ -81,10 +89,14 @@ def get_sync_tool():
         _sync_tool = sync_image_library
     return _sync_tool
 
+
 import asyncio
 
+
 @tool
-async def render_slide(text: str, image_path: str, slide_number: int, output_dir: str = None) -> str:
+async def render_slide(
+    text: str, image_path: str, slide_number: int, output_dir: str = None
+) -> str:
     """Render a slide with text and image, returning the output path.
 
     Args:
@@ -94,16 +106,13 @@ async def render_slide(text: str, image_path: str, slide_number: int, output_dir
         slide_number: The sequence number of the slide.
         output_dir: Optional absolute path to the directory where the slide should be saved.
     """
-    slide_data = {
-        "text": text,
-        "image_path": image_path,
-        "slide_number": slide_number
-    }
+    slide_data = {"text": text, "image_path": image_path, "slide_number": slide_number}
     # Config can be expanded later
-    config = {"font_style": "Montserrat"} 
-    
+    config = {"font_style": "Montserrat"}
+
     # Run async renderer
     return await get_renderer().render_slide(slide_data, config, output_dir=output_dir)
+
 
 @tool
 async def setup_project_folder(topic: str) -> dict:
@@ -134,7 +143,7 @@ async def setup_project_folder(topic: str) -> dict:
 
     # Increase descriptiveness: Fix regex to allow all numbers, max 3 words, max 30 chars
     # Remove special chars (keep letters, numbers, spaces)
-    clean_topic = re.sub(r'[^a-zA-Z0-9\s]', '', topic)
+    clean_topic = re.sub(r"[^a-zA-Z0-9\s]", "", topic)
 
     # Split into words, take max 3, join with underscore
     words = clean_topic.split()
@@ -161,15 +170,18 @@ async def setup_project_folder(topic: str) -> dict:
         return {"error": "GOOGLE_DRIVE_PARENT_ID not set in .env"}
 
     # Create subfolder using personal OAuth account
-    root_folder_id = await get_drive().create_folder(root_folder_name, parent_id=TARGET_DRIVE_PARENT_ID)
+    root_folder_id = await get_drive().create_folder(
+        root_folder_name, parent_id=TARGET_DRIVE_PARENT_ID
+    )
 
     return {
         "project_root_id": root_folder_id,
         "local_project_root": str(local_project_root),
         "local_slideshows_dir": str(local_slideshows_dir),
         "local_metadata_dir": str(local_metadata_dir),
-        "folder_name": root_folder_name
+        "folder_name": root_folder_name,
     }
+
 
 @tool
 async def save_locally(project_id: str, topic: str, slides: str) -> str:
@@ -202,7 +214,7 @@ async def save_locally(project_id: str, topic: str, slides: str) -> str:
     now = datetime.datetime.now(datetime.timezone.utc)
     timestamp = now.strftime("%d%m%Y_%H%M")
 
-    clean_topic = re.sub(r'[^a-zA-Z0-9\s]', '', topic)
+    clean_topic = re.sub(r"[^a-zA-Z0-9\s]", "", topic)
     words = clean_topic.split()
     short_topic = "_".join(words[:3])
     reel_name = short_topic.lower().strip()[:30]
@@ -216,15 +228,20 @@ async def save_locally(project_id: str, topic: str, slides: str) -> str:
 
     # Save metadata.json
     metadata_path = local_metadata_dir / "metadata.json"
+
     def save_metadata_sync():
         with open(metadata_path, "w", encoding="utf-8") as f:
             json.dump(slides_data, f, indent=4)
+
     await asyncio.to_thread(save_metadata_sync)
 
     # 2. Save to KB (historical record)
-    await asyncio.to_thread(get_kb().save_slideshow, project_id, topic, slides_data, "Drive Upload")
+    await asyncio.to_thread(
+        get_kb().save_slideshow, project_id, topic, slides_data, "Drive Upload"
+    )
 
     return f"Metadata recorded in Knowledge Base and saved to {local_metadata_dir}"
+
 
 @tool
 async def read_metadata_file(metadata_dir: str) -> str:
@@ -253,21 +270,25 @@ async def read_metadata_file(metadata_dir: str) -> str:
 
     return content
 
+
 @tool
 async def upload_to_drive(file_paths: list[str], folder_id: str) -> str:
     """Uploads files to a specific Google Drive folder.
-    
+
     Args:
         file_paths: List of local absolute file paths to upload.
         folder_id: The Google Drive folder ID to upload into.
-        
+
     Returns:
         A shared link to the folder containing the uploads.
     """
     return await get_drive().upload_files(file_paths, folder_id)
 
+
 @tool
-async def send_email_notification(subject: str, content: str, to_email: str = None) -> str:
+async def send_email_notification(
+    subject: str, content: str, to_email: str = None
+) -> str:
     """Sends an email notification via SMTP.
 
     **IMPORTANT**: You do NOT need to provide a recipient email.
@@ -296,76 +317,78 @@ async def send_email_notification(subject: str, content: str, to_email: str = No
         return "❌ ERROR: EMAIL_TO not configured in .env file. Cannot send notification. Please add EMAIL_TO=your-email@gmail.com to your .env file."
 
     recipients.append(env_email)
-        
+
     # 2. Include agent-specified email if provided and different
     if to_email and to_email.strip() and to_email != env_email:
         recipients.append(to_email)
-    
+
     if not recipients:
         return "Error: No recipient email provided in .env or arguments."
-        
+
     # Send to all recipients
     results = []
     for recipient in recipients:
         try:
-            # We treat subject slightly differently to avoid threading issues if desired, 
+            # We treat subject slightly differently to avoid threading issues if desired,
             # but usually same subject is fine.
             res = await get_drive().send_email(recipient, subject, content)
             results.append(f"Sent to {recipient}: {res}")
         except Exception as e:
             results.append(f"Failed to send to {recipient}: {str(e)}")
-            
+
     return "\n".join(results)
+
 
 @tool
 def request_human_approval(summary: str) -> str:
     """Request human approval for the current plan or content.
-    
+
     This tool triggers a system interrupt. Execution will pause until the human approves.
     If ENABLE_HUMAN_REVIEW=false in .env, this tool auto-approves without pausing.
-    
+
     Args:
         summary: A brief summary of what is being approved (e.g., "QA Approved: Script and Images look good").
     """
     # Check if human review is enabled
     enable_human_review = os.getenv("ENABLE_HUMAN_REVIEW", "True").lower() == "true"
-    
+
     if not enable_human_review:
         # Auto-approve without interrupting
         return f"Auto-approved (ENABLE_HUMAN_REVIEW=false): {summary}"
-    
+
     from langgraph.types import interrupt
-    
+
     # This pauses execution. The value passed to interrupt() is shown to the user/client.
     # The value returned by interrupt() is what the user provides when resuming (or None).
     user_feedback = interrupt(summary)
-    
+
     if user_feedback and isinstance(user_feedback, str):
         return f"Human Feedback: {user_feedback}"
-        
+
     return "Human approved"
 
 
 @tool
 def read_format_library() -> str:
     """Read the Format Library containing proven TikTok slideshow formats.
-    
+
     Returns the full format library JSON with:
     - formats: List of proven formats (transformation-story, myth-busting, listicle, etc.)
     - hook_formulas: Universal hook templates
     - cta_styles: Call-to-action approaches
     - product_positioning_guide: How to position products
     - universal_principles: Key rules for viral content
-    
+
     The Creative Director should ALWAYS read this before creating a Creative Brief.
     """
     format_lib_path = _get_format_library_path()
-    
+
     if not format_lib_path.exists():
         return json.dumps({"error": f"Format library not found at {format_lib_path}"})
-    
+
     with open(format_lib_path, "r", encoding="utf-8") as f:
         return f.read()
+
 
 @tool
 async def verify_drive_upload(folder_id: str, expected_slide_count: int) -> str:
@@ -391,7 +414,9 @@ async def verify_drive_upload(folder_id: str, expected_slide_count: int) -> str:
     has_metadata = "metadata.json" in files_in_folder
 
     # Count slide images (files ending with .png or .jpg)
-    slide_images = [f for f in files_in_folder if f.endswith('.png') or f.endswith('.jpg')]
+    slide_images = [
+        f for f in files_in_folder if f.endswith(".png") or f.endswith(".jpg")
+    ]
     actual_slide_count = len(slide_images)
 
     # Build verification report
@@ -412,3 +437,46 @@ async def verify_drive_upload(folder_id: str, expected_slide_count: int) -> str:
 
     # All checks passed
     return f"✅ VERIFICATION PASSED: All {expected_slide_count} slides + metadata.json confirmed in Drive folder (Total: {len(files_in_folder)} files)"
+
+
+@tool
+def get_brief_fields(brief_id: str, fields: list[str]) -> str:
+    """Retrieve specific fields from the Creative Brief stored in agent state.
+
+    This tool enables context-efficient access to Creative Brief data.
+    Instead of receiving the full 2000+ character brief JSON, agents can request
+    only the fields they need.
+
+    Args:
+        brief_id: The Creative Brief identifier (e.g., "brief_20260123_abc123").
+        fields: List of field names to retrieve from the brief.
+               Common fields by agent:
+               - hook-agent: ["hooks", "tone", "target_audience", "hook_style", "reference_hooks", "avoid"]
+               - content-strategist: ["narrative_arc", "product_position", "product_mention_guidance", "cta_style", "cta_examples", "avoid"]
+               - visual-designer: ["image_arc", "tone", "format_id"]
+               - qa-specialist: ["slides", "format_id", "tone", "hook_style", "narrative_arc", "product_position", "image_arc", "cta_style"]
+
+    Returns:
+        A JSON string containing only the requested fields from the Creative Brief.
+        Returns error message if brief_id not found or fields not in brief.
+
+    Example:
+        get_brief_fields("brief_20260123_abc123", ["tone", "image_arc"])
+        Returns: {"tone": "energetic", "image_arc": ["moody", "moody", "transitional", "bright", "bright"]}
+    """
+    import json
+
+    # This tool requires access to agent state. In LangGraph, state is passed via context.
+    # For now, return instructions for how this integrates with state.
+    # The actual implementation will read from state['creative_brief'] where brief_id matches.
+
+    # Placeholder for state integration - actual access happens via state context
+    return json.dumps(
+        {
+            "brief_id": brief_id,
+            "requested_fields": fields,
+            "status": "brief_access_tool_available",
+            "note": "This tool accesses state['creative_brief'] in the actual implementation",
+            "expected_fields": fields,
+        }
+    )

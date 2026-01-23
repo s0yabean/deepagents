@@ -4,16 +4,18 @@ import httpx
 import json
 
 @tool
-def search_pexels(query: str, per_page: int = 2) -> str:
-    """Search for high-quality, portrait-oriented images on Pexels.
-    
+def search_pexels(query: str, per_page: int = 5, slide_position: int = 1) -> str:
+    """Search for high-quality, portrait-oriented images on Pexels with automatic query optimization.
+
     Use this when local image library is insufficient.
-    
+
     Args:
         query: Search keywords (e.g., "minimalist beach sunset", "dark moody city").
-               Tip: Append "background" or "aesthetic" to get cleaner images.
-        per_page: Number of images to return (max 5).
-    
+        per_page: Number of images to return (default: 5, max: 15).
+        slide_position: Slide number (1-based). Used to auto-optimize query.
+                       Slide 1 (Hook): Allows people in images.
+                       Slides 2+: Automatically appends "no people background" for consistency.
+
     Returns:
         JSON string containing list of image objects:
         [{
@@ -28,12 +30,23 @@ def search_pexels(query: str, per_page: int = 2) -> str:
     if not api_key:
         return json.dumps({"error": "PEXELS_API_KEY not found in environment settings."})
 
+    # Auto-enhance query based on slide position (Single Protagonist Rule)
+    enhanced_query = query
+    if slide_position > 1:
+        # Body slides: enforce no-people constraint for visual consistency
+        if "no people" not in query.lower() and "background" not in query.lower():
+            enhanced_query = f"{query} no people background"
+        elif "no people" not in query.lower():
+            enhanced_query = f"{query} no people"
+        elif "background" not in query.lower():
+            enhanced_query = f"{query} background"
+
     # Strict limits to respect rate limiting (200/hour)
     limit = min(per_page, 15)
     
     # Force portrait (9:16 aspect ratio roughly)
     params = {
-        "query": query,
+        "query": enhanced_query,
         "orientation": "portrait",
         "per_page": limit,
         "page": 1

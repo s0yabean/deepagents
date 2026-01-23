@@ -51,6 +51,7 @@ from tiktok_slideshow_agent.tools.agent_tools import (
     request_human_approval,
     read_format_library,
     search_pexels,
+    search_pexels_with_fallback,
 )
 
 # ==============================================================================
@@ -144,6 +145,7 @@ def get_visual_designer():
         "tools": [
             get_sync_tool(),
             search_pexels,
+            search_pexels_with_fallback,
             verify_visual_consistency,
             select_best_fitting_image,
         ],  # render_slide moved to Publisher

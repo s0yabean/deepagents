@@ -9,6 +9,35 @@ description: Advanced image selection and visual design system for content creat
 
 Provides comprehensive image selection and visual design capabilities for content creation workflows. Handles library management, mood-based selection, visual consistency validation, and fallback image sourcing with non-blocking operations.
 
+## Image Selection Checklist (MANDATORY)
+
+Follow this workflow in order. DO NOT skip steps:
+
+1. **Library Scan** - Run `sync_image_library()` to refresh metadata
+2. **Exhaustive Local Search** - For EACH mood in the arc:
+   - Try at LEAST 3 different category combinations
+   - Search across multiple tags and metadata
+   - Collect all viable candidates (aim for 5+ options per mood)
+3. **Quality Gate** - Evaluate local candidates:
+   - If you have <3 strong candidates for ANY mood → MUST use Pexels for that slide
+   - "Strong candidate" = matches mood + complements slide text + fits arc progression
+4. **Pexels Search** (when triggered):
+   - Use enhanced queries (mood keywords + "background" + slide-specific terms)
+   - Start with per_page=10 for good selection pool
+   - Use `select_best_fitting_image()` to pick from candidates with context
+5. **Consistency Verification** - BEFORE finalizing:
+   - Call `verify_visual_consistency()` on complete image set
+   - Target consistency score: ≥7/10
+6. **Outlier Replacement** - If consistency <7/10:
+   - Use Smart Selection process (search more candidates, use selection tool)
+   - Increase search results (per_page=15 if needed)
+   - Re-verify after replacement
+
+**Critical Rules:**
+- DO NOT rationalize "local images are good enough" without trying 3+ category combinations
+- DO NOT skip Pexels if local library is sparse for a mood category
+- DO NOT skip consistency verification before finalizing
+
 ## Core Capabilities
 
 ### 1. Image Library Management
