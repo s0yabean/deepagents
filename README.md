@@ -15,7 +15,8 @@ Here are the currently supported quickstarts:
 
 | Quickstart Name | Location | Description | Usage Options |
 |----------------|----------|-------------|---------------|
-| [Deep Research](deep_research/README.md) | `deep_research/` | A research agent that conducts multi-step web research using Tavily for URL discovery, fetches full webpage content, and coordinates work through parallel sub-agents and strategic reflection | **Jupyter Notebook** or **LangGraph Server** |
+| [TikTok Slideshow Agent](tiktok_slideshow_agent/README.md) | `tiktok_slideshow_agent/` | AI-powered TikTok content creation using multi-agent architecture with Creative Director workflow, Pexels integration, and Google Drive delivery | LangGraph Server |
+| [Deep Research](deep_research/README.md) | `deep_research/` | A research agent that conducts multi-step web research using Tavily for URL discovery, fetches full webpage content, and coordinates work through parallel sub-agents and strategic reflection | Jupyter Notebook or LangGraph Server |
 
 ## Built-In Deepagent Components
 
