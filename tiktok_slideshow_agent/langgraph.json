@@ -1,9 +1,8 @@
 {
-    "dependencies": [
-        "."
-    ],
-    "graphs": {
-        "tiktok_ss_agent": "./agent.py:agent"
-    },
-    "env": ".env"
+  "python_version": "3.12",
+  "dependencies": ["."],
+  "graphs": {
+    "tiktok_slideshow_agent": "./agent.py:agent"
+  },
+  "env": ".env"
 }

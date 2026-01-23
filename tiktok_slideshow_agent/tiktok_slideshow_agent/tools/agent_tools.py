@@ -366,3 +366,49 @@ def read_format_library() -> str:
     
     with open(format_lib_path, "r", encoding="utf-8") as f:
         return f.read()
+
+@tool
+async def verify_drive_upload(folder_id: str, expected_slide_count: int) -> str:
+    """Verifies that all required files were uploaded to Google Drive.
+
+    This tool performs a critical verification step after upload to ensure:
+    1. metadata.json exists in the Drive folder
+    2. All expected slide images were uploaded
+
+    CRITICAL: This tool MUST be called after upload_to_drive and BEFORE send_email_notification.
+
+    Args:
+        folder_id: The Google Drive folder ID where files were uploaded.
+        expected_slide_count: The number of slide images that should be present.
+
+    Returns:
+        Success message if all files present, or detailed error message listing missing files.
+    """
+    # List all files in the Drive folder
+    files_in_folder = await get_drive().list_folder_files(folder_id)
+
+    # Check for metadata.json
+    has_metadata = "metadata.json" in files_in_folder
+
+    # Count slide images (files ending with .png or .jpg)
+    slide_images = [f for f in files_in_folder if f.endswith('.png') or f.endswith('.jpg')]
+    actual_slide_count = len(slide_images)
+
+    # Build verification report
+    issues = []
+
+    if not has_metadata:
+        issues.append("❌ CRITICAL: metadata.json is MISSING from Drive folder")
+
+    if actual_slide_count != expected_slide_count:
+        issues.append(
+            f"❌ CRITICAL: Expected {expected_slide_count} slides, but found {actual_slide_count} in Drive folder"
+        )
+
+    if issues:
+        error_report = "\n".join(issues)
+        error_report += f"\n\nFiles found in folder: {', '.join(files_in_folder)}"
+        return f"VERIFICATION FAILED:\n{error_report}"
+
+    # All checks passed
+    return f"✅ VERIFICATION PASSED: All {expected_slide_count} slides + metadata.json confirmed in Drive folder (Total: {len(files_in_folder)} files)"

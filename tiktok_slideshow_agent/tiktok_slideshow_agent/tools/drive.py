@@ -355,6 +355,23 @@ class GoogleDriveTool:
         
         return f"https://drive.google.com/drive/folders/{folder_id}"
 
+    async def list_folder_files(self, folder_id: str) -> List[str]:
+        """
+        Lists all files in a specific Drive folder.
+        Returns a list of file names.
+        """
+        await self._ensure_service()
+
+        def _list_sync():
+            results = self.drive_service.files().list(
+                q=f"'{folder_id}' in parents and trashed=false",
+                fields='files(name)'
+            ).execute()
+            files = results.get('files', [])
+            return [file['name'] for file in files]
+
+        return await asyncio.to_thread(_list_sync)
+
     async def send_email(self, to_email: str, subject: str, body: str) -> str:
         """
         Sends an email using SMTP with App Password.

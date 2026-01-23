@@ -306,14 +306,21 @@ Your job is to:
     - **CRITICAL**: Also include `{metadata_dir}/metadata.json` in the upload list.
     - Call `upload_to_drive(file_paths=[...rendered slides..., metadata.json], folder_id=project_root_id)`.
 
-5.  **Email Notification**:
+5.  **VERIFY Upload (MANDATORY - DO NOT SKIP)**:
+    - **CRITICAL**: You MUST verify the upload before sending email.
+    - Call `verify_drive_upload(folder_id=project_root_id, expected_slide_count=<number of slides>)`.
+    - This confirms that metadata.json and all slides are present in the Drive folder.
+    - **IF VERIFICATION FAILS**: DO NOT send email. Report the error immediately.
+    - **IF VERIFICATION PASSES**: Proceed to step 6.
+
+6.  **Email Notification**:
     - Construct the Drive Link from the previous step.
     - Call `send_email_notification(subject="TikTok Slideshow Ready", content="Your slideshow is ready: [Drive Link]")`.
     - **CRITICAL**: DO NOT provide the `to_email` parameter - leave it empty.
     - The email will automatically be sent to the admin address configured in EMAIL_TO (.env).
     - Only provide `to_email` if the user explicitly requested an additional recipient in their requirements.
 
-6.  **Final Summary**: Provide the Drive link and confirm email sent.
+7.  **Final Summary**: Provide the Drive link and confirm email sent.
 
 **Quality Guarantee**: By reading metadata.json from disk, you ensure the exact approved copy is rendered, preventing any drift between approval and rendering.
 """

@@ -9,7 +9,12 @@ from langchain_core.tools import tool
 # Import Deep Agent Factory
 # Assuming deepagents is installed or available in path
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), "../qmdj_agent/.venv/lib/python3.12/site-packages"))
+
+sys.path.append(
+    os.path.join(
+        os.path.dirname(__file__), "../qmdj_agent/.venv/lib/python3.12/site-packages"
+    )
+)
 from deepagents import create_deep_agent
 
 # Import Tavily Search Tool
@@ -22,13 +27,15 @@ from tiktok_slideshow_agent.state import AgentState
 
 # Import Prompts
 from tiktok_slideshow_agent.prompts.orchestrator import ORCHESTRATOR_INSTRUCTIONS
-from tiktok_slideshow_agent.prompts.creative_director import CREATIVE_DIRECTOR_INSTRUCTIONS
+from tiktok_slideshow_agent.prompts.creative_director import (
+    CREATIVE_DIRECTOR_INSTRUCTIONS,
+)
 from tiktok_slideshow_agent.prompts.specialists import (
     HOOK_AGENT_INSTRUCTIONS,
     STRATEGIST_INSTRUCTIONS,
     DESIGNER_INSTRUCTIONS,
     PUBLISHER_INSTRUCTIONS,
-    QA_INSTRUCTIONS
+    QA_INSTRUCTIONS,
 )
 
 # Import Tools
@@ -39,16 +46,18 @@ from tiktok_slideshow_agent.tools.agent_tools import (
     get_sync_tool,
     setup_project_folder,
     upload_to_drive,
+    verify_drive_upload,
     send_email_notification,
     request_human_approval,
     read_format_library,
-    search_pexels
+    search_pexels,
 )
 
 # ==============================================================================
 # Model Configuration (must be before subagent definitions)
 # ==============================================================================
 from tiktok_slideshow_agent.rotating_model import RotatingGeminiModel
+
 
 def get_google_api_keys() -> list:
     """Get all available Google API keys from environment."""
@@ -62,6 +71,7 @@ def get_google_api_keys() -> list:
         if key:
             keys.append(key)
     return keys
+
 
 api_keys = get_google_api_keys()
 
@@ -77,6 +87,7 @@ specialist_model = RotatingGeminiModel(
     api_keys=api_keys,
     model="gemini-2.5-pro",
     temperature=0.7,
+    max_function_calls=25,  # Increased from default 10 to support multi-step image verification
 )
 
 # ==============================================================================
@@ -108,11 +119,15 @@ content_strategist = {
     "name": "content-strategist",
     "description": "Writes the full script for the slideshow.",
     "system_prompt": STRATEGIST_INSTRUCTIONS,
-    "tools": [], # Pure LLM task
+    "tools": [],  # Pure LLM task
     "model": specialist_model,
 }
 
-from tiktok_slideshow_agent.tools.vision_tool import verify_visual_consistency, select_best_fitting_image
+from tiktok_slideshow_agent.tools.vision_tool import (
+    verify_visual_consistency,
+    select_best_fitting_image,
+)
+
 
 # ==============================================================================
 # Specialist 3: Visual Designer
@@ -125,8 +140,13 @@ def get_visual_designer():
     return {
         "name": "visual-designer",
         "description": "Selects images suitables for the reel from content library.",
-        "system_prompt": DESIGNER_INSTRUCTIONS, # Use raw instructions
-        "tools": [get_sync_tool(), search_pexels, verify_visual_consistency, select_best_fitting_image], # render_slide moved to Publisher
+        "system_prompt": DESIGNER_INSTRUCTIONS,  # Use raw instructions
+        "tools": [
+            get_sync_tool(),
+            search_pexels,
+            verify_visual_consistency,
+            select_best_fitting_image,
+        ],  # render_slide moved to Publisher
         "model": specialist_model,
     }
 
@@ -140,9 +160,17 @@ def get_publisher():
         "name": "publisher",
         "description": "Reads approved metadata, renders slides, uploads to Drive, and sends email notification.",
         "system_prompt": PUBLISHER_INSTRUCTIONS,
-        "tools": [setup_project_folder, read_metadata_file, render_slide, upload_to_drive, send_email_notification],
+        "tools": [
+            setup_project_folder,
+            read_metadata_file,
+            render_slide,
+            upload_to_drive,
+            verify_drive_upload,
+            send_email_notification,
+        ],
         "model": specialist_model,
     }
+
 
 # ==============================================================================
 # Specialist 5: QA Specialist
@@ -161,21 +189,24 @@ qa_specialist = {
 from tiktok_slideshow_agent.state import AgentState
 from deepagents.backends import CompositeBackend, StateBackend, FilesystemBackend
 
-# Define the backend to route /image_library/ to the real disk
+
+# Define the backend to route /image_library/ and /skills/ to the real disk
 def get_backend(rt):
     # Calculate path relative to this file: .../tiktok_slideshow_agent/agent.py
     current_file = Path(__file__).resolve()
     image_library_path = current_file.parent / "image_library"
-    
+    skills_path = current_file.parent / "skills"
+
     return CompositeBackend(
         default=StateBackend(rt),
         routes={
             "/image_library/": FilesystemBackend(
-                root_dir=str(image_library_path),
-                virtual_mode=True
+                root_dir=str(image_library_path), virtual_mode=True
             ),
-        }
+            "/skills/": FilesystemBackend(root_dir=str(skills_path), virtual_mode=True),
+        },
     )
+
 
 # Check for Human-in-the-Loop config - Defaulting to True for user visibility
 enable_human_review = os.getenv("ENABLE_HUMAN_REVIEW", "True").lower() == "true"
@@ -187,7 +218,7 @@ interrupt_points = {}
 
 agent = create_deep_agent(
     model=orchestrator_model,  # Gemini 3 Pro for orchestrator
-    tools=[], # Orchestrator tools (if any)
+    tools=[],  # Orchestrator tools (if any)
     system_prompt=ORCHESTRATOR_INSTRUCTIONS,
     backend=get_backend,
     subagents=[
@@ -196,8 +227,9 @@ agent = create_deep_agent(
         content_strategist,
         get_visual_designer(),
         qa_specialist,
-        get_publisher()
+        get_publisher(),
     ],
     context_schema=AgentState,
     interrupt_on=interrupt_points,
+    skills=["skills/"],  # Load context bloat reduction skills
 )

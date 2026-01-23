@@ -1003,5 +1003,75 @@
       }
     ],
     "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "4d31e17e-0fd5-48ef-b762-4f9c3069ffcd",
+    "project_id": "sayura-tiktok-slideshow-pkg",
+    "topic": "Sayura TikTok Slideshow",
+    "created_at": "2026-01-23T07:21:07.512682",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "You\u2019re not bad at sales . Your nervous system is speaking the wrong language.",
+        "image_path": "/image_library/moody_portrait.jpg"
+      },
+      {
+        "slide": 2,
+        "text": "I used to have the perfect script.\nBut my voice would shake on calls.\nMy energy felt off.\nIt was like my body was betraying my words, and the person on the other end could always feel that strange disconnect.",
+        "image_path": "/image_library/city_blur.jpg"
+      },
+      {
+        "slide": 3,
+        "text": "Then I realized the magic isn't in what you say.\nIt's in the calm and certainty behind the words.\nMy strategy shifted from just practicing the script, to practicing my own energy and my own vocal tone. It changed everything.",
+        "image_path": "/image_library/calm_waves.jpg"
+      },
+      {
+        "slide": 4,
+        "text": "I found this app called Sayura that listens to my voice.\nIt analyzes my tone and helps me practice sounding calm and confident.\nIt\u2019s become my private rehearsal space before any important calls.\nLike a gym for my nervous system.",
+        "image_path": "/image_library/feet_in_sand.jpg"
+      },
+      {
+        "slide": 5,
+        "text": "Now, the words just flow because the calm is real.\nI\u2019m not fighting my body anymore.\nIt has been a complete game changer for me.\nHave you ever felt that disconnect between your words and your energy? Let me know.",
+        "image_path": "/image_library/ocean_wide.jpg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "90a6434e-86d7-48dc-985a-31c71c8b1600",
+    "project_id": "sayura-slideshow-1715705352",
+    "topic": "Sayura App Review",
+    "created_at": "2026-01-23T10:40:35.521891",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "You\u2019re not bad at sales . Your nervous system is speaking the wrong language.",
+        "image_path": "https://images.pexels.com/photos/4926671/pexels-photo-4926671.jpeg"
+      },
+      {
+        "slide": 2,
+        "text": "Whether you are leading a team, asking for a raise, or just trying to genuinely connect with someone new. People feel your energy first. They buy your certainty, not just your words.",
+        "image_path": "https://images.pexels.com/photos/30441337/pexels-photo-30441337.jpeg"
+      },
+      {
+        "slide": 3,
+        "text": "If your voice sounds shaky or flat, it signals a lack of belief in what you're saying. It\u2019s a subconscious dealbreaker. People can\u2019t trust a message from an uncertain messenger.",
+        "image_path": "https://images.pexels.com/photos/6108867/pexels-photo-6108867.jpeg"
+      },
+      {
+        "slide": 4,
+        "text": "I started using an app called Sayura. It listens to my voice and gives me feedback. It\u2019s like a gym for my vocal tone. Three minutes a day helped retrain my nervous system to speak with confidence.",
+        "image_path": "https://images.pexels.com/photos/7130544/pexels-photo-7130544.jpeg"
+      },
+      {
+        "slide": 5,
+        "text": "The result is a feeling of deep self trust. A presence that people can feel. The kind of certainty that doesn't need to be loud. Your voice finally matches your conviction.",
+        "image_path": "https://images.pexels.com/photos/2088205/pexels-photo-2088205.jpeg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
   }
 ]
