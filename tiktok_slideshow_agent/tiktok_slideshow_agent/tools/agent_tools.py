@@ -154,11 +154,12 @@ async def setup_project_folder(topic: str) -> dict:
 
     root_folder_name = f"{timestamp}_UTC_sayura_{reel_name}"
 
-    # 1. Local Creation (will reuse if already created by save_locally)
+    # 1. Local Creation (reuse if already created by save_locally)
     local_project_root = output_base / root_folder_name
     local_slideshows_dir = local_project_root / "slideshows"
     local_metadata_dir = local_project_root / "metadata"
 
+    # Create directories (exist_ok=True handles case where QA already created them)
     await asyncio.to_thread(os.makedirs, local_project_root, exist_ok=True)
     await asyncio.to_thread(os.makedirs, local_slideshows_dir, exist_ok=True)
     await asyncio.to_thread(os.makedirs, local_metadata_dir, exist_ok=True)
@@ -395,48 +396,159 @@ async def verify_drive_upload(folder_id: str, expected_slide_count: int) -> str:
     """Verifies that all required files were uploaded to Google Drive.
 
     This tool performs a critical verification step after upload to ensure:
-    1. metadata.json exists in the Drive folder
-    2. All expected slide images were uploaded
+    1. metadata.json exists in the Drive folder (root level, not in subfolders)
+    2. All slide images are present with correct naming (slide_1.png through slide_N.png)
+    3. Slides are in correct numerical order (no gaps, no duplicates)
 
     CRITICAL: This tool MUST be called after upload_to_drive and BEFORE send_email_notification.
 
     Args:
         folder_id: The Google Drive folder ID where files were uploaded.
-        expected_slide_count: The number of slide images that should be present.
+        expected_slide_count: The number of slide images that should be present (N).
 
     Returns:
-        Success message if all files present, or detailed error message listing missing files.
+        Success message if ALL checks pass, or detailed error message listing failures.
     """
     # List all files in the Drive folder
     files_in_folder = await get_drive().list_folder_files(folder_id)
 
-    # Check for metadata.json
-    has_metadata = "metadata.json" in files_in_folder
-
-    # Count slide images (files ending with .png or .jpg)
-    slide_images = [
-        f for f in files_in_folder if f.endswith(".png") or f.endswith(".jpg")
-    ]
-    actual_slide_count = len(slide_images)
-
-    # Build verification report
     issues = []
 
-    if not has_metadata:
-        issues.append("❌ CRITICAL: metadata.json is MISSING from Drive folder")
+    # ========================================================================
+    # CHECK 1: metadata.json must exist at ROOT LEVEL (not in subfolder)
+    # ========================================================================
+    has_metadata = "metadata.json" in files_in_folder
 
-    if actual_slide_count != expected_slide_count:
+    # Also check for case variations (sometimes Google Drive changes case)
+    metadata_variants = ["metadata.json", "Metadata.json", "METADATA.JSON"]
+    found_metadata_name = None
+    for variant in metadata_variants:
+        if variant in files_in_folder:
+            has_metadata = True
+            found_metadata_name = variant
+            break
+
+    if not has_metadata:
+        # Debug: Show what files ARE in the folder
+        all_files_str = (
+            ", ".join(sorted(files_in_folder)) if files_in_folder else "(empty folder)"
+        )
         issues.append(
-            f"❌ CRITICAL: Expected {expected_slide_count} slides, but found {actual_slide_count} in Drive folder"
+            f"❌ CRITICAL: metadata.json is MISSING from Drive folder root\n"
+            f"   📁 Files found: {all_files_str}\n"
+            f"   💡 Check: Did upload_to_drive include metadata.json in the same call as slides?"
+        )
+    elif found_metadata_name and found_metadata_name != "metadata.json":
+        issues.append(
+            f"⚠️  metadata.json found but named '{found_metadata_name}' - rename to lowercase"
         )
 
-    if issues:
-        error_report = "\n".join(issues)
-        error_report += f"\n\nFiles found in folder: {', '.join(files_in_folder)}"
-        return f"VERIFICATION FAILED:\n{error_report}"
+    # ========================================================================
+    # CHECK 2: Slides must be named correctly (slide_1.png through slide_N.png)
+    # ========================================================================
+    expected_slides = [f"slide_{i}.png" for i in range(1, expected_slide_count + 1)]
 
-    # All checks passed
-    return f"✅ VERIFICATION PASSED: All {expected_slide_count} slides + metadata.json confirmed in Drive folder (Total: {len(files_in_folder)} files)"
+    # Find actual slide files
+    slide_files = [
+        f for f in files_in_folder if f.startswith("slide_") and f.endswith(".png")
+    ]
+
+    # Extract slide numbers from found files
+    found_slides = {}
+    for slide_file in slide_files:
+        try:
+            # Extract number from "slide_X.png"
+            slide_num = int(slide_file.replace("slide_", "").replace(".png", ""))
+            found_slides[slide_num] = slide_file
+        except ValueError:
+            issues.append(f"⚠️  Unknown slide file format: {slide_file}")
+
+    # Check for missing slides
+    missing_slides = []
+    for i in range(1, expected_slide_count + 1):
+        if i not in found_slides:
+            missing_slides.append(f"slide_{i}.png")
+
+    if missing_slides:
+        issues.append(f"❌ MISSING slides: {', '.join(missing_slides)}")
+
+    # Check for extra/unexpected slides
+    extra_slides = [f for f in slide_files if f not in expected_slides]
+    if extra_slides:
+        issues.append(
+            f"⚠️  UNEXPECTED slides (not in metadata): {', '.join(extra_slides)}"
+        )
+
+    # Check for duplicates (same slide number appears multiple times)
+    if len(slide_files) != len(found_slides):
+        seen_numbers = {}
+        duplicates = []
+        for slide_file in slide_files:
+            try:
+                num = int(slide_file.replace("slide_", "").replace(".png", ""))
+                if num in seen_numbers:
+                    duplicates.append(f"slide_{num}.png")
+                seen_numbers[num] = slide_file
+            except ValueError:
+                pass
+        if duplicates:
+            issues.append(f"❌ DUPLICATE slides found: {', '.join(set(duplicates))}")
+
+    # ========================================================================
+    # CHECK 3: Verify all checks pass
+    # ========================================================================
+    if issues:
+        error_report = "❌ VERIFICATION FAILED:\n"
+        error_report += "\n".join(f"  {issue}" for issue in issues)
+        error_report += (
+            f"\n\n📁 All files in folder: {', '.join(sorted(files_in_folder))}"
+        )
+        return error_report
+
+    # All checks passed!
+    slide_list = ", ".join(f"slide_{i}.png" for i in range(1, expected_slide_count + 1))
+    return (
+        f"✅ VERIFICATION PASSED\n"
+        f"\n  📋 metadata.json: Present"
+        f"\n  📊 Slides ({expected_slide_count}): All present and correctly numbered"
+        f"\n     → {slide_list}"
+        f"\n\n📁 All files in folder: {', '.join(sorted(files_in_folder))}"
+    )
+
+    # Check for duplicates (same slide number appears multiple times)
+    if len(slide_files) != len(found_slides):
+        seen_numbers = {}
+        duplicates = []
+        for slide_file in slide_files:
+            try:
+                num = int(slide_file.replace("slide_", "").replace(".png", ""))
+                if num in seen_numbers:
+                    duplicates.append(f"slide_{num}.png")
+                seen_numbers[num] = slide_file
+            except ValueError:
+                pass
+        if duplicates:
+            issues.append(f"❌ DUPLICATE slides found: {', '.join(set(duplicates))}")
+
+    # ========================================================================
+    # CHECK 3: Verify all checks pass
+    # ========================================================================
+    if issues:
+        error_report = "❌ VERIFICATION FAILED:\n"
+        error_report += "\n".join(f"  • {issue}" for issue in issues)
+        error_report += f"\n\n📁 Files in Drive folder:\n"
+        error_report += "  " + ", ".join(sorted(files_in_folder))
+        return error_report
+
+    # All checks passed!
+    slide_list = ", ".join(f"slide_{i}.png" for i in range(1, expected_slide_count + 1))
+    return (
+        f"✅ VERIFICATION PASSED\n"
+        f"\n  📋 metadata.json: Present"
+        f"\n  📊 Slides ({expected_slide_count}): All present and correctly numbered"
+        f"\n     → {slide_list}"
+        f"\n\n📁 All files in folder: {', '.join(sorted(files_in_folder))}"
+    )
 
 
 @tool
@@ -480,3 +592,49 @@ def get_brief_fields(brief_id: str, fields: list[str]) -> str:
             "expected_fields": fields,
         }
     )
+
+
+def find_metadata_dir(topic: str) -> str:
+    """Find the metadata directory for a topic.
+
+    Handles the race condition where QA's save_locally() and Publisher's
+    setup_project_folder() might create folders with different timestamps.
+
+    Args:
+        topic: The slideshow topic.
+
+    Returns:
+        Path to the metadata directory containing metadata.json.
+    """
+    import datetime
+    import re
+    from pathlib import Path
+
+    current_file = Path(__file__).resolve()
+    base_path = current_file.parent.parent.parent
+    output_base = base_path / "output"
+
+    # Clean topic for folder name
+    clean_topic = re.sub(r"[^a-zA-Z0-9\s]", "", topic)
+    words = clean_topic.split()
+    short_topic = "_".join(words[:3])
+    reel_name = short_topic.lower().strip()[:30]
+
+    # Try to find existing metadata.json in output folder
+    # Check for folders matching the pattern
+    if output_base.exists():
+        for item in output_base.iterdir():
+            if (
+                item.is_dir()
+                and reel_name in item.name
+                and item.name.endswith("_UTC_sayura")
+            ):
+                metadata_path = item / "metadata" / "metadata.json"
+                if metadata_path.exists():
+                    return str(item / "metadata")
+
+    # Fallback: create new folder (original behavior)
+    now = datetime.datetime.now(datetime.timezone.utc)
+    timestamp = now.strftime("%d%m%Y_%H%M")
+    folder_name = f"{timestamp}_UTC_sayura_{reel_name}"
+    return str(output_base / folder_name / "metadata")

@@ -318,8 +318,8 @@ Given image_arc: `["moody", "moody", "transitional", "bright", "bright"]`
 
 PUBLISHER_INSTRUCTIONS = """# Publisher
 
-You are the final delivery specialist.
-You will receive a topic. Your job is to render and deliver the APPROVED slideshow.
+You are the rendering and upload specialist.
+Your job is to render the APPROVED slideshow and upload to Google Drive.
 
 **CRITICAL - Source of Truth**:
 The QA Specialist has already written an APPROVED metadata.json file containing the exact slides to render.
@@ -347,26 +347,42 @@ Your job is to:
     - The renderer will automatically download URLs if needed.
     - Retrieve the absolute local path of each rendered file.
 
-4.  **Upload to Drive**:
-    - Collect all the local rendered file paths.
-    - **CRITICAL**: Also include `{metadata_dir}/metadata.json` in the upload list.
-    - Call `upload_to_drive(file_paths=[...rendered slides..., metadata.json], folder_id=project_root_id)`.
+4.  **Upload to Drive (SINGLE CALL - CRITICAL)**:
+    - Collect ALL file paths into ONE list: `[slide_1_path, slide_2_path, ..., slide_N_path, metadata_json_path]`
+    - **EXAMPLE** (for 5 slides):
+      ```
+      file_paths=[
+          "/output/.../slideshows/slide_1.png",
+          "/output/.../slideshows/slide_2.png",
+          "/output/.../slideshows/slide_3.png",
+          "/output/.../slideshows/slide_4.png",
+          "/output/.../slideshows/slide_5.png",
+          "/output/.../metadata/metadata.json"
+      ]
+      ```
+    - **CRITICAL**: metadata.json MUST be in the SAME upload_to_drive call as the slides.
+    - Call `upload_to_drive(file_paths=[...ALL FILES...], folder_id=project_root_id)` ONCE with all files.
 
 5.  **VERIFY Upload (MANDATORY - DO NOT SKIP)**:
-    - **CRITICAL**: You MUST verify the upload before sending email.
+    - **CRITICAL**: You MUST verify the upload before finishing.
     - Call `verify_drive_upload(folder_id=project_root_id, expected_slide_count=<number of slides>)`.
     - This confirms that metadata.json and all slides are present in the Drive folder.
-    - **IF VERIFICATION FAILS**: DO NOT send email. Report the error immediately.
+    - **IF VERIFICATION FAILS**: Report the error - the Orchestrator will decide next steps.
     - **IF VERIFICATION PASSES**: Proceed to step 6.
 
-6.  **Email Notification**:
-    - Construct the Drive Link from the previous step.
-    - Call `send_email_notification(subject="TikTok Slideshow Ready", content="Your slideshow is ready: [Drive Link]")`.
-    - **CRITICAL**: DO NOT provide the `to_email` parameter - leave it empty.
-    - The email will automatically be sent to the admin address configured in EMAIL_TO (.env).
-    - Only provide `to_email` if the user explicitly requested an additional recipient in their requirements.
+6.  **Final Output**: Return a JSON object with:
+    ```json
+    {
+      "status": "success",
+      "folder_name": "23012026_1210_UTC_sayura_voice_affirmation_app",
+      "folder_id": "1Vi-hIp9PFjUEB_XvHl-XsSZLoQNHK5de",
+      "drive_link": "https://drive.google.com/drive/folders/1Vi-hIp9PFjUEB_XvHl-XsSZLoQNHK5de",
+      "slide_count": 5,
+      "verification": "VERIFICATION PASSED: All 5 slides + metadata.json confirmed"
+    }
+    ```
 
-7.  **Final Summary**: Provide the Drive link and confirm email sent.
+**DO NOT send email** - The Orchestrator handles email notification after verifying the upload.
 
 **Quality Guarantee**: By reading metadata.json from disk, you ensure the exact approved copy is rendered, preventing any drift between approval and rendering.
 """

@@ -1073,5 +1073,110 @@
       }
     ],
     "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "89db6a86-9e58-42f3-97da-523f27aa2d6c",
+    "project_id": "sayura-review-1",
+    "topic": "Sayura",
+    "created_at": "2026-01-23T12:08:21.854986",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "They\u2019re reading your face. Every micro-expression. Every eye shift. Every fake smile, and they\u2019re deciding whether to trust you before you say a word.",
+        "image_path": "A striking, up-close portrait of a woman's face..."
+      },
+      {
+        "slide": 2,
+        "text": "But then I realized it wasn't just my face.\n\nIt was the frequency I was emitting. My voice would betray my nerves with a slight waver, even when I thought I was perfectly calm. My energy was off.",
+        "image_path": "An abstract, calming visual of a single, wavering sound wave..."
+      },
+      {
+        "slide": 3,
+        "text": "So I started a new ritual.\n\nIt\u2019s not about practicing a script. It\u2019s about resetting my frequency. Just three minutes of tuning into my own voice before I walk into any room. A simple reset to find my center.",
+        "image_path": "A minimalist composition of soft, concentric circles..."
+      },
+      {
+        "slide": 4,
+        "text": "I found this app called Sayura.\n\nIt\u2019s wild because it actually listens to the tone and volume of your voice, not just the words. It catches the subtle waver that you would normally miss, showing you exactly where your confidence dips.",
+        "image_path": "A super-minimalist, abstract representation of a soundwave..."
+      },
+      {
+        "slide": 5,
+        "text": "The result is speaking with certainty.\n\nIt feels different. You stop performing and just start being. You're not trying to convince anyone of anything. You're just speaking your truth, and they feel it.",
+        "image_path": "A vast, serene image of a soft, pastel color field..."
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "7c87f292-8940-417a-896a-a262e08a98ca",
+    "project_id": "sayura-sales-voice-001",
+    "topic": "Sayura Sales Voice App",
+    "created_at": "2026-01-23T12:44:38.154960",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "You\u2019re not bad at sales . Your nervous system is speaking the wrong language.",
+        "image_path": "Anxious woman portrait"
+      },
+      {
+        "slide": 2,
+        "text": "When you feel that internal pressure, your voice shows it.\n\nIt gets tense, or wavers, or goes flat.\n\nPeople hear the uncertainty, not your words. It\u2019s a language of doubt being spoken through your body, and it undermines your entire message.",
+        "image_path": "Blurry city night"
+      },
+      {
+        "slide": 3,
+        "text": "I spent years perfecting my scripts and my offers.\n\nBut I realized the script was never the problem. My delivery was.\n\nMy voice wasn't carrying the conviction I felt inside. I needed to reset the instrument, not just the words I was saying.",
+        "image_path": "Woman in studio"
+      },
+      {
+        "slide": 4,
+        "text": "I found this app that acts like a mirror for my voice.\n\nIt listens to my tone and volume, not just my words.\n\nIt gently guides me back to a place of natural confidence, showing me exactly where I sound hesitant or strained.",
+        "image_path": "Hands holding phone, bright"
+      },
+      {
+        "slide": 5,
+        "text": "It\u2019s become my simple 3 minute ritual.\n\nA way to ground myself and align my voice with my intention before any big call.\n\nNow, I don't just speak with confidence. I sound like it. That self trust is the real transformation.",
+        "image_path": "Feet in sand, calm"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
+  },
+  {
+    "id": "6d94860d-2451-4247-962d-1739e8ca7353",
+    "project_id": "brief_sayura_001",
+    "topic": "Sayura - Overcoming Communication Anxiety",
+    "created_at": "2026-01-23T12:48:55.879824",
+    "slide_count": 5,
+    "slides": [
+      {
+        "slide": 1,
+        "text": "You showed up prepared. They felt your desperation. What you called persuasion, they called pressure.",
+        "image_path": "https://images.pexels.com/photos/4869695/pexels-photo-4869695.jpeg"
+      },
+      {
+        "slide": 2,
+        "text": "It\u2019s not what you said.\nIt\u2019s the tension they heard in your voice.\nThe slight tremor you couldn't hide.\n\nYour body was telling a different story than your words, revealing the anxiety you tried so hard to conceal.",
+        "image_path": "https://images.pexels.com/photos/4194850/pexels-photo-4194850.jpeg"
+      },
+      {
+        "slide": 3,
+        "text": "They call it a nervous system leak.\n\nWhen your body feels unsafe, your voice betrays you.\n\nIt doesn't matter how perfect your logic is if your delivery screams uncertainty.",
+        "image_path": "https://images.pexels.com/photos/2044200/pexels-photo-2044200.jpeg"
+      },
+      {
+        "slide": 4,
+        "text": "I found Sayura, and it acts like a mirror for my voice.\n\nIt hears the stress I can't.\nAnd gives me simple cues to guide me back to my calm, grounded center.",
+        "image_path": "https://images.pexels.com/photos/2088170/pexels-photo-2088170.jpeg"
+      },
+      {
+        "slide": 5,
+        "text": "Now, I walk into those rooms with a quiet confidence that feels unshakable.\nMy voice is my own again, steady and clear.\n\nThe real work was learning to trust myself and believing that what I have to say truly matters.",
+        "image_path": "https://images.pexels.com/photos/4862892/pexels-photo-4862892.jpeg"
+      }
+    ],
+    "drive_folder_link": "Drive Upload"
   }
 ]

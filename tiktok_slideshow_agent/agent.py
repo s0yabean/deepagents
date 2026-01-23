@@ -50,8 +50,14 @@ from tiktok_slideshow_agent.tools.agent_tools import (
     send_email_notification,
     request_human_approval,
     read_format_library,
-    search_pexels,
     search_pexels_with_fallback,
+    get_brief_fields,
+)
+
+# Import Vision Tools
+from tiktok_slideshow_agent.tools.vision_tool import (
+    verify_visual_consistency,
+    select_best_fitting_image,
 )
 
 # ==============================================================================
@@ -88,7 +94,9 @@ specialist_model = RotatingGeminiModel(
     api_keys=api_keys,
     model="gemini-2.5-pro",
     temperature=0.7,
-    max_function_calls=25,  # Increased from default 10 to support multi-step image verification
+    model_kwargs={
+        "max_function_calls": 25
+    },  # Increased from default 10 to support multi-step image verification
 )
 
 # ==============================================================================
@@ -144,10 +152,10 @@ def get_visual_designer():
         "system_prompt": DESIGNER_INSTRUCTIONS,  # Use raw instructions
         "tools": [
             get_sync_tool(),
-            search_pexels,
             search_pexels_with_fallback,
             verify_visual_consistency,
             select_best_fitting_image,
+            get_brief_fields,
         ],  # render_slide moved to Publisher
         "model": specialist_model,
     }
@@ -168,7 +176,6 @@ def get_publisher():
             render_slide,
             upload_to_drive,
             verify_drive_upload,
-            send_email_notification,
         ],
         "model": specialist_model,
     }
@@ -220,7 +227,10 @@ interrupt_points = {}
 
 agent = create_deep_agent(
     model=orchestrator_model,  # Gemini 3 Pro for orchestrator
-    tools=[],  # Orchestrator tools (if any)
+    tools=[
+        verify_drive_upload,
+        send_email_notification,
+    ],  # Orchestrator handles final verification + email
     system_prompt=ORCHESTRATOR_INSTRUCTIONS,
     backend=get_backend,
     subagents=[
